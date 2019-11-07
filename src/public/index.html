@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/jpg" href="assets/Emerginov.jpg" />
+  <!-- 2 load the theme CSS file -->
+  <link rel="stylesheet" href="plugin/codemirror/addon/display/fullscreen.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+  <title>Editeur</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="plugin/codemirror/lib/codemirror.js"></script>
+  <!--<script src="plugin/Codemirror/addon/comment/comment.js"></script>
+  <script src="plugin/Codemirror/addon/display/fullscreen.js"></script>-->
+  <script src="plugin/codemirror/addon/hint/show-hint.js"></script>
+  <script src="plugin/codemirror/addon/hint/anyword-hint.js"></script>
+  <script src="plugin/codemirror/addon/hint/html-hint.js"></script>
+  <script src="plugin/codemirror/addon/hint/javascript-hint.js"></script>
+  <script src="plugin/codemirror/addon/hint/css-hint.js"></script>
+  <link rel="stylesheet" href="plugin/codemirror/addon/hint/show-hint.css"/>
+  <link rel="stylesheet" href="plugin/codemirror/lib/codemirror.css"/>
+  <script src="plugin/codemirror/mode/xml/xml.js"></script>
+  <script src="plugin/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+  <script src="plugin/codemirror/mode/php/php.js"></script>
+  <script src="plugin/codemirror/mode/python/python.js"></script>
+  <script src="plugin/codemirror/mode/javascript/javascript.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+  <link rel="stylesheet" href="plugin/codemirror/theme/dracula.css"/>
+  <link rel="stylesheet" href="plugin/codemirror/theme/blackboard.css"/>
+  <link rel="stylesheet" href="plugin/codemirror/theme/xq-dark.css"/>
+
+<style>
+   body {font-size:12.5px;}
+   *{
+    padding: 0;
+    margin: 0;
+   }
+   .main{
+    background: #DDDCDB;
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+   }
+   .bs-example{
+    margin: 20px;
+   }
+   #viewer{
+    background: white;
+    margin: 30px;
+    margin-left: 100px;
+    margin-top: -30px;
+    width: 100%;
+    resize: vertical;
+    border: 1px solid #3498db
+   }
+   #editor-textarea
+   {height: 100%;}
+   #X,#Y,#Z,#T,#U
+   {
+    visibility: hidden;}
+  .center-div {
+    margin: 0 auto;
+    width: 100px;}
+  .tree :first-child {
+    width: 30px;}
+  .nav{
+    background: #DDDCDB;}
+  .CodeMirror-activeline-background {
+    background-color:#F0E68C;
+  }
+}</style>
+</head>
+
+<body>
+<div   class="main">
+  <nav class="navbar navbar-light" style="margin-top: -10px;">
+
+    <button style="margin-left: -20px;"  type="button" class="text-light bg-dark btn-lg" disabled>Emerginov Editor</button>
+    <button id="run" style="margin-left: 170px;"   type="button" class="btn btn-primary" onclick="refresh()">Run</button>
+
+    <button onclick="save()" type="button"  class="btn btn-success">Save As</button>
+    <input id="toggle-event"  type="checkbox" checked data-toggle="toggle" data-on="Num" data-off=" NO Num" data-onstyle="warning" data-offstyle="info">
+
+
+    <!--Choice of language-->
+    <select id="lang" onchange="myFunction()" class="mdb-select md-form ">
+      <option value="1" selected>Html</option>
+      <option value="2"   >Javascript</option>
+      <option value="3">Python</option>
+      <option value="4" >PHP</option>
+
+    </select>
+
+    <div style="margin-left: 160px;" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary" onclick="theme3()">
+        <input type="radio" name="options" id="option2" autocomplete="off" checked> The Dark
+      </label>
+
+      <label class="btn btn-secondary" onclick="theme2()">
+        <input type="radio" name="options" id="option3" autocomplete="off"> BlackBoard
+      </label>
+      <label class="btn btn-secondary" onclick="theme1()">
+        <input type="radio" name="options" id="option1"  autocomplete="off" > Dracula
+      </label>
+      <label class="btn btn-secondary active" onclick="theme0()" >
+        <input type="radio" name="options" id="option0"  autocomplete="off"> Default
+      </label>
+      <button  type="button" class="btn btn-danger">Back</button>
+
+    </div></div></nav>
+
+
+<!--<button type="button" class="btn btn-warning">Warning</button>
+<button type="button" class="btn btn-info">Info</button>
+<button type="button" class="btn btn-light">Light</button>
+<button type="button" class="btn btn-dark">Dark</button>-->
+
+<div class="main">
+  <button  type="button" class="text-light bg-danger btn-lg" disabled>Your project</button>
+
+</div>
+
+<div class="main">
+   <!-- div for the tree-->
+    <div class="tree" id="jstree"></div>
+   <!--div for the editor-->
+    <div  style="margin-top: -50px;margin-left: 220px;">
+    <textarea  id="editor-textarea"   placeholder="Put your code here !" onkeyup =""></textarea></div>
+    <div class="bd-example">
+      <div class="btn-group-vertical btn-group-sm " role="group" aria-label="Vertical button group">
+         <button id="X" onclick="step_by_step()"  type="button" class="btn btn-secondary">By Step</button>
+         <button id="Y" onclick="Resume()"      id="Y" type="button" class="btn btn-secondary">Next</button>
+         <button id="Z" onclick="removeAll()" type="button" class="btn btn-secondary">Remove </button>
+         <button id="T" onclick="hideAll()" type="button" class="btn btn-secondary">Hide </button>
+         <button id="U" onclick="showAll()" type="button" class="btn btn-secondary">Show </button>
+      </div>
+    </div>
+   <!-- div for the viewer-->
+    <iframe  id="viewer"></iframe>
+</div>
+
+
+ <p id="demo"></p>
+<!-- include the minified jstree source -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<script>
+
+   //create an instance of editor using Codemirror and set some options
+   var editor=CodeMirror.fromTextArea(document.getElementById('editor-textarea'),
+   {
+     mode:"application/x-httpd-php",
+     dragDrop:true,
+     indentWithTabs: true,
+     autocorrect:true,
+     lineNumbers:true,
+     autoCloseBrackets: true,
+     extraKeys: {"Ctrl-Space":"autocomplete"},
+     gutters: ["CodeMirror-linenumbers", "breakpoints"]
+   });
+   var infos=[];
+ var memory =[];
+ var highlightedLine=[]
+
+
+ editor.on("gutterClick", function (cm, n) {
+ var info = cm.lineInfo(n);
+ var infoLine=info.line;
+ console.log(info);
+ if (info.gutterMarkers!=null) {
+   var line=info.line ;
+   let i=0;
+   while (infos[i]!=line && i<infos.length){
+     i=i+1;
+   }
+   infos.splice(i,1);
+   console.log(infos);
+ }else{
+     infos.push(infoLine);
+     infos.sort((a, b) => a - b);
+     console.log(infos);
+     var textContent=editor.getRange({line:0, ch:0},{line:infos[0]+1, ch:0});
+     console.log(textContent)
+
+ }
+//info.textbeforeLine=textContent;
+ info.tableau=infos;
+ console.log(info)
+ cm.setGutterMarker(n, "breakpoints", info.gutterMarkers ? null : makeMarker());
+
+});
+function removeAll(){
+for (var i=0;i<infos.length;i++){
+ editor.setGutterMarker(infos[i], "breakpoints", null);
+     }
+for (var i=0;i<memory.length;i++){
+ editor.setGutterMarker(memory[i], "breakpoints", null);
+     }
+
+ infos=[];
+ memory=[];
+ setVisibility();
+
+}
+
+function hideAll(){
+for (var i=0;i<infos.length;i++){
+ editor.setGutterMarker(infos[i], "breakpoints",  hideMarker());
+ memory.push(infos[i]);
+     }
+
+ infos=[];
+  for(var i=0 ;i<highlightedLine.length;i++){
+    editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
+
+   }
+ highlightedLine=[];
+}
+
+
+function checkInclusion (superset, subset) {
+ if (0 === subset.length) {
+   return false;
+ }
+ return subset.every(function (value) {
+   return (superset.indexOf(value) >= 0);
+ });
+}
+ function show(BreakpointsInvisible,BreakpointsVisible){
+   for (var i = 0; i < BreakpointsVisible.length; i++) {
+     editor.setGutterMarker(infos[i], "breakpoints",  makeMarker());
+   }
+   for (var i = 0; i < BreakpointsInvisible.length; i++) {
+     editor.setGutterMarker(infos[i], "breakpoints",  hideMarker());
+   }
+ }
+
+ function showAll(){
+
+if (!checkInclusion(infos,memory)) {
+  console.log("hello");
+
+ for (var i=0;i<memory.length;i++){
+     editor.setGutterMarker(memory[i], "breakpoints",  makeMarker());
+     infos.push(memory[i]);
+     infos.sort((a, b) => a - b);
+
+   }
+ }
+    for (var i=0;i<infos.length;i++){
+        editor.setGutterMarker(infos[i], "breakpoints",  makeMarker());
+     }
+ for(var i=0 ;i<highlightedLine.length;i++){
+    editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
+
+   }
+ highlightedLine=[];
+ memory=[];
+}
+
+   editor.on("gutterClick", function(cm, n) {
+ var info = cm.lineInfo(n);
+//info.textbeforeLine=textContent;
+ console.log("done");
+
+ console.log(editor);
+ setVisibility();
+
+});
+ function setVisibility(){
+ var button1 = document.getElementById("X");
+ var button2 = document.getElementById("Y");
+ var button3 = document.getElementById("Z");
+ var button4 = document.getElementById("T");
+ var button5 = document.getElementById("U");
+
+ if (infos.length!=0) {
+   button1.style.visibility="visible";
+   button2.style.visibility="visible";
+   button3.style.visibility="visible";
+   button4.style.visibility="visible";
+   button5.style.visibility="visible";
+
+ }else{
+   button1.style.visibility="hidden";
+   button2.style.visibility="hidden";
+   button3.style.visibility="hidden";
+   button4.style.visibility="hidden";
+   button5.style.visibility="hidden";
+    for(var i=0 ;i<highlightedLine.length;i++){
+    editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
+
+   }
+   highlightedLine=[];
+
+
+
+ }
+ }
+
+function step_by_step() {
+   console.log(highlightedLine);
+   length=highlightedLine.length;
+   if(length!=0){
+     editor.removeLineClass(highlightedLine[length-1], 'wrap', 'CodeMirror-activeline-background');
+     console.log(highlightedLine)
+     editor.addLineClass(highlightedLine[length-1]+1, 'wrap', 'CodeMirror-activeline-background');
+     highlightedLine.push(highlightedLine[length-1]+1);
+     console.log(highlightedLine);
+   }else{
+     editor.addLineClass(infos[0], 'wrap', 'CodeMirror-activeline-background');
+     highlightedLine.push(infos[0]);
+     console.log(highlightedLine);
+   }
+}
+function Resume() {
+     var j=0;
+     console.log(highlightedLine);
+   if (highlightedLine.length>0) {
+     console.log(highlightedLine);
+    while (j<=highlightedLine.length-1){
+     var i=0;
+     while (i<infos.length && infos[i]!=highlightedLine[highlightedLine.length-j-1]){
+       i++;
+     }
+     if (i>=infos.length) {
+       j++;
+       console.log(j);
+     }else{
+       break;
+       console.log(infos[i]);
+     }
+    }
+    editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
+    editor.removeLineClass(highlightedLine[highlightedLine.length-1], 'wrap', 'CodeMirror-activeline-background');
+    if (infos[i+1]!=null) {
+          editor.addLineClass(infos[i+1], 'wrap', 'CodeMirror-activeline-background');
+          highlightedLine.push(infos[i+1]);
+          //highlightedLine.splice(0,1);
+          console.log(highlightedLine);
+       }
+   }else{
+
+     editor.addLineClass(infos[0], 'wrap', 'CodeMirror-activeline-background');
+     highlightedLine.push(infos[0]);
+
+   }
+
+}
+
+
+function makeMarker() {
+ var marker = document.createElement("div");
+ marker.style.color = "#822";
+ marker.innerHTML = "●";
+ marker.style.marginLeft="-26px";
+ return marker;
+
+
+}
+function hideMarker() {
+ var marker = document.createElement("div");
+ marker.style.color = "#6666FF";
+ marker.innerHTML = "●";
+ marker.style.marginLeft="-26px";
+ return marker;
+
+
+}
+
+    editor.setSize(500, 960);   //set editor size
+
+    CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
+     cm.showHint({hint: CodeMirror.hint.anyword});
+    }
+
+   function myFunction(){
+    var x = document.getElementById("lang").value;
+    if  (x=="1") {
+     editor.setOption("mode","application/x-httpd-php");
+    }if (x=="2") {
+     editor.setOption("mode","javascript");
+    }if (x=="3") {
+     editor.setOption("mode","python");
+    }if (x=="4") {
+     editor.setOption("mode","php");
+    }
+   }
+
+  function save() {
+
+      var textContent=editor.getValue();
+      var selected_path = localStorage.getItem('selected_path');
+      console.log(textContent);
+      console.log(selected_path);
+
+      $.ajax({
+          async: true,
+          type: "POST",
+          url: "http://localhost:3000/save",
+          dataType:"json",
+          data: {
+              "code":textContent,
+              "path":selected_path
+          },
+          success: function (json) {
+            console.log("done");
+            //editor.setValue(json.code);
+            //  document.getElementById('viewer').srcdoc=json.response;
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            //  alert(xhr.status);
+            //  alert(thrownError);
+          }
+      });
+  };
+ //function to set lineNumbers  editor's options
+ $(function lineNumbers_Activation() {
+   $('#toggle-event').change(function() {
+     if ( $(this).prop('checked')) {
+      editor.setOption("lineNumbers",true);
+    }else{
+      editor.setOption("lineNumbers",false);
+
+    }
+
+  })
+ })
+  //set the chosen theme in editor's options
+
+ function theme0(){
+   editor.setOption("theme","");
+  }
+ function theme1(){
+   editor.setOption("theme","dracula");
+ }
+ function theme2(){
+   editor.setOption("theme","blackboard");
+ }
+ function theme3(){
+   editor.setOption("theme","xq-dark");
+ }
+
+   $('#run').click(function sendCode () {
+              var textContent=editor.getValue();
+            //  console.log(textContent);
+              $.ajax({
+                  async: true,
+                  type: "POST",
+                  url: "http://localhost:3000/php",
+                  dataType:"json",
+                  data: {
+                      "code":textContent
+                  },
+                  success: function (json) {
+                      document.getElementById('viewer').srcdoc=json.response;
+                  },
+                  error: function (xhr, ajaxOptions, thrownError) {
+                    //  alert(xhr.status);
+                    //  alert(thrownError);
+                  }
+              });
+   });
+   $(function () {
+              $.ajax({
+                  async: true,
+                  type: "GET",
+                  url: "http://localhost:3000/home/editor",
+                  dataType: "json",
+                  success: function (json) {
+                      create_tree(json);
+                  },
+
+                  error: function (xhr, ajaxOptions, thrownError) {
+                      alert(xhr.status);
+                      alert(thrownError);
+                  }
+              });
+          });
+   function create_tree(jsondata){
+    //  create an instance with one node
+    $('#jstree').jstree({
+         "core" : {
+           "animation" : 0,
+           "check_callback" : true,
+           'data' : {
+             'd}ata' : function (node) {
+                 return { 'id' : node.id };
+                }
+           },
+           "themes" : { "stripes" : true },
+           'data' : jsondata
+           },
+           "types" : {
+             "#" : {
+                   "max_children" : 1,
+                   "max_depth" : 6,              //set max number of children's node
+                   "valid_children" : ["root"]
+                 },
+            "root" : {
+              "icon" : "/static/3.3.8/assets/images/tree_icon.png",
+                "valid_children" : ["default"]
+            },
+
+            "default" : {
+                   "valid_children" : ["default","file"]
+            },
+            "file" : {
+                   "icon" : "glyphicon glyphicon-file",
+                   "valid_children" : []
+                 }
+           },
+           'contextmenu' : {
+            'items' : function(node) {
+               var tmp = $.jstree.defaults.contextmenu.items();
+               delete tmp.create.action;
+               tmp.create.label = "New";
+               tmp.create.submenu = {
+                 "create_folder" : {
+                   "separator_after"	: true,
+                   "label"				: "Folder",
+                   "action"			: function (data) {
+                   var inst = $.jstree.reference(data.reference),
+                   obj = inst.get_node(data.reference);
+                   inst.create_node(obj, { type : "default" }, "last", function (new_node) {
+                       var path=inst.get_path(new_node,'/');
+                       var name=inst.get_text();
+                       console.log(new_node);
+                       new_node.original.path = path;
+                       console.log(new_node);
+
+                       $.ajax({
+                           async: true,
+                           type: "POST",
+                           url: "http://localhost:3000/home/project",
+                           data: {
+                             "path":path,
+                             "type":"folder"
+                           },
+                           success: function (json) {
+                           },
+
+                           error: function (xhr, ajaxOptions, thrownError) {
+                               alert(thrownError);
+                           }
+                       });
+
+                       //put("/file/create", {path: "path", type:"file"})
+                        setTimeout(function () { inst.edit(new_node); },0);
+                     });
+                   }
+                 },
+                 "create_file" : {
+                   "label"				: "File",
+                   "action"			: function (data) {
+                      var inst = $.jstree.reference(data.reference),
+                      obj = inst.get_node(data.reference);
+                      inst.create_node(obj, { type : "file" }, "last", function (new_node) {
+                      var name=inst.get_text();
+                      var path=inst.get_path(new_node,'/');
+                      new_node.original.path = path;
+                      $.ajax({
+                          async: true,
+                          type: "POST",
+                          url: "http://localhost:3000/home/project",
+                          data: {
+                            "path":path,
+                            "type":"file"
+                          },
+                          success: function (json) {
+                            //alert("done");
+                          },
+
+                          error: function (xhr, ajaxOptions, thrownError) {
+                              alert(thrownError);
+                          }
+
+                      });
+
+                      //put("/file/create", {path: "path", type:"file"})
+                       setTimeout(function () { inst.edit(new_node); },0);
+
+                     });
+                   }
+                 }
+               };
+               if(this.get_type(node) === "file") {
+                 delete tmp.create;
+               }
+               return tmp;
+             }
+           },
+          "plugins" : [
+               "contextmenu",  // set the context menu (create/rename/delete nodeds)
+               "dnd",          // allow drag and drop
+               "search",
+               "state",
+               "types"
+               ]
+      });
+    }
+
+   $('#jstree').on("changed.jstree", function(e, data) {
+     var type_of_selected=data.node.type == "default" ? "folder" : "file";
+     if (type_of_selected=="file") {
+       var new_path = data.node.original.path;
+      // var old_path =localStorage.getItem('selected_path');
+      // var old_path = new_path.replace(/\/[^\/]*$/, `/${text}`);
+      // data.node.original.old_path=old_path;
+      var old_path=new_path;
+    }
+    console.log(data.node);
+     localStorage.setItem('selected_path', new_path);
+
+     $.ajax({
+         async: true,
+         type: "POST",
+         url: "http://localhost:3000/save/show",
+         dataType:"json",
+         data:{
+           "new_path":new_path,
+           "old_path":old_path,
+           "BreakpointsVisible":infos,
+           "BreakpointsInvisible":memory
+         },
+         success: function (json) {
+           console.log("done");
+           editor.setValue(json.code);
+           show(json.InvisibleBreakpoints,json.VisibleBreakpoints);
+
+           //  document.getElementById('viewer').srcdoc=json.response;
+         },
+         error: function (xhr, ajaxOptions, thrownError) {
+           //  alert(xhr.status);
+           //  alert(thrownError);
+         }
+     });
+    });
+
+   $('#jstree').on('delete_node.jstree', function (e, data) {
+         let node = data.node;
+         let path = node.original.path;
+         let type = node.type == "default" ? "folder" : "file";
+
+         //let new_path = old_path.replace(/\/[^\/]*$/, `/${node.text}`)
+       $.ajax({
+           async: true,
+           type: "DELETE",
+           url: "http://localhost:3000/home/project",
+           data: {
+             "path":path,
+             "type":type
+
+           },
+           success: function (json) {
+             //alert("done");
+           },
+
+           error: function (xhr, ajaxOptions, thrownError) {
+               alert(thrownError);
+           }
+       });
+      });
+
+   $('#jstree').on('rename_node.jstree', function (e, data) {
+        // var inst = $.jstree.reference(data.reference);
+        let node = data.node;
+        let old_path = node.original.path;
+        let new_path = old_path.replace(/\/[^\/]*$/, `/${node.text}`);
+        node.original.new_path=new_path;
+        console.log(node);
+        console.log(new_path);
+        $.ajax({
+            async: true,
+            type: "PUT",
+            url: "http://localhost:3000/home/project",
+            data: {
+              "old_path": old_path,
+              "new_path": new_path,
+            },
+            success: function (json) {
+            //  alert("done");
+            },
+
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+        });
+       });
+
+   $('#jstree').on('move_node.jstree', function (e, data) {
+        let node = data.node;
+        let newParent=data.parent;
+        let newPosition=data.position;
+        console.log($('#jstree').jstree(true).get_path(newParent));
+        // console.log($('#jstree').get_path(newParent));
+        // let old_path = node.original.path;
+        // let new_path = old_path.replace(/\/[^\/]*$/, `/${node.text}`)
+        // console.log(new_path);
+        // $.ajax({
+        //     async: true,
+        //     type: "PUT",
+        //     url: "http://localhost:3000/home/project",
+        //     data: {
+        //       "old_path": old_path,
+        //       "new_path": new_path,
+        //     },
+        //     success: function (json) {
+        //     //  alert("done");
+        //     },
+        //
+        //     error: function (xhr, ajaxOptions, thrownError) {
+        //         alert(thrownError);
+        //     }
+        // });
+    	});
+
+
+
+
+  </script>
+  </body>
+  </html>
