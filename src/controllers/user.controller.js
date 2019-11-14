@@ -99,7 +99,7 @@ export async function getUserByLogin(req,res){
           }
         });
         if (user!=null) {
-            return res.redirect('/');
+            return res.redirect('/home.html');
 
         }else {
           return res.json({

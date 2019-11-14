@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <!-- En-tête de la page -->
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="icon" type="image/jpg" href="assets/Emerginov.jpg" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!--  HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <title>Accueil</title>
+
+    </head>
+
+
+    <body  >
+    <div style="height: 100px;" class="p-3 mb-2 bg-info text-white font-weight-bold h1" >
+        Emerginov
+      </div>
+
+     <form
+       id="app1"
+       @submit="checkLogin"
+       action="http://localhost:3000/api/users/login"
+       method="post"
+       novalidate="true" class="form-inline">
+
+       <div style="margin-top: -60px;" class="form-group mb-2">
+         <label  for="login" class="sr-only">Login</label>
+         <input id="login"  name="login" v-model="login"  type="text" class="form-control" placeholder="login">
+      </div>
+       <div   style="margin-top: -60px;"class="form-group mx-sm-3 mb-2">
+        <label for="password" class="sr-only">Password</label>
+        <input id="password" name="password" v-model="password" type="password" class="form-control" placeholder="password">
+      </div>
+
+     <button  style="margin-top: -60px;" type="submit" class="btn btn-dark mb-2">Connexion</button>
+     <div style="margin-top: 700px;" v-if="errors.length">
+       <b>Please correct the following error(s):</b>
+       <ul>
+         <li v-for="error in errors">{{ error }}</li>
+       </ul>
+     </div>
+     </form>
+      <a id="link" style="color:white" href="https://example.com">I forgot my password</a>
+
+<br><br><br>
+      <form
+  id="app"
+  @submit="checkForm"
+  action="http://localhost:3000/api/users/"
+  method="post"
+  novalidate="true"
+>
+  <p v-if="errors.length">
+    <b>Please correct the following error(s):</b>
+    <ul>
+      <li v-for="error in errors">{{ error }}</li>
+    </ul>
+  </p>
+  <div  style="margin-left: 47px;"  class="p-3 mb-2 h1 font-weight-bold">Create an Account </div><br>
+  <div  class="row form-group">
+      <div  class="col">
+        <input  id="name" name="name" v-model="name" type="text" class="form-control" placeholder="name">
+      </div>
+      <div   class="col">
+        <input id="login"  v-model="login" type="text" class="form-control" placeholder="login">
+      </div>
+  </div>
+  <div class="form-group">
+      <input id="profession"  name="profession" v-model="profession" type="text" class="form-control" id="formGroupExampleInput2" placeholder="profession">
+  </div>
+  <div class="form-group">
+    <input id="school" v-model="school" name="school" type="text" class="form-control" id="formGroupExampleInput2" placeholder="School">
+  </div>
+  <div class="form-group">
+    <input id="password" v-model="password" type="password" class="form-control" id="formGroupExampleInput2" placeholder="Password">
+  </div>
+
+
+  <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
+
+</form>
+      </form>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.0-rc.5/vue.js"></script>
+    <script src="js/app.js"></script>
+    <style>
+        body{
+          background-color: #D3D5D8;
+        }
+        form{
+          position: absolute;
+          margin-left : 900px ;
+          margin-top : -40px ;
+
+          font-family: Comic sans ms;
+        }
+
+    </style>
+</html>

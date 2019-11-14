@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 const app=express();
 
 //Importing routes
+import gitRoutes from './routes/git'
 import projectRoutes from './routes/projects';
 import usersRoutes from './routes/users';
 import homeRoutes from './routes/home';
@@ -27,6 +28,7 @@ app.use('/api/users/login',usersRoutes);
 app.use('/home',homeRoutes);
 app.use('/php',phpRoutes);
 app.use('/save',saveRoutes);
+app.use('/repos',gitRoutes)
 
 //app.use('/',function(req,res){res.redirect('/home')});
 

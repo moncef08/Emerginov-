@@ -3,7 +3,7 @@
 <head lang="en">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" type="image/jpg" href="assets/Emerginov.jpg" />
+  <link rel="icon" href="./assets/Emerginov.ico" />
   <!-- 2 load the theme CSS file -->
   <link rel="stylesheet" href="plugin/codemirror/addon/display/fullscreen.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
@@ -25,7 +25,7 @@
   <script src="plugin/codemirror/mode/xml/xml.js"></script>
   <script src="plugin/codemirror/mode/htmlmixed/htmlmixed.js"></script>
   <script src="plugin/codemirror/mode/php/php.js"></script>
-  <script src="plugin/codemirror/mode/python/python.js"></script>
+  <script src="plugin/codemirror/mode/clike/clike.js"></script>
   <script src="plugin/codemirror/mode/javascript/javascript.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -82,7 +82,7 @@
   <nav class="navbar navbar-light" style="margin-top: -10px;">
 
     <button style="margin-left: -20px;"  type="button" class="text-light bg-dark btn-lg" disabled>Emerginov Editor</button>
-    <button id="run" style="margin-left: 170px;"   type="button" class="btn btn-primary" onclick="refresh()">Run</button>
+    <button id="run" style="margin-left: 170px;"   type="button" class="btn btn-primary">Run</button>
 
     <button onclick="save()" type="button"  class="btn btn-success">Save As</button>
     <input id="toggle-event"  type="checkbox" checked data-toggle="toggle" data-on="Num" data-off=" NO Num" data-onstyle="warning" data-offstyle="info">
@@ -136,9 +136,9 @@
       <div class="btn-group-vertical btn-group-sm " role="group" aria-label="Vertical button group">
          <button id="X" onclick="step_by_step()"  type="button" class="btn btn-secondary">By Step</button>
          <button id="Y" onclick="Resume()"      id="Y" type="button" class="btn btn-secondary">Next</button>
-         <button id="Z" onclick="removeAll()" type="button" class="btn btn-secondary">Remove </button>
+         <button id="Z" onclick="removeAll()" type="button" class="btn btn-secondary">RemoveAll </button>
          <button id="T" onclick="hideAll()" type="button" class="btn btn-secondary">Hide </button>
-         <button id="U" onclick="showAll()" type="button" class="btn btn-secondary">Show </button>
+         <button id="U" onclick="showAll()" type="button" class="btn btn-secondary">Show All</button>
       </div>
     </div>
    <!-- div for the viewer-->
@@ -163,14 +163,17 @@
      extraKeys: {"Ctrl-Space":"autocomplete"},
      gutters: ["CodeMirror-linenumbers", "breakpoints"]
    });
-   var infos=[];
+
+ var infos=[];
  var memory =[];
  var highlightedLine=[]
 
-
- editor.on("gutterClick", function (cm, n) {
+editor.on("gutterClick", function (cm, n) {
+ var BreakpointsOnlyifEmpty="";
  var info = cm.lineInfo(n);
  var infoLine=info.line;
+ var textContent=editor.getRange({line:n, ch:0},{line:n+1, ch:0});
+ BreakpointsOnlyifEmpty=textContent;
  console.log(info);
  if (info.gutterMarkers!=null) {
    var line=info.line ;
@@ -179,29 +182,47 @@
      i=i+1;
    }
    infos.splice(i,1);
+   cm.setGutterMarker(n, "breakpoints", info.gutterMarkers ? null : null);
+
    console.log(infos);
  }else{
+   if (BreakpointsOnlyifEmpty.length>1 && BreakpointsOnlyifEmpty!="") {
      infos.push(infoLine);
      infos.sort((a, b) => a - b);
      console.log(infos);
-     var textContent=editor.getRange({line:0, ch:0},{line:infos[0]+1, ch:0});
-     console.log(textContent)
+    /* var textContent=editor.getRange({line:0, ch:0},{line:infos[0]+1, ch:0});
+     console.log(textContent)*/
+     cm.setGutterMarker(n, "breakpoints", info.gutterMarkers ? null : makeMarker());
+
+   }
+
 
  }
-//info.textbeforeLine=textContent;
+ //info.textbeforeLine=textContent;
  info.tableau=infos;
  console.log(info)
- cm.setGutterMarker(n, "breakpoints", info.gutterMarkers ? null : makeMarker());
 
 });
-function removeAll(){
-for (var i=0;i<infos.length;i++){
- editor.setGutterMarker(infos[i], "breakpoints", null);
-     }
-for (var i=0;i<memory.length;i++){
- editor.setGutterMarker(memory[i], "breakpoints", null);
-     }
 
+function removeAll(){
+ for(var k of VisibleMap.keys()){
+ for (var i = 0; i < VisibleMap.get(k).length; i++) {
+    editor.setGutterMarker(VisibleMap.get(k)[i], "breakpoints",  null);
+  }
+ }
+ for(var k of InvisibleMap.keys()){
+  for (var i = 0; i < InvisibleMap.get(k).length; i++) {
+    editor.setGutterMarker(InvisibleMap.get(k)[i], "breakpoints",  null);
+  }
+ }
+ for (var i=0;i<infos.length;i++){
+  editor.setGutterMarker(infos[i], "breakpoints", null);
+     }
+ for (var i=0;i<memory.length;i++){
+  editor.setGutterMarker(memory[i], "breakpoints", null);
+ }
+ VisibleMap.clear();
+ InvisibleMap.clear();
  infos=[];
  memory=[];
  setVisibility();
@@ -209,10 +230,50 @@ for (var i=0;i<memory.length;i++){
 }
 
 function hideAll(){
-for (var i=0;i<infos.length;i++){
- editor.setGutterMarker(infos[i], "breakpoints",  hideMarker());
- memory.push(infos[i]);
-     }
+  let new_path=localStorage.getItem('selected_path');
+  console.log(new_path);
+  if (infos.length!=0) {
+    if (VisibleMap.get(new_path)==null) {
+      VisibleMap.set(new_path,infos);
+    }else {
+      for (var i = 0; i < infos.length; i++) {
+        VisibleMap.get(new_path).push(infos[i]);
+        VisibleMap.get(new_path).sort((a, b) => a - b);
+      }
+    }
+
+  }
+    if (VisibleMap.size!=0) {
+      for (var k of VisibleMap.keys()) {
+        if (k==new_path) {
+          for (var i = 0; i < VisibleMap.get(k).length; i++) {
+            editor.setGutterMarker(VisibleMap.get(k)[i], "breakpoints",  hideMarker());
+          }
+          if (InvisibleMap.get(k)==null) {
+            InvisibleMap.set(k,VisibleMap.get(k));
+          }else {
+            for ( var i=0;i<VisibleMap.get(k).length;i++){
+              InvisibleMap.get(k).push(VisibleMap.get(k)[i]);
+              InvisibleMap.get(k).sort((a, b) => a - b);
+            }
+          }
+
+          VisibleMap.delete(k);
+
+        }
+        console.log(infos);
+      }
+
+    }else{
+      for (var i=0;i<infos.length;i++){
+       editor.setGutterMarker(infos[i], "breakpoints",  hideMarker());
+       memory.push(infos[i]);
+           }
+       InvisibleMap.set(new_path,infos);
+    }
+
+console.log(infos);
+
 
  infos=[];
   for(var i=0 ;i<highlightedLine.length;i++){
@@ -231,48 +292,62 @@ function checkInclusion (superset, subset) {
    return (superset.indexOf(value) >= 0);
  });
 }
- function show(BreakpointsInvisible,BreakpointsVisible){
-   for (var i = 0; i < BreakpointsVisible.length; i++) {
-     editor.setGutterMarker(infos[i], "breakpoints",  makeMarker());
+
+function show(BreakpointsInvisible,BreakpointsVisible){
+   if (BreakpointsInvisible!=null || BreakpointsVisible!=null) {
+     for (var i = 0; i < BreakpointsVisible.length; i++) {
+       editor.setGutterMarker(BreakpointsVisible[i], "breakpoints",  makeMarker());
+     }
+     for (var i = 0; i < BreakpointsInvisible.length; i++) {
+      editor.setGutterMarker(BreakpointsInvisible[i], "breakpoints",  hideMarker());
+     }
    }
-   for (var i = 0; i < BreakpointsInvisible.length; i++) {
-     editor.setGutterMarker(infos[i], "breakpoints",  hideMarker());
-   }
+
  }
 
- function showAll(){
-
-if (!checkInclusion(infos,memory)) {
-  console.log("hello");
-
- for (var i=0;i<memory.length;i++){
+function showAll(){
+ let new_path=localStorage.getItem('selected_path');
+ if (InvisibleMap.size!=0) {
+   for(var k1 of InvisibleMap.keys()){
+     if (k1==new_path) {
+       for (var i = 0; i < InvisibleMap.get(k1).length; i++) {
+         editor.setGutterMarker(InvisibleMap.get(k1)[i], "breakpoints",  makeMarker());
+       }
+     }
+     VisibleMap.set(k1,InvisibleMap.get(k1));
+     InvisibleMap.delete(k1)
+   }
+ }else {
+   if (!checkInclusion(infos,memory)) {
+    for (var i=0;i<memory.length;i++){
      editor.setGutterMarker(memory[i], "breakpoints",  makeMarker());
      infos.push(memory[i]);
      infos.sort((a, b) => a - b);
-
+    }
    }
+
  }
-    for (var i=0;i<infos.length;i++){
+ for (var i=0;i<infos.length;i++){
         editor.setGutterMarker(infos[i], "breakpoints",  makeMarker());
-     }
+ }
  for(var i=0 ;i<highlightedLine.length;i++){
     editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
-
-   }
+ }
  highlightedLine=[];
  memory=[];
 }
 
-   editor.on("gutterClick", function(cm, n) {
+editor.on("gutterClick", function(cm, n) {
  var info = cm.lineInfo(n);
-//info.textbeforeLine=textContent;
+ //info.textbeforeLine=textContent;
  console.log("done");
 
  console.log(editor);
  setVisibility();
 
 });
- function setVisibility(){
+
+function setVisibility(){
  var button1 = document.getElementById("X");
  var button2 = document.getElementById("Y");
  var button3 = document.getElementById("Z");
@@ -304,54 +379,108 @@ if (!checkInclusion(infos,memory)) {
  }
 
 function step_by_step() {
-   console.log(highlightedLine);
-   length=highlightedLine.length;
-   if(length!=0){
-     editor.removeLineClass(highlightedLine[length-1], 'wrap', 'CodeMirror-activeline-background');
-     console.log(highlightedLine)
-     editor.addLineClass(highlightedLine[length-1]+1, 'wrap', 'CodeMirror-activeline-background');
-     highlightedLine.push(highlightedLine[length-1]+1);
-     console.log(highlightedLine);
-   }else{
-     editor.addLineClass(infos[0], 'wrap', 'CodeMirror-activeline-background');
-     highlightedLine.push(infos[0]);
-     console.log(highlightedLine);
-   }
-}
-function Resume() {
-     var j=0;
-     console.log(highlightedLine);
-   if (highlightedLine.length>0) {
-     console.log(highlightedLine);
-    while (j<=highlightedLine.length-1){
-     var i=0;
-     while (i<infos.length && infos[i]!=highlightedLine[highlightedLine.length-j-1]){
-       i++;
-     }
-     if (i>=infos.length) {
-       j++;
-       console.log(j);
+   let new_path=localStorage.getItem('selected_path');
+   if (infos.length==0) {
+     length=highlightedLine.length;
+     if(length!=0){
+       editor.removeLineClass(highlightedLine[length-1], 'wrap', 'CodeMirror-activeline-background');
+       console.log(highlightedLine)
+       editor.addLineClass(highlightedLine[length-1]+1, 'wrap', 'CodeMirror-activeline-background');
+       highlightedLine.push(highlightedLine[length-1]+1);
+       console.log(highlightedLine);
      }else{
-       break;
-       console.log(infos[i]);
+       editor.addLineClass(VisibleMap.get(new_path)[0], 'wrap', 'CodeMirror-activeline-background');
+       highlightedLine.push(VisibleMap.get(new_path)[0]);
+       console.log(highlightedLine);
      }
-    }
-    editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
-    editor.removeLineClass(highlightedLine[highlightedLine.length-1], 'wrap', 'CodeMirror-activeline-background');
-    if (infos[i+1]!=null) {
-          editor.addLineClass(infos[i+1], 'wrap', 'CodeMirror-activeline-background');
-          highlightedLine.push(infos[i+1]);
-          //highlightedLine.splice(0,1);
-          console.log(highlightedLine);
-       }
-   }else{
-
-     editor.addLineClass(infos[0], 'wrap', 'CodeMirror-activeline-background');
-     highlightedLine.push(infos[0]);
-
+     //infos=VisibleMap.get(new_path);
+   }else {
+     console.log(infos);
+     console.log(highlightedLine);
+     length=highlightedLine.length;
+     if(length!=0){
+       editor.removeLineClass(highlightedLine[length-1], 'wrap', 'CodeMirror-activeline-background');
+       console.log(highlightedLine)
+       editor.addLineClass(highlightedLine[length-1]+1, 'wrap', 'CodeMirror-activeline-background');
+       highlightedLine.push(highlightedLine[length-1]+1);
+       console.log(highlightedLine);
+     }else{
+       editor.addLineClass(infos[0], 'wrap', 'CodeMirror-activeline-background');
+       highlightedLine.push(infos[0]);
+       console.log(highlightedLine);
+     }
    }
 
 }
+
+function Resume() {
+  let new_path=localStorage.getItem('selected_path');
+
+  if (infos.length==0) {
+    var j=0;
+    console.log(highlightedLine);
+  if (highlightedLine.length>0) {
+    console.log(highlightedLine);
+   while (j<=highlightedLine.length-1){
+    var i=0;
+    while (i<VisibleMap.get(new_path).length && VisibleMap.get(new_path)[i]!=highlightedLine[highlightedLine.length-j-1]){
+      i++;
+    }
+    if (i>=VisibleMap.get(new_path).length) {
+      j++;
+      console.log(j);
+    }else{
+      break;
+      console.log(infos[i]);
+    }
+   }
+   editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
+   editor.removeLineClass(highlightedLine[highlightedLine.length-1], 'wrap', 'CodeMirror-activeline-background');
+   if (VisibleMap.get(new_path)[i+1]!=null) {
+         editor.addLineClass(VisibleMap.get(new_path)[i+1], 'wrap', 'CodeMirror-activeline-background');
+         highlightedLine.push(VisibleMap.get(new_path)[i+1]);
+         //highlightedLine.splice(0,1);
+         console.log(highlightedLine);
+      }
+  }else{
+
+    editor.addLineClass(VisibleMap.get(new_path)[0], 'wrap', 'CodeMirror-activeline-background');
+    highlightedLine.push(VisibleMap.get(new_path)[0]);
+
+  }
+  //  infos=VisibleMap.get(new_path);
+ }else {
+  var j=0;
+  console.log(highlightedLine);
+  if (highlightedLine.length>0) {
+  console.log(highlightedLine);
+  while (j<=highlightedLine.length-1){
+   var i=0;
+   while (i<infos.length && infos[i]!=highlightedLine[highlightedLine.length-j-1]){
+    i++;
+   }
+   if (i>=infos.length) {
+    j++;
+    console.log(j);
+   }else{
+    break;
+    console.log(infos[i]);
+   }
+  }
+  editor.removeLineClass(highlightedLine[i], 'wrap', 'CodeMirror-activeline-background');
+  editor.removeLineClass(highlightedLine[highlightedLine.length-1], 'wrap', 'CodeMirror-activeline-background');
+  if (infos[i+1]!=null) {
+       editor.addLineClass(infos[i+1], 'wrap', 'CodeMirror-activeline-background');
+       highlightedLine.push(infos[i+1]);
+       //highlightedLine.splice(0,1);
+       console.log(highlightedLine);
+    }
+  }else{
+
+  editor.addLineClass(infos[0], 'wrap', 'CodeMirror-activeline-background');
+  highlightedLine.push(infos[0]);
+
+}}}
 
 
 function makeMarker() {
@@ -363,6 +492,7 @@ function makeMarker() {
 
 
 }
+
 function hideMarker() {
  var marker = document.createElement("div");
  marker.style.color = "#6666FF";
@@ -373,8 +503,8 @@ function hideMarker() {
 
 }
 
-    editor.setSize(500, 960);   //set editor size
 
+    editor.setSize(500, 960);   //set editor size
     CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
      cm.showHint({hint: CodeMirror.hint.anyword});
     }
@@ -392,7 +522,7 @@ function hideMarker() {
     }
    }
 
-  function save() {
+   function save() {
 
       var textContent=editor.getValue();
       var selected_path = localStorage.getItem('selected_path');
@@ -417,20 +547,17 @@ function hideMarker() {
             //  alert(xhr.status);
             //  alert(thrownError);
           }
-      });
-  };
+      });};
  //function to set lineNumbers  editor's options
- $(function lineNumbers_Activation() {
-   $('#toggle-event').change(function() {
+   $(function lineNumbers_Activation() {
+    $('#toggle-event').change(function() {
      if ( $(this).prop('checked')) {
       editor.setOption("lineNumbers",true);
-    }else{
+     }else{
       editor.setOption("lineNumbers",false);
 
-    }
-
-  })
- })
+     }
+   })})
   //set the chosen theme in editor's options
 
  function theme0(){
@@ -489,7 +616,7 @@ function hideMarker() {
            "animation" : 0,
            "check_callback" : true,
            'data' : {
-             'd}ata' : function (node) {
+             'data' : function (node) {
                  return { 'id' : node.id };
                 }
            },
@@ -605,17 +732,37 @@ function hideMarker() {
       });
     }
 
+   var VisibleMap=new Map();
+   var InvisibleMap=new Map();
+
    $('#jstree').on("changed.jstree", function(e, data) {
+     var VisibleBreakpointsToLoad=[];
+     var InvisibleBreakpointsToLoad=[];
      var type_of_selected=data.node.type == "default" ? "folder" : "file";
      if (type_of_selected=="file") {
-       var new_path = data.node.original.path;
-      // var old_path =localStorage.getItem('selected_path');
-      // var old_path = new_path.replace(/\/[^\/]*$/, `/${text}`);
-      // data.node.original.old_path=old_path;
-      var old_path=new_path;
-    }
-    console.log(data.node);
-     localStorage.setItem('selected_path', new_path);
+       var old_path =localStorage.getItem('selected_path');
+       console.log("old_path: "+old_path);
+     }
+     var new_path = data.node.original.path;
+     new_path = new_path.replace(/\/[^\/]*$/, `/${data.node.text}`);
+     console.log("new_path: "+new_path);
+     if (type_of_selected=="file") {
+       localStorage.setItem('selected_path', new_path);
+     }
+     if (infos.length!=0) {
+       if (VisibleMap.get(old_path)==null) {
+         VisibleMap.set(old_path,infos);
+       }else {
+         for (var i=0;i<infos.length;i++){
+           VisibleMap.get(old_path).push(infos[i]);
+           VisibleMap.get(old_path).sort((a, b) => a - b);
+         }
+       }
+     }
+     if (memory.length!=0) {
+       InvisibleMap.set(old_path,memory);
+     }
+     if (type_of_selected=="file") {
 
      $.ajax({
          async: true,
@@ -624,30 +771,46 @@ function hideMarker() {
          dataType:"json",
          data:{
            "new_path":new_path,
-           "old_path":old_path,
-           "BreakpointsVisible":infos,
-           "BreakpointsInvisible":memory
          },
          success: function (json) {
-           console.log("done");
+           //console.log("done");
            editor.setValue(json.code);
-           show(json.InvisibleBreakpoints,json.VisibleBreakpoints);
-
-           //  document.getElementById('viewer').srcdoc=json.response;
+           for (var path of VisibleMap.keys()) {
+             console.log(VisibleMap);
+              if (path==new_path && VisibleMap.get(path).length!=0) {
+                  VisibleBreakpointsToLoad=VisibleMap.get(path);
+                  console.log(VisibleBreakpointsToLoad);
+                  console.log(infos);
+              }
+           }
+           for (var path of InvisibleMap.keys()) {
+             console.log(InvisibleMap);
+              if (path==new_path && InvisibleMap.get(path).length!=0) {
+                  InvisibleBreakpointsToLoad=InvisibleMap.get(path);
+                  console.log(InvisibleBreakpointsToLoad);
+                  console.log(infos);
+              }
+           }
+           show(InvisibleBreakpointsToLoad,VisibleBreakpointsToLoad)
+           infos=[];
+           memory=[];
+           highlightedLine=[];
          },
          error: function (xhr, ajaxOptions, thrownError) {
            //  alert(xhr.status);
            //  alert(thrownError);
          }
-     });
-    });
+     });}});
 
    $('#jstree').on('delete_node.jstree', function (e, data) {
          let node = data.node;
          let path = node.original.path;
          let type = node.type == "default" ? "folder" : "file";
-
+         console.log(path);
          //let new_path = old_path.replace(/\/[^\/]*$/, `/${node.text}`)
+         if (type=="file") {
+           path=localStorage.getItem('selected_path');
+         }
        $.ajax({
            async: true,
            type: "DELETE",

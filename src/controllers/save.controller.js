@@ -26,48 +26,14 @@
      }
 
   }
-
   export async function show_Code(req, res){
-    const {new_path,old_path,BreakpointsVisible,BreakpointsInvisible}= req.body;
-    var VisibleMap=new Map();
-    var InvisibleMap=new Map();
-    VisibleMap.set(old_path, BreakpointsVisible);
-    InvisibleMap.set(old_path, BreakpointsInvisible);
-    var VisibleBreakpointsToLoad=[];
-    var InvisibleBreakpointsToLoad=[];
-    console.log(new_path);
-    console.log(VisibleMap);
-    console.log(InvisibleMap);
-
+    const {new_path}= req.body;
     try{
-
      var contents = fs.readFileSync(new_path, 'utf8');
-
-
-     for (path in VisibleMap.keys()) {
-       if (path==new_path) {
-         VisibleBreakpointsToLoad=VisibleMap.get(path);
-       }
-     }
-     for (path in InvisibleMap.keys()) {
-       if (path==new_path) {
-        InvisibleBreakpointsToLoad=InvisibleMap.get(path);
-       }
-     }
-
-
       res.json({
         "code":contents,
-
-        "VisibleBreakpoints":VisibleBreakpointsToLoad,
-        "InvisibleBreakpoints":InvisibleBreakpointsToLoad
-
       });
-
       }catch(e){
-
         console.log(e)
-
        }
-
     }

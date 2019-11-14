@@ -50,15 +50,19 @@ export async function update_DirectoryOrFile(req,res){
 export async function delete_DirectoryOrFile(req,res){
   const {type,path}= req.body;
   if (type=="folder") {
-    fs.rmdir(path, (err) => {
-    if (err) throw err;
-  });
+    console.log(path);
+    //rimraf(path, function () { console.log("delete done"); });
+    fs.rmdir(path, { recursive: true },(err) => {
+      if (err) throw err;
+      console.log("folder successfully deleted");
+    });
   }else{
     fs.unlink(path, (err) => {
     if (err) throw err;
+    console.log("file successfully deleted");
+
   });
   }
-  console.log(path+'successfully deleted');
   //var data=fs.readFileSync('./public/home.html','utf-8');
   res.json({
     message:'done'

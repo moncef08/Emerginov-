@@ -1,13 +1,16 @@
   /*global phpCode, resultBody, uniter */
   var uniter = require('uniter');
+/*  require('dotphp/register');
+  //var result2=require('../../projects/test1/test.php')().execute();
+  var result2=require('../../projects/test1/test.php')().execute();
+  console.log(result2);*/
   'use strict';
-
   export async function get_And_Execute_PhpCode(req, res){
     const {code}= req.body;
     console.log(code);
     try{
     var phpEngine = uniter.createEngine('PHP');
-
+    phpEngine.expose();
     var result1= phpEngine.getStdout().on('data', function (data) {
         console.log(data);
       });
