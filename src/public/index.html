@@ -41,6 +41,9 @@
     padding: 0;
     margin: 0;
    }
+   #chatBox{
+     background: white;
+   }
    .main{
     background: #DDDCDB;
     width: 100%;
@@ -82,7 +85,7 @@
   <nav class="navbar navbar-light" style="margin-top: -10px;">
 
     <button style="margin-left: -20px;"  type="button" class="text-light bg-dark btn-lg" disabled>Emerginov Editor</button>
-    <button id="run" style="margin-left: 170px;"   type="button" class="btn btn-primary">Run</button>
+    <button id="run" style="margin-left: 195px;"   type="button" class="btn btn-primary">Run</button>
 
     <button onclick="save()" type="button"  class="btn btn-success">Save As</button>
     <input id="toggle-event"  type="checkbox" checked data-toggle="toggle" data-on="Num" data-off=" NO Num" data-onstyle="warning" data-offstyle="info">
@@ -97,7 +100,7 @@
 
     </select>
 
-    <div style="margin-left: 160px;" class="btn-group btn-group-toggle" data-toggle="buttons">
+    <div style="margin-left: 440px;" class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary" onclick="theme3()">
         <input type="radio" name="options" id="option2" autocomplete="off" checked> The Dark
       </label>
@@ -129,8 +132,20 @@
 <div class="main">
    <!-- div for the tree-->
     <div class="tree" id="jstree"></div>
+    <div style="margin-top:450px;">
+        <button  style="margin-top:-50px; margin-left:100px"type="button" class="text-light bg-dark btn" disabled>Live Chat</button>
+        <button  style="margin-left:0px" class="btn btn-success" onclick="RefreshSlack()">refresh conversation</button><button style="margin-left:0px" class="btn btn-danger" onclick="CleanConversation()">Clean the chat</button>
+
+        <iframe height="200px" width="300px" id="chatBox" ></iframe>
+
+        <div style="margin-top: 10px;" >
+          <input id="inputSlack"  name="" type="text" placeholder="put a message here"><input  onclick="putSlackMessage()" type="submit">
+       </div>
+        <img style="margin-left:90px;margin-top:10px" src="./assets/slack.png" width="100px" alt="" />
+    </div>
+
    <!--div for the editor-->
-    <div  style="margin-top: -50px;margin-left: 220px;">
+    <div  style="margin-top: -50px;margin-left: 50px;">
     <textarea  id="editor-textarea"   placeholder="Put your code here !" onkeyup =""></textarea></div>
     <div class="bd-example">
       <div class="btn-group-vertical btn-group-sm " role="group" aria-label="Vertical button group">
@@ -163,6 +178,7 @@
      extraKeys: {"Ctrl-Space":"autocomplete"},
      gutters: ["CodeMirror-linenumbers", "breakpoints"]
    });
+   var m=0;
 
  var infos=[];
  var memory =[];
@@ -883,6 +899,59 @@ function hideMarker() {
         // });
     	});
 
+      function CleanConversation(){
+        document.getElementById('chatBox').srcdoc="";
+      }
+
+      function RefreshSlack(){
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/slack",
+            data: {
+
+            },
+            success: function (json) {
+              console.log(json);
+              var updateConversation="";
+              for (x in json) {
+                  updateConversation+=json[x]+"<br>";
+                  document.getElementById('chatBox').srcdoc=updateConversation;
+                }
+              },
+              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+              // document.getElementById('chatBox').srcdoc+=response;
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+
+        });
+      }
+      function putSlackMessage(){
+        var value=document.getElementById('inputSlack').value;
+        console.log(value);
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/slack/send",
+            data: {
+              "message":value
+            },
+            success: function (json) {
+                  value=json.name+": "+value;
+                  document.getElementById('chatBox').srcdoc+="<br>"+value;
+              },
+              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+              // document.getElementById('chatBox').srcdoc+=response;
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+
+        });
+
+
+      }
 
 
 

@@ -11,6 +11,7 @@ import usersRoutes from './routes/users';
 import homeRoutes from './routes/home';
 import phpRoutes from './routes/php';
 import saveRoutes from './routes/save';
+import slackRoutes from './routes/slack';
 //middlewares
 app.use(morgan('dev'));
 app.use(json());
@@ -28,7 +29,8 @@ app.use('/api/users/login',usersRoutes);
 app.use('/home',homeRoutes);
 app.use('/php',phpRoutes);
 app.use('/save',saveRoutes);
-app.use('/repos',gitRoutes)
+app.use('/repos',gitRoutes);
+app.use('/slack',slackRoutes);
 
 //app.use('/',function(req,res){res.redirect('/home')});
 
