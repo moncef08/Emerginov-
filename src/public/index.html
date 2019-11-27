@@ -139,7 +139,7 @@
         <iframe height="200px" width="300px" id="chatBox" ></iframe>
 
         <div style="margin-top: 10px;" >
-          <input id="inputSlack"  name="" type="text" placeholder="put a message here"><input  onclick="putSlackMessage()" type="submit">
+          <input id="inputSlack"  name="" type="text" placeholder="put a message here"><input  onclick="putMastodonMessage()" type="submit">
        </div>
         <img style="margin-left:90px;margin-top:10px" src="./assets/slack.png" width="100px" alt="" />
     </div>
@@ -903,6 +903,31 @@ function hideMarker() {
         document.getElementById('chatBox').srcdoc="";
       }
 
+      function RefreshMastodon(){
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/mastodon",
+            data: {
+
+            },
+            success: function (json) {
+              console.log(json);
+              var updateConversation="";
+              for (x in json) {
+                  updateConversation+=json[x]+"<br>";
+                  document.getElementById('chatBox').srcdoc=updateConversation;
+                }
+              },
+              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+              // document.getElementById('chatBox').srcdoc+=response;
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+
+        });
+      }
       function RefreshSlack(){
 
         $.ajax({
@@ -919,6 +944,29 @@ function hideMarker() {
                   updateConversation+=json[x]+"<br>";
                   document.getElementById('chatBox').srcdoc=updateConversation;
                 }
+              },
+              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+              // document.getElementById('chatBox').srcdoc+=response;
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+
+        });
+      }
+      
+      function putMastodonMessage(){
+        var value=document.getElementById('inputSlack').value;
+        console.log(value);
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/mastodon/send",
+            data: {
+              "message":value
+            },
+            success: function (json) {
+                  value=json.name+": "+value;
+                  document.getElementById('chatBox').srcdoc+="<br>"+value;
               },
               // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
               // document.getElementById('chatBox').srcdoc+=response;

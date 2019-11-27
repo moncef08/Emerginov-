@@ -12,6 +12,9 @@ import homeRoutes from './routes/home';
 import phpRoutes from './routes/php';
 import saveRoutes from './routes/save';
 import slackRoutes from './routes/slack';
+import smsRoutes from './routes/sms';
+import mailRoutes from './routes/mail';
+import mastodonRoutes from './routes/mastodon'
 //middlewares
 app.use(morgan('dev'));
 app.use(json());
@@ -31,6 +34,11 @@ app.use('/php',phpRoutes);
 app.use('/save',saveRoutes);
 app.use('/repos',gitRoutes);
 app.use('/slack',slackRoutes);
+app.use('/sms',smsRoutes);
+app.use('/mail',mailRoutes);
+app.use('/mastodon',mastodonRoutes);
+
+
 
 //app.use('/',function(req,res){res.redirect('/home')});
 
