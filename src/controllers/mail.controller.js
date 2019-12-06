@@ -15,8 +15,8 @@ export async function sendEmail(req,res){
       port:465,
       proxy: 'http://localhost:3000/',
       auth: {
-          user: 'moncefrejeb1996@gmail.com',
-          pass: 'Police911'
+          user: '',
+          pass: ''
       },
 
   });

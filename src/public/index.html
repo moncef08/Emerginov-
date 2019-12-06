@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="plugin/codemirror/theme/dracula.css"/>
   <link rel="stylesheet" href="plugin/codemirror/theme/blackboard.css"/>
   <link rel="stylesheet" href="plugin/codemirror/theme/xq-dark.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
 
 <style>
    body {font-size:12.5px;}
@@ -134,14 +135,14 @@
     <div class="tree" id="jstree"></div>
     <div style="margin-top:450px;">
         <button  style="margin-top:-50px; margin-left:100px"type="button" class="text-light bg-dark btn" disabled>Live Chat</button>
-        <button  style="margin-left:0px" class="btn btn-success" onclick="RefreshSlack()">refresh conversation</button><button style="margin-left:0px" class="btn btn-danger" onclick="CleanConversation()">Clean the chat</button>
+        <!--<button  style="margin-left:0px" class="btn btn-success" onclick="RefreshSlack()">refresh conversation</button>--><button style="margin-left:0px" class="btn btn-danger" onclick="CleanConversation()">Clean the chat</button>
 
-        <iframe height="200px" width="300px" id="chatBox" ></iframe>
+        <iframe name="Showframe" height="200px" width="300px" id="chatBox" ></iframe>
 
         <div style="margin-top: 10px;" >
-          <input id="inputSlack"  name="" type="text" placeholder="put a message here"><input  onclick="putMastodonMessage()" type="submit">
+          <input onkeypress="pressEnter(event)" id="inputSlack"  name="" type="text" placeholder="put a message here"><input onclick="putMastodonMessage()" type="submit">
        </div>
-        <img style="margin-left:90px;margin-top:10px" src="./assets/slack.png" width="100px" alt="" />
+        <img style="margin-left:90px;margin-top:10px" src="./assets/mastodon.png" width="100px" alt="" />
     </div>
 
    <!--div for the editor-->
@@ -556,14 +557,12 @@ function hideMarker() {
           },
           success: function (json) {
             console.log("done");
-            //editor.setValue(json.code);
-            //  document.getElementById('viewer').srcdoc=json.response;
           },
           error: function (xhr, ajaxOptions, thrownError) {
-            //  alert(xhr.status);
-            //  alert(thrownError);
+            console.log("Error");
           }
-      });};
+      });
+    };
  //function to set lineNumbers  editor's options
    $(function lineNumbers_Activation() {
     $('#toggle-event').change(function() {
@@ -901,8 +900,9 @@ function hideMarker() {
 
       function CleanConversation(){
         document.getElementById('chatBox').srcdoc="";
-      }
 
+      }
+/*
       function RefreshMastodon(){
 
         $.ajax({
@@ -953,7 +953,44 @@ function hideMarker() {
 
         });
       }
-      
+*/
+//Sound for chatBox
+var snd1 = new Audio("./assets/audio1.wav");
+var snd2 = new Audio("./assets/audio2.wav");
+
+  var NbMessageRecieved=0
+  function playMusic(snd){
+     var info = document.getElementById("message");
+
+  if (!document.hasFocus() ) {
+        snd.play();
+        window.parent.document.title = "("+NbMessageRecieved+") new message !"
+        NbMessageRecieved++;
+  }
+  }
+  setInterval( checkPageFocus, 200 );
+
+function checkPageFocus() {
+  var info = document.getElementById("message");
+
+  if ( !document.hasFocus() ) {
+  } else {
+     NbMessageRecieved=1;
+    console.log(NbMessageRecieved)
+    window.parent.document.title = "Editeur"
+
+  }
+}
+
+      var socket = io.connect('http://localhost:8080');
+      socket.on('message', function(message) {
+              console.log('Le serveur a un message pour vous : ' + message);
+
+              playMusic(snd2);
+              document.getElementById('chatBox').srcdoc+=message;
+
+          })
+
       function putMastodonMessage(){
         var value=document.getElementById('inputSlack').value;
         console.log(value);
@@ -966,7 +1003,8 @@ function hideMarker() {
             },
             success: function (json) {
                   value=json.name+": "+value;
-                  document.getElementById('chatBox').srcdoc+="<br>"+value;
+                  console.log(value);
+                //  document.getElementById('chatBox').srcdoc+="<br>"+value;
               },
               // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
               // document.getElementById('chatBox').srcdoc+=response;
@@ -975,7 +1013,19 @@ function hideMarker() {
             }
 
         });
-      }
+        $('#inputSlack').val('');
+
+}
+
+function pressEnter() {
+               var code=event.which || event.keyCode; //Selon le navigateur c'est which ou keyCode
+               if (code==13) { //le code de la touche Enter
+                 console.log("pressed");
+                 putMastodonMessage();
+               }
+           }
+
+
       function putSlackMessage(){
         var value=document.getElementById('inputSlack').value;
         console.log(value);

@@ -35,8 +35,10 @@
     "popups": "^1.1.3",
     "rimraf": "^3.0.0",
     "sequelize": "^5.19.0",
+    "socket.io": "^2.3.0",
     "twilio": "^3.37.1",
-    "uniter": "^2.13.2"
+    "uniter": "^2.13.2",
+    "websocket": "^1.0.30"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.2",
