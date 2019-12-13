@@ -91,15 +91,16 @@
     <button onclick="save()" type="button"  class="btn btn-success">Save As</button>
     <input id="toggle-event"  type="checkbox" checked data-toggle="toggle" data-on="Num" data-off=" NO Num" data-onstyle="warning" data-offstyle="info">
 
+    <button onclick="zip()" type="button"  class="btn btn-success">Zip</button>
 
-    <!--Choice of language-->
+    <!--Choice of language
     <select id="lang" onchange="myFunction()" class="mdb-select md-form ">
       <option value="1" selected>Html</option>
       <option value="2"   >Javascript</option>
       <option value="3">Python</option>
       <option value="4" >PHP</option>
 
-    </select>
+    </select>-->
 
     <div style="margin-left: 440px;" class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary" onclick="theme3()">
@@ -1049,6 +1050,24 @@ function pressEnter() {
         });
 
 
+      }
+      function zip(){
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/zip/",
+            data: {
+            },
+            success: function (json) {
+
+              },
+              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+              // document.getElementById('chatBox').srcdoc+=response;
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+
+        });
       }
 
 

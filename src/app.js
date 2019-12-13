@@ -14,7 +14,8 @@ import saveRoutes from './routes/save';
 import slackRoutes from './routes/slack';
 import smsRoutes from './routes/sms';
 import mailRoutes from './routes/mail';
-import mastodonRoutes from './routes/mastodon'
+import mastodonRoutes from './routes/mastodon';
+import zipRoutes from './routes/zip';
 //middlewares
 app.use(morgan('dev'));
 app.use(json());
@@ -37,6 +38,8 @@ app.use('/slack',slackRoutes);
 app.use('/sms',smsRoutes);
 app.use('/mail',mailRoutes);
 app.use('/mastodon',mastodonRoutes);
+app.use('/zip',zipRoutes);
+
 
 
 
