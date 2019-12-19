@@ -86,6 +86,7 @@
   <nav class="navbar navbar-light" style="margin-top: -10px;">
 
     <button style="margin-left: -20px;"  type="button" class="text-light bg-dark btn-lg" disabled>Emerginov Editor</button>
+
     <button id="run" style="margin-left: 195px;"   type="button" class="btn btn-primary">Run</button>
 
     <button onclick="save()" type="button"  class="btn btn-success">Save As</button>
@@ -590,8 +591,7 @@ function hideMarker() {
  }
 
    $('#run').click(function sendCode () {
-              var textContent=editor.getValue();
-            //  console.log(textContent);
+             var textContent=editor.getValue();
               $.ajax({
                   async: true,
                   type: "POST",
@@ -608,6 +608,7 @@ function hideMarker() {
                     //  alert(thrownError);
                   }
               });
+
    });
    $(function () {
               $.ajax({
