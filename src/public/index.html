@@ -2,6 +2,7 @@
 <html>
 <head lang="en">
   <meta charset="utf-8" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="icon" href="./assets/Emerginov.ico" />
   <!-- 2 load the theme CSS file -->
@@ -37,7 +38,231 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
 
 <style>
-   body {font-size:12.5px;}
+
+		.chat{
+			margin-top: auto;
+			margin-bottom: auto;
+			margin-left: -55px
+		}
+
+		.card{
+			font-size: 12px;
+			height: 450px;
+			width: 300px;
+			border-radius: 15px !important;
+			background-color: rgba(0,0,0,0.4) !important;
+		}
+		.contacts_body{
+			padding:  0.75rem 0 !important;
+			overflow-y: auto;
+			white-space: nowrap;
+		}
+		.msg_card_body{
+			overflow-y: auto;
+
+		}
+		.card-header{
+			border-radius: 15px 15px 0 0 !important;
+			border-bottom: 0 !important;
+		}
+	 .card-footer{
+		border-radius: 0 0 15px 15px !important;
+			border-top: 0 !important;
+
+	}
+		.container{
+			align-content: center;
+
+		}
+		.search{
+			border-radius: 15px 0 0 15px !important;
+			background-color: rgba(0,0,0,0.3) !important;
+			border:0 !important;
+			color:white !important;
+		}
+		.search:focus{
+		     box-shadow:none !important;
+           outline:0px !important;
+		}
+		.type_msg{
+			background-color: rgba(0,0,0,0.3) !important;
+			border:0 !important;
+			color:white !important;
+			height: 40px !important;
+			overflow-y: auto;
+		}
+			.type_msg:focus{
+		     box-shadow:none !important;
+           outline:0px !important;
+		}
+		.attach_btn{
+	border-radius: 15px 0 0 15px !important;
+	background-color: rgba(0,0,0,0.3) !important;
+			border:0 !important;
+			color: white !important;
+			cursor: pointer;
+		}
+		.send_btn{
+	border-radius: 0 15px 15px 0 !important;
+	background-color: rgba(0,0,0,0.3) !important;
+			border:0 !important;
+			color: white !important;
+			cursor: pointer;
+		}
+		.search_btn{
+			border-radius: 0 15px 15px 0 !important;
+			background-color: rgba(0,0,0,0.3) !important;
+			border:0 !important;
+			color: white !important;
+			cursor: pointer;
+		}
+		.contacts{
+			list-style: none;
+			padding: 0;
+		}
+		.contacts li{
+			width: 100% !important;
+			padding: 5px 1px;
+			margin-bottom: 15px !important;
+		}
+	.active{
+			background-color: rgba(0,0,0,0.3);
+	}
+		.user_img{
+			height: 50px;
+			width: 50px;
+			border:1.5px solid #f5f6fa;
+
+		}
+		.user_img_msg{
+			height: 40px;
+			width: 40px;
+			border:1.5px solid #f5f6fa;
+
+		}
+	.img_cont{
+			position: relative;
+			height: 50px;
+			width: 50px;
+	}
+	.img_cont_msg{
+			height: 40px;
+			width: 40px;
+	}
+	.online_icon{
+		position: absolute;
+		height: 10px;
+		width:10px;
+		background-color: #4cd137;
+		border-radius: 50%;
+		bottom: 0.2em;
+		right: 0.4em;
+		border:1.5px solid white;
+	}
+	.offline{
+		background-color: #c23616 !important;
+	}
+	.user_info{
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-left: 15px;
+	}
+	.user_info span{
+		font-size: 20px;
+		color: white;
+	}
+	.user_info p{
+	font-size: 10px;
+	color: rgba(255,255,255,0.6);
+	}
+	.video_cam{
+		margin-left: 50px;
+		margin-top: 5px;
+	}
+	.video_cam span{
+		color: white;
+		font-size: 20px;
+		cursor: pointer;
+		margin-right: 20px;
+	}
+	.msg_cotainer{
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-left: 10px;
+		border-radius: 25px;
+		background-color: #82ccdd;
+		padding: 10px;
+		position: relative;
+	}
+	.msg_cotainer_send{
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: 10px;
+		border-radius: 25px;
+		background-color: #78e08f;
+		padding: 10px;
+		position: relative;
+	}
+	.msg_time{
+		position: absolute;
+		left: 0;
+		bottom: -15px;
+		color: rgba(255,255,255,0.5);
+		font-size: 10px;
+	}
+	.msg_time_send{
+		position: absolute;
+		right:0;
+		bottom: -15px;
+		color: rgba(255,255,255,0.5);
+		font-size: 10px;
+	}
+	.msg_head{
+		position: relative;
+	}
+	#action_menu_btn{
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		color: white;
+		cursor: pointer;
+		font-size: 20px;
+	}
+	.action_menu{
+		z-index: 1;
+		position: absolute;
+		padding: 15px 0;
+		background-color: rgba(0,0,0,0.5);
+		color: white;
+		border-radius: 15px;
+		top: 30px;
+		right: 15px;
+		display: none;
+	}
+	.action_menu ul{
+		list-style: none;
+		padding: 0;
+	margin: 0;
+	}
+	.action_menu ul li{
+		width: 100%;
+		padding: 10px 15px;
+		margin-bottom: 5px;
+	}
+	.action_menu ul li i{
+		padding-right: 10px;
+
+	}
+	.action_menu ul li:hover{
+		cursor: pointer;
+		background-color: rgba(0,0,0,0.2);
+	}
+	@media(max-width: 576px){
+	.contacts_card{
+		margin-bottom: 15px !important;
+	}
+	}
+   body {background:  	#505050;}
    *{
     padding: 0;
     margin: 0;
@@ -46,7 +271,6 @@
      background: white;
    }
    .main{
-    background: #DDDCDB;
     width: 100%;
     height: 100%;
     display: inline-flex;
@@ -72,7 +296,10 @@
     margin: 0 auto;
     width: 100px;}
   .tree :first-child {
-    width: 30px;}
+    width: 30px;
+    color: #A0A0A0;
+  }
+
   .nav{
     background: #DDDCDB;}
   .CodeMirror-activeline-background {
@@ -82,44 +309,77 @@
 </head>
 
 <body>
-<div   class="main">
-  <nav class="navbar navbar-light" style="margin-top: -10px;">
+  <div class="bd-example">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a id="titre" class="navbar-brand" href="#">
+ <img src="./assets/Emerginov.png" width="30" height="30" alt="logo">
+Emerginov Editor
+</a>
 
-    <button style="margin-left: -20px;"  type="button" class="text-light bg-dark btn-lg" disabled>Emerginov Editor</button>
 
-    <button id="run" style="margin-left: 195px;"   type="button" class="btn btn-primary">Run</button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item ">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a id="run" class="nav-link"  target="viewer" href="http://project3.ci/">Run</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " id="saved" onkeypress="pressControlS(event)" onclick="save()" href="#">save</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " id="add" href="#">add friend +</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Github
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onclick="push()">Push</a>
+            <a class="dropdown-item" href="#"onclick="theme2()">Commit</a>
+            <a class="dropdown-item" href="#"onclick="theme1()">Pull</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Themes
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onclick="theme3()">The Dark</a>
+            <a class="dropdown-item" href="#"onclick="theme2()">BlackBoard</a>
+            <a class="dropdown-item" href="#"onclick="theme1()">Dracula</a>
 
-    <button onclick="save()" type="button"  class="btn btn-success">Save As</button>
-    <input id="toggle-event"  type="checkbox" checked data-toggle="toggle" data-on="Num" data-off=" NO Num" data-onstyle="warning" data-offstyle="info">
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#"  onclick="theme0()">Default</a>
+          </div>
+        </li>
 
-    <button onclick="zip()" type="button"  class="btn btn-success">Zip</button>
 
-    <!--Choice of language
-    <select id="lang" onchange="myFunction()" class="mdb-select md-form ">
-      <option value="1" selected>Html</option>
-      <option value="2"   >Javascript</option>
-      <option value="3">Python</option>
-      <option value="4" >PHP</option>
+      </ul>
+      <form style="margin-left:540px;"class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      <div  class="collapse navbar-collapse" id="navbar-list-4">
+    <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img src="./assets/Moncef.jpg" width="40" height="40" class="rounded-circle">
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Dashboard</a>
+          <a class="dropdown-item" href="#">Edit Profile</a>
+          <a class="dropdown-item" href="#">Log Out</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+    <!--  <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>-->
 
-    </select>-->
+    </div>
+  </nav>
+  </div>
 
-    <div style="margin-left: 440px;" class="btn-group btn-group-toggle" data-toggle="buttons">
-      <label class="btn btn-secondary" onclick="theme3()">
-        <input type="radio" name="options" id="option2" autocomplete="off" checked> The Dark
-      </label>
-
-      <label class="btn btn-secondary" onclick="theme2()">
-        <input type="radio" name="options" id="option3" autocomplete="off"> BlackBoard
-      </label>
-      <label class="btn btn-secondary" onclick="theme1()">
-        <input type="radio" name="options" id="option1"  autocomplete="off" > Dracula
-      </label>
-      <label class="btn btn-secondary active" onclick="theme0()" >
-        <input type="radio" name="options" id="option0"  autocomplete="off"> Default
-      </label>
-      <button  type="button" class="btn btn-danger">Back</button>
-
-    </div></div></nav>
 
 
 <!--<button type="button" class="btn btn-warning">Warning</button>
@@ -127,30 +387,32 @@
 <button type="button" class="btn btn-light">Light</button>
 <button type="button" class="btn btn-dark">Dark</button>-->
 
-<div class="main">
-  <button  type="button" class="text-light bg-danger btn-lg" disabled>Your project</button>
 
-</div>
 
 <div class="main">
    <!-- div for the tree-->
-    <div class="tree" id="jstree"></div>
-    <div style="margin-top:450px;">
+    <div style="margin-top:30px;" class="tree" id="jstree"></div>
+  <!--  <div style=" margin-top:450px;">
         <button  style="margin-top:-50px; margin-left:100px"type="button" class="text-light bg-dark btn" disabled>Live Chat</button>
-        <!--<button  style="margin-left:0px" class="btn btn-success" onclick="RefreshSlack()">refresh conversation</button>--><button style="margin-left:0px" class="btn btn-danger" onclick="CleanConversation()">Clean the chat</button>
+-->
+        <!--<button  style="margin-left:0px" class="btn btn-success" onclick="RefreshSlack()">refresh conversation</button><button style="margin-left:0px" class="btn btn-danger" onclick="CleanConversation()">Clean the chat</button>-->
 
-        <iframe name="Showframe" height="200px" width="300px" id="chatBox" ></iframe>
+      <!--  <iframe name="Showframe" height="200px" width="300px" id="chatBox" ></iframe>
 
         <div style="margin-top: 10px;" >
           <input onkeypress="pressEnter(event)" id="inputSlack"  name="" type="text" placeholder="put a message here"><input onclick="putMastodonMessage()" type="submit">
+
        </div>
-        <img style="margin-left:90px;margin-top:10px" src="./assets/mastodon.png" width="100px" alt="" />
-    </div>
+       <img style="margin-left:90px;margin-top:10px" src="./assets/mastodon.png" width="100px" alt="" />
+
+     -->
+
 
    <!--div for the editor-->
-    <div  style="margin-top: -50px;margin-left: 50px;">
-    <textarea  id="editor-textarea"   placeholder="Put your code here !" onkeyup =""></textarea></div>
-    <div class="bd-example">
+
+    <div style="margin-top: 20px;margin-left: 350px;">
+    <textarea  id="editor-textarea" class="editor" name="editor" placeholder="Put your code here !" ></textarea></div>
+    <div style="margin-top: 20px;" class="bd-example">
       <div class="btn-group-vertical btn-group-sm " role="group" aria-label="Vertical button group">
          <button id="X" onclick="step_by_step()"  type="button" class="btn btn-secondary">By Step</button>
          <button id="Y" onclick="Resume()"      id="Y" type="button" class="btn btn-secondary">Next</button>
@@ -160,15 +422,67 @@
       </div>
     </div>
    <!-- div for the viewer-->
-    <iframe  id="viewer"></iframe>
+    <iframe name="viewer" style="margin-top: 20px;" id="viewer"></iframe>
 </div>
 
+<div style=" margin-top:-450px; margin-left:-250px" class="container">
+   <div class="container-fluid h-100">
+     <div class="row justify-content-center h-100">
+       <div class="col-md-8 col-xl-6 chat">
+         <div class="card">
+           <div class="card-header msg_head">
+             <div class="d-flex bd-highlight">
+               <div class="img_cont">
+                 <img src="./assets/Moncef.jpg" class="rounded-circle user_img">
+                 <span class="online_icon"></span>
+               </div>
+               <div class="user_info">
+                 <span> Chat</span>
+                 <p>1767 Messages</p>
+               </div>
+               <!-- <div class="video_cam">
+                 <span><i class="fas fa-video"></i></span>
+                 <span><i class="fas fa-phone"></i></span>
+               </div> -->
+             </div>
+             <!-- <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span> -->
+              <!-- <div class="action_menu">
+               <ul>
+                 <li><i class="fas fa-user-circle"></i> View profile</li>
+                 <li><i class="fas fa-users"></i> Add to close friends</li>
+                 <li><i class="fas fa-plus"></i> Add to group</li>
+                 <li><i class="fas fa-ban"></i> Block</li>
+               </ul>
+             </div> -->
+           </div>
+           <div id="msgs" class="card-body msg_card_body">
 
+           </div>
+           <div class="card-footer">
+             <div class="input-group">
+
+               <textarea  onkeypress="pressEnter(event)" id="inputSlack" name="" class="form-control type_msg" placeholder="Type your message..."></textarea>
+               <div class="input-group-append">
+                 <span onclick="putMastodonMessage()" class="input-group-text send_btn"><i class="fa fa-paper-plane"></i></span>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+</div>
+</div>
  <p id="demo"></p>
 <!-- include the minified jstree source -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script>
 
+$(document).ready(function(){
+$('#action_menu_btn').click(function(){
+	$('.action_menu').toggle();
+});
+	});
    //create an instance of editor using Codemirror and set some options
    var editor=CodeMirror.fromTextArea(document.getElementById('editor-textarea'),
    {
@@ -178,15 +492,19 @@
      autocorrect:true,
      lineNumbers:true,
      autoCloseBrackets: true,
-     extraKeys: {"Ctrl-Space":"autocomplete"},
+     theme: "dracula",
+     extraKeys: {
+       "Ctrl-Space":"autocomplete",
+       "Ctrl-S": save
+
+   },
      gutters: ["CodeMirror-linenumbers", "breakpoints"]
    });
    var m=0;
-
  var infos=[];
  var memory =[];
  var highlightedLine=[]
-
+ var sender = false;
 editor.on("gutterClick", function (cm, n) {
  var BreakpointsOnlyifEmpty="";
  var info = cm.lineInfo(n);
@@ -523,7 +841,7 @@ function hideMarker() {
 }
 
 
-    editor.setSize(500, 960);   //set editor size
+    editor.setSize(500,760);   //set editor size
     CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
      cm.showHint({hint: CodeMirror.hint.anyword});
     }
@@ -540,6 +858,34 @@ function hideMarker() {
      editor.setOption("mode","php");
     }
    }
+
+   function virtual_Save(){
+     var textContent=editor.getValue();
+     //console.log("voici le nouveau: "+textContent);
+     var selected_path = localStorage.getItem('selected_path');
+     //console.log(textContent);
+     console.log(selected_path);
+    if (textContent.length!=0) {
+
+     $.ajax({
+         async: true,
+         type: "POST",
+         url: "http://localhost:3000/save/fictiveSave",
+         dataType:"json",
+         data: {
+             "code":textContent,
+             "path":selected_path
+         },
+         success: function (json) {
+           console.log("virtualy saved");
+         },
+         error: function (xhr, ajaxOptions, thrownError) {
+           console.log("Error");
+         }
+     });
+   }
+   };
+     //setInterval(virtual_Save,200)
 
    function save() {
 
@@ -564,6 +910,9 @@ function hideMarker() {
             console.log("Error");
           }
       });
+      //document.getElementById('saved')="saved"
+      var x=document.getElementById('saved');
+      x.textContent="save"
     };
  //function to set lineNumbers  editor's options
    $(function lineNumbers_Activation() {
@@ -590,7 +939,41 @@ function hideMarker() {
    editor.setOption("theme","xq-dark");
  }
 
+ editor.on("update",function changed(){
+   var x=document.getElementById('saved');
+   var new_path =localStorage.getItem('selected_path');
+   virtual_Save();
+   $.ajax({
+       async: true,
+       type: "POST",
+       url: "http://localhost:3000/save/show",
+       dataType:"json",
+       data:{
+         "new_path":new_path
+       },
+       success: function (json) {
+         console.log("verfication");
+         console.log(json.variation);
+         if (json.variation==true) {
+           x.textContent="save*"
+         }else {
+           x.textContent="save"
+
+         }
+
+       },
+
+       error: function (xhr, ajaxOptions, thrownError) {
+
+       }
+     });
+   });
+
+
+
+
    $('#run').click(function sendCode () {
+
              var textContent=editor.getValue();
               $.ajax({
                   async: true,
@@ -610,6 +993,7 @@ function hideMarker() {
               });
 
    });
+
    $(function () {
               $.ajax({
                   async: true,
@@ -780,14 +1164,13 @@ function hideMarker() {
        InvisibleMap.set(old_path,memory);
      }
      if (type_of_selected=="file") {
-
      $.ajax({
          async: true,
          type: "POST",
          url: "http://localhost:3000/save/show",
          dataType:"json",
          data:{
-           "new_path":new_path,
+           "new_path":new_path
          },
          success: function (json) {
            //console.log("done");
@@ -957,14 +1340,14 @@ function hideMarker() {
       }
 */
 //Sound for chatBox
-var snd1 = new Audio("./assets/audio1.wav");
 var snd2 = new Audio("./assets/audio2.wav");
 
   var NbMessageRecieved=0
   function playMusic(snd){
      var info = document.getElementById("message");
 
-  if (!document.hasFocus() ) {
+  if (!document.hasFocus()) {
+        console.log("NO FOCUS");
         snd.play();
         window.parent.document.title = "("+NbMessageRecieved+") new message !"
         NbMessageRecieved++;
@@ -986,13 +1369,61 @@ function checkPageFocus() {
 
       var socket = io.connect('http://localhost:8080');
       socket.on('message', function(message) {
+              message=message.replace("<p>"," ");
+              message=message.replace("</p>","");
+
               console.log('Le serveur a un message pour vous : ' + message);
 
               playMusic(snd2);
-              document.getElementById('chatBox').srcdoc+=message;
+            console.log("sender"+sender);
+              if (sender==false) {
+                addElementrecieved(message)
+
+              }else {
+                addElement(message);
+              }
+              sender=false
+              //document.getElementById('chatBox').srcdoc+=message;
 
           })
-
+  function addElementrecieved(message){
+    document.getElementById('msgs').innerHTML += `<div class="d-flex justify-content-end mb-4">
+      <div id="msg2" class="msg_cotainer_send">
+      ${message}
+        <span class="msg_time_send">9:05 AM, Today</span>
+      </div>
+      <div class="img_cont_msg">
+    <img src="./assets/Moncef.jpg" class="rounded-circle user_img_msg">
+      </div>
+    </div>`
+  }
+  function addElement (message) {
+    document.getElementById('msgs').innerHTML += `<div class="d-flex justify-content-start mb-4">
+      <div id="msg1" class="img_cont_msg">
+        <img src="./assets/Moncef.jpg" class="rounded-circle user_img_msg">
+      </div>
+      <div class="msg_cotainer">
+        ${message}
+        <span class="msg_time">9:07 AM, Today</span>
+      </div>
+    </div>`
+  // crée un nouvel élément div
+  // var newDiv = document.createElement("div");
+  // // et lui donne un peu de contenu
+  // newDiv.class="d-flex justify-content-end mb-4";
+  // newDiv.id="new msg"
+  // console.log(newDiv);
+  // var newContent = document.createTextNode(message);
+  // // ajoute le nœud texte au nouveau div créé
+  // newDiv.appendChild(newContent);
+  // var sp2 = document.getElementById("msg2");
+  // var parentDiv = document.getElementById("msg2").parentNode;
+  // ajoute le nouvel élément créé et son contenu dans le DOM
+//  let currentDiv = document.getElementById('titre')
+  //var currentDiv = document.getElementById('msg2');
+  //console.log(currentDiv);
+//  parentDiv.insertBefore(newDiv, sp2);
+}
       function putMastodonMessage(){
         var value=document.getElementById('inputSlack').value;
         console.log(value);
@@ -1004,8 +1435,9 @@ function checkPageFocus() {
               "message":value
             },
             success: function (json) {
-                  value=json.name+": "+value;
+                  value= `${json.name}: ${value}`;
                   console.log(value);
+                  sender=json.sender;
                 //  document.getElementById('chatBox').srcdoc+="<br>"+value;
               },
               // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
@@ -1052,6 +1484,7 @@ function pressEnter() {
 
 
       }
+      //don't need anymore to that funcion because i use fs-extra package to run
       function zip(){
         $.ajax({
             async: true,
@@ -1070,7 +1503,31 @@ function pressEnter() {
 
         });
       }
+      function changed(){
+        console.log("hello");
+      }
+      function push(){
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/push/",
+            data: {
+            },
+            success: function (json) {
 
+              },
+              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+              // document.getElementById('chatBox').srcdoc+=response;
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError);
+            }
+
+        });
+
+      }
+
+   // var msg2=document.getElementById("msg2")
+   // console.log(msg2);
 
 
   </script>

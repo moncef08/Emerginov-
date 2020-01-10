@@ -42,7 +42,8 @@ export async function putMessage(req,res){
       var username=data.account.username;
       console.log(username);
       res.json({
-        "name":username
+        "name":username,
+        "sender":true
       })
     }
   })
@@ -63,6 +64,7 @@ export async function putMessage(req,res){
       io.sockets.emit('message',value);
       console.log("done");
       console.log(history);
+
     }
 
   });

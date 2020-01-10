@@ -1,6 +1,7 @@
 //require("dotenv").config();
 const octokit = require('@octokit/rest');
-
+var $ = require("jquery");
+import copyFiles_And_CreateVirtualHost from './php.controller.js'
 
 export async function create_Git_Repository(req,res){
   const {name,token}= req.body;
@@ -14,10 +15,11 @@ export async function create_Git_Repository(req,res){
   console.log("repo successfully created");
   }).catch(e =>{
   console.log(e);
-  alert("ERROR check your informations");
+//  alert("ERROR check your informations");
   })
 
-  return res.redirect('/');
+  return res.redirect('/home.html');
+
 
 }
 export async function delete_Git_Repository(req,res){

@@ -24,6 +24,8 @@ app.use(bodyParser.json());
 
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/login',function(req,res){res.redirect('/login.html')});
+
 app.use(express.static(__dirname + '/public'));
 
 //routes
@@ -43,7 +45,6 @@ app.use('/zip',zipRoutes);
 
 
 
-//app.use('/',function(req,res){res.redirect('/home')});
 
 
 export default app;

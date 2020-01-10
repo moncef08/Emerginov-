@@ -5,7 +5,7 @@
   const fs = require('fs-extra');
   //const { exec } = require('child_process');
   sudo.setPassword('azerty');
-  var projectName="project2"
+  var projectName="project3"
   var newVirtualHost =`
   <VirtualHost *:80>
     ServerAdmin adminr@${projectName}.ci
@@ -51,7 +51,7 @@
       console.log("rights of hosts changed");
       });
   }
-function copyFiles_And_CreateVirtualHost(){
+export function copyFiles_And_CreateVirtualHost(){
 
   var path=`projects/${projectName}.ci`;
 
@@ -105,10 +105,12 @@ function reloadApache2(){
 }
 
   export  function get_And_Execute_PhpCode(req, res){
+
+    //const {name}= req.body;
     rights()
-    setTimeout(copyFiles_And_CreateVirtualHost, 1000);
-    setTimeout(a2ensite, 1100);
-    setTimeout(reloadApache2, 1200);
+    setTimeout(copyFiles_And_CreateVirtualHost, 100);
+    setTimeout(a2ensite, 110);
+    setTimeout(reloadApache2, 120);
 
 //sudo chmod 777 /etc/hosts
 //sudo chmod 777 /etc/apache2/sites-available
