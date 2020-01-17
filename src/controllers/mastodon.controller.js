@@ -14,7 +14,7 @@ var io = require('socket.io').listen(server);
 // Quand un client se connecte, on le note dans la console
 
 
-server.listen(8080, function() {
+server.listen(8000, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
 });
 const M=new Mastodon({
