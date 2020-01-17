@@ -1,7 +1,7 @@
 
 import Project from '../models/Project';
 import Users from '../models/Users';
-
+const { Op } = require("sequelize");
 
 export async function createProject(req, res){
   const { name,priority,description,deliverydate}= req.body;
@@ -43,7 +43,26 @@ export async function getProjects(req,res){
   console.log(e)
  }
 }
+export async function getProjectByName(req,res){
+  const { name }=req.body;
 
+  const project= await Project.findAll({
+    where:{
+      name : {
+        [Op.like]:`%${name}%`
+      }
+    }
+  });
+  if (project!=null) {
+      res.json(project);
+  }else {
+    return res.json({
+      message:' this project does not exist '
+    });
+  }
+
+
+}
 export async function getProjectById(req,res){
   const { id }=req.params;
   const project= await Project.findOne({

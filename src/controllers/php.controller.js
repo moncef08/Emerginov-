@@ -108,7 +108,7 @@ function reloadApache2(){
 
     //const {name}= req.body;
     rights()
-    setTimeout(copyFiles_And_CreateVirtualHost, 100);
+    setTimeout(copyFiles_And_CreateVirtualHost, 1100);
     setTimeout(a2ensite, 110);
     setTimeout(reloadApache2, 120);
 

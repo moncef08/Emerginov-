@@ -42,7 +42,7 @@ export async function getUsers(req,res){
 export async function getUsersByProject(req,res){
     const {projectId}= req.params;
     const ProjectUsers = await Users.findAll({
-      attributes: ['name', 'profession', 'projectId'],
+      attributes: ['name', 'profession', 'projectid'],
       where:{
         projectId
       }
@@ -75,7 +75,7 @@ export async function getUserById(req,res){
 
   }
 export async function getUserByName(req,res){
-        const { name }=req.params;
+        const { name }=req.body;
         const user= await Users.findOne({
           where:{
             name

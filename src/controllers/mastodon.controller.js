@@ -1,4 +1,3 @@
-
 const Mastodon=require('mastodon-api');
 var http = require('http');
 var fs = require('fs');
@@ -10,7 +9,6 @@ var server = http.createServer(function(req, res) {
         res.end(content);
     });
 });
-
 // Chargement de socket.io
 var io = require('socket.io').listen(server);
 // Quand un client se connecte, on le note dans la console

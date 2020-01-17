@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
   <meta charset="utf-8" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -14,6 +15,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="plugin/codemirror/lib/codemirror.js"></script>
+
   <!--<script src="plugin/Codemirror/addon/comment/comment.js"></script>
   <script src="plugin/Codemirror/addon/display/fullscreen.js"></script>-->
   <script src="plugin/codemirror/addon/hint/show-hint.js"></script>
@@ -36,19 +38,20 @@
   <link rel="stylesheet" href="plugin/codemirror/theme/blackboard.css"/>
   <link rel="stylesheet" href="plugin/codemirror/theme/xq-dark.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
 
 		.chat{
-			margin-top: auto;
+			margin-top: 100px;
 			margin-bottom: auto;
 			margin-left: -55px
 		}
 
 		.card{
-			font-size: 12px;
-			height: 450px;
-			width: 300px;
+			font-size: 11px;
+			height:400px;
+			width: 265px;
 			border-radius: 15px !important;
 			background-color: rgba(0,0,0,0.4) !important;
 		}
@@ -262,7 +265,9 @@
 		margin-bottom: 15px !important;
 	}
 	}
-   body {background:  	#505050;}
+   body {
+
+     background:  	#505050;}
    *{
     padding: 0;
     margin: 0;
@@ -305,6 +310,20 @@
   .CodeMirror-activeline-background {
     background-color:#F0E68C;
   }
+  #suggestions {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid black;
+    position: absolute;
+    left: 1290px;
+    top: 16px;
+    background-color: white;
+
+}
+
+.option{
+   display:none;
+}
 }</style>
 </head>
 
@@ -355,9 +374,13 @@ Emerginov Editor
         </li>
 
 
-      </ul>
-      <form style="margin-left:540px;"class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+       </ul>
+
+
+      <form  style="margin-left:240px;"class="form-inline my-2 my-lg-0">
+        <input  list="livesearch" name="search" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onkeyup="showResult(this.value)" >
+        <datalist id="livesearch">
+        </datalist>
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
       <div  class="collapse navbar-collapse" id="navbar-list-4">
@@ -368,7 +391,7 @@ Emerginov Editor
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="#">Dashboard</a>
-          <a class="dropdown-item" href="#">Edit Profile</a>
+          <a class="dropdown-item" href="editProfile.html">Edit Profile</a>
           <a class="dropdown-item" href="#">Log Out</a>
         </div>
       </li>
@@ -425,12 +448,13 @@ Emerginov Editor
     <iframe name="viewer" style="margin-top: 20px;" id="viewer"></iframe>
 </div>
 
-<div style=" margin-top:-450px; margin-left:-250px" class="container">
+<div style=" margin-top:-500px; margin-left:-250px" class="container">
    <div class="container-fluid h-100">
      <div class="row justify-content-center h-100">
        <div class="col-md-8 col-xl-6 chat">
          <div class="card">
            <div class="card-header msg_head">
+
              <div class="d-flex bd-highlight">
                <div class="img_cont">
                  <img src="./assets/Moncef.jpg" class="rounded-circle user_img">
@@ -438,7 +462,14 @@ Emerginov Editor
                </div>
                <div class="user_info">
                  <span> Chat</span>
-                 <p>1767 Messages</p>
+
+                 <p id="numberOfMsgs"></p>
+               </div>
+
+               <div  class="video_cam">
+                 <span onclick="CleanConversation()"><i style="margin-left:5px;" class="material-icons">delete</i></span>
+                 <span onclick="CleanConversation()"><i style="margin-left:-15px;" class="material-icons">call</i></span>
+
                </div>
                <!-- <div class="video_cam">
                  <span><i class="fas fa-video"></i></span>
@@ -477,7 +508,6 @@ Emerginov Editor
 <!-- include the minified jstree source -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script>
-
 $(document).ready(function(){
 $('#action_menu_btn').click(function(){
 	$('.action_menu').toggle();
@@ -505,6 +535,7 @@ $('#action_menu_btn').click(function(){
  var memory =[];
  var highlightedLine=[]
  var sender = false;
+ var numberOfMsgs=0
 editor.on("gutterClick", function (cm, n) {
  var BreakpointsOnlyifEmpty="";
  var info = cm.lineInfo(n);
@@ -714,7 +745,48 @@ function setVisibility(){
 
  }
  }
+ function showResult(str) {
+   console.log(str);
+   if (str!="") {
+     $.ajax({
+         async: true,
+         type: "POST",
+         url: "http://localhost:3000/api/projects/name",
+         dataType:"json",
+         data:{
+           "name":str
+         },
+         success: function (json) {
+              if (typeof json.message !== 'undefined') {
+                  $("datalist").prepend(`<option>${json.message}</option>`)
+              }else {
+                console.log(json[0]);
+                console.log(json.length);
+                for (var i = 0; i < json.length; i++) {
+                  $("datalist").prepend(`<option>${json[i].name}</option>`)
 
+                }
+
+              }
+
+            //  console.log(json.description);
+             // if (json.message!=NULL) {
+             //   if (json.message==" this project does nt exist ") {
+             //   }
+             // }
+             //
+
+
+          // document.getElementById("livesearch").innerHTML+=`<option>${json.message}</option>`
+
+           console.log(json);
+
+
+   }
+  });
+   }
+
+}
 function step_by_step() {
    let new_path=localStorage.getItem('selected_path');
    if (infos.length==0) {
@@ -841,7 +913,7 @@ function hideMarker() {
 }
 
 
-    editor.setSize(500,760);   //set editor size
+    editor.setSize(400,650);   //set editor size
     CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
      cm.showHint({hint: CodeMirror.hint.anyword});
     }
@@ -865,7 +937,7 @@ function hideMarker() {
      var selected_path = localStorage.getItem('selected_path');
      //console.log(textContent);
      console.log(selected_path);
-    if (textContent.length!=0) {
+    if (textContent.length!=0 && text.content!=NULL) {
 
      $.ajax({
          async: true,
@@ -1284,7 +1356,11 @@ function hideMarker() {
     	});
 
       function CleanConversation(){
-        document.getElementById('chatBox').srcdoc="";
+        $("div1").empty()
+        $("div2").empty()
+        numberOfMsgs=0
+        document.getElementById('numberOfMsgs').innerHTML=numberOfMsgs.toString()+" messages"
+
 
       }
 /*
@@ -1367,7 +1443,7 @@ function checkPageFocus() {
   }
 }
 
-      var socket = io.connect('http://localhost:8080');
+      var socket = io.connect('http://localhost:8000');
       socket.on('message', function(message) {
               message=message.replace("<p>"," ");
               message=message.replace("</p>","");
@@ -1387,26 +1463,37 @@ function checkPageFocus() {
 
           })
   function addElementrecieved(message){
-    document.getElementById('msgs').innerHTML += `<div class="d-flex justify-content-end mb-4">
+    console.log(message);
+    document.getElementById('msgs').innerHTML += `<div1 class="d-flex justify-content-end mb-4">
       <div id="msg2" class="msg_cotainer_send">
       ${message}
-        <span class="msg_time_send">9:05 AM, Today</span>
+        <span id="Time" class="msg_time_send"></span>
       </div>
       <div class="img_cont_msg">
     <img src="./assets/Moncef.jpg" class="rounded-circle user_img_msg">
       </div>
-    </div>`
+    </div1>`
+    numberOfMsgs+=1
+    document.getElementById('numberOfMsgs').innerHTML=numberOfMsgs.toString()+" messages"
+    let date=new Date()
+    document.getElementById('Time').innerHTML=date.toLocaleDateString()+" "+date.getHours()+":"+date.getMinutes();
+
   }
   function addElement (message) {
-    document.getElementById('msgs').innerHTML += `<div class="d-flex justify-content-start mb-4">
+    document.getElementById('msgs').innerHTML += `<div2 class="d-flex justify-content-start mb-4">
       <div id="msg1" class="img_cont_msg">
         <img src="./assets/Moncef.jpg" class="rounded-circle user_img_msg">
       </div>
       <div class="msg_cotainer">
         ${message}
-        <span class="msg_time">9:07 AM, Today</span>
+        <span id="Time1" class="msg_time"></span>
       </div>
-    </div>`
+    </div2>`
+    numberOfMsgs+=1
+    document.getElementById('numberOfMsgs').innerHTML=numberOfMsgs.toString()+" messages"
+    let date=new Date()
+    document.getElementById('Time1').innerHTML=date.toLocaleDateString()+" "+date.getHours()+":"+date.getMinutes();
+
   // crée un nouvel élément div
   // var newDiv = document.createElement("div");
   // // et lui donne un peu de contenu
@@ -1525,6 +1612,7 @@ function pressEnter() {
         });
 
       }
+
 
    // var msg2=document.getElementById("msg2")
    // console.log(msg2);

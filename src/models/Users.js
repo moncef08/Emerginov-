@@ -15,7 +15,7 @@ const Users=sequelize.define('users',{
   profession:{
     type: Sequelize.TEXT
   },
-  projectId:{
+  projectid:{
     type: Sequelize.INTEGER
   }
 },{
