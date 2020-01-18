@@ -10,7 +10,7 @@ router.get('/', getUsers);
 // /api/users/:userID
 router.get('/:id',getUserById);
 router.post('/login',getUserByLogin);
-router.post('/login',getUserByName);
+router.post('/name',getUserByName);
 
 router.get('/projects/:projectId',getUsersByProject);
 router.delete('/:id',deleteUser);

@@ -1,6 +1,7 @@
 import Users from '../models/Users';
 import Project from '../models/Project';
 
+const { Op } = require("sequelize");
 
 export async function createUser(req, res){
   const { name,login,profession}= req.body;
@@ -74,11 +75,14 @@ export async function getUserById(req,res){
     }
 
   }
+
 export async function getUserByName(req,res){
         const { name }=req.body;
-        const user= await Users.findOne({
+        const user= await Users.findAll({
           where:{
-            name
+            name : {
+              [Op.like]:`%${name}%`
+            }
           }
         });
         if (user!=null) {
@@ -127,10 +131,10 @@ export async function deleteUserFromProject(req,res){}
 
 export async function updateUser(req,res){
     const { id } = req.params;
-    const{ name,login, profession, projectId } = req.body;
+    const{ name,login, profession, projectid } = req.body;
 
     const users = await Users.findAll({
-      attributes: ['id', 'name','login', 'profession', 'projectId'],
+      attributes: ['id', 'name','login', 'profession', 'projectid'],
       where:{
         id
       }

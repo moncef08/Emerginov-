@@ -378,7 +378,7 @@ Emerginov Editor
 
 
       <form  style="margin-left:240px;"class="form-inline my-2 my-lg-0">
-        <input  list="livesearch" name="search" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onkeyup="showResult(this.value)" >
+        <input  id="search" list="livesearch" name="search" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onkeyup="showResult(this.value)" >
         <datalist id="livesearch">
         </datalist>
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -536,6 +536,7 @@ $('#action_menu_btn').click(function(){
  var highlightedLine=[]
  var sender = false;
  var numberOfMsgs=0
+ var tableOfProfiles=[];
 editor.on("gutterClick", function (cm, n) {
  var BreakpointsOnlyifEmpty="";
  var info = cm.lineInfo(n);
@@ -747,11 +748,13 @@ function setVisibility(){
  }
  function showResult(str) {
    console.log(str);
+
+
    if (str!="") {
      $.ajax({
          async: true,
          type: "POST",
-         url: "http://localhost:3000/api/projects/name",
+         url: "http://localhost:3000/api/users/name",
          dataType:"json",
          data:{
            "name":str
@@ -763,11 +766,15 @@ function setVisibility(){
                 console.log(json[0]);
                 console.log(json.length);
                 for (var i = 0; i < json.length; i++) {
-                  $("datalist").prepend(`<option>${json[i].name}</option>`)
-
+                  if (!tableOfProfiles.includes(json[i].name)) {
+                    console.log("no it isn");
+                    $("datalist").prepend(`<option>${json[i].name}</option>`)
+                    tableOfProfiles.push(json[i].name)
+                  }
                 }
 
               }
+
 
             //  console.log(json.description);
              // if (json.message!=NULL) {
@@ -784,7 +791,7 @@ function setVisibility(){
 
    }
   });
-   }
+}
 
 }
 function step_by_step() {
@@ -937,7 +944,7 @@ function hideMarker() {
      var selected_path = localStorage.getItem('selected_path');
      //console.log(textContent);
      console.log(selected_path);
-    if (textContent.length!=0 && text.content!=NULL) {
+    if (textContent.length!=0) {
 
      $.ajax({
          async: true,
@@ -1012,10 +1019,10 @@ function hideMarker() {
  }
 
  editor.on("update",function changed(){
+   virtual_Save();
    var x=document.getElementById('saved');
    var new_path =localStorage.getItem('selected_path');
-   virtual_Save();
-   $.ajax({
+   setTimeout(function(){$.ajax({
        async: true,
        type: "POST",
        url: "http://localhost:3000/save/show",
@@ -1038,7 +1045,8 @@ function hideMarker() {
        error: function (xhr, ajaxOptions, thrownError) {
 
        }
-     });
+     })
+   },200);
    });
 
 

@@ -22,7 +22,7 @@ const Project= sequelize.define('projects',{
 },{
   timestamps:false
 });
-Project.hasMany(Users,{foreignKey:'projectId',sourceKey:'id'});
-Users.belongsTo(Project,{foreignKey:'projectId',sourceKey:'id'});
+Project.hasMany(Users,{foreignKey:'projectid',sourceKey:'id'});
+Users.belongsTo(Project,{foreignKey:'projectid',sourceKey:'id'});
 
 export default Project;

@@ -22,7 +22,7 @@ INSERT INTO projects(name, priority,description,deliverydate)
    VALUES('emerginov III','1','web application','2022-01-01');
 
 ------- INSERT users DATA--------
-INSERT INTO users(name, profession,projectId,login)
+INSERT INTO users(name, profession,projectid,login)
  VALUES('moncef','student','2','b');
- INSERT INTO users(name, profession,projectId,login)
+ INSERT INTO users(name, profession,projectid,login)
   VALUES('nicolas','student','2','a');

@@ -51,6 +51,7 @@ export async function get_And_Save_Code(req, res){
 
   }
 
+
   export async function show_Code(req, res){
     const {new_path}= req.body;
     var did_Something_Changed=true
@@ -58,9 +59,11 @@ export async function get_And_Save_Code(req, res){
       console.log(new_path);
        var contents = fs.readFileSync(new_path, 'utf8');
        var virtual_contents = fs.readFileSync("fictiveProjects/"+new_path, 'utf8');
-      // console.log(virtual_contents.length);
-      // console.log(contents.length);
-      // console.log(virtual_contents==contents);
+       // console.log("voila");
+       //
+       // console.log(virtual_contents);
+       // console.log(contents);
+       // console.log(virtual_contents==contents);
       if (contents.localeCompare(virtual_contents)==0) {
         console.log("nothing");
         did_Something_Changed=false
