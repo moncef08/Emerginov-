@@ -154,7 +154,7 @@
           <div class="bg-white shadow rounded overflow-hidden">
               <div class="px-4 pt-0 pb-4 bg-dark">
                   <div class="media align-items-end profile-header">
-                      <div  class="profile mr-3"><img src="./assets/Moncef.jpg" alt="..." width="130" class="rounded mb-2 img-thumbnail"><a id="follow" href="#"class="btn btn-danger btn-sm btn-block">Follow</a></div>
+                      <div  class="profile mr-3"><img src="./assets/Moncef.jpg" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"   href=""  class="btn btn-danger btn-sm btn-block">Follow</button></div>
                       <div class="media-body mb-5 text-white">
                           <h4 id="name" class="mt-0 mb-0"></h4>
                           <p id="location"class="small mb-4"> <i class="fa fa-map-marker mr-2"></i></p>
@@ -235,6 +235,7 @@
           "id":id
       },
       success: function (json) {
+        window.parent.document.title = json.name
         document.getElementById("name").innerHTML=json.name
         document.getElementById("location").innerHTML+=json.location
         document.getElementById("Job").innerHTML+=json.job
@@ -260,17 +261,7 @@
         }else {
           document.getElementById("nbfollowers").innerHTML+=nbfollowers
         }
-        // if (json.nbfollowers>999) {
-        //   var nbfollowers=json.nbfollowers/1000)
-        //   =json.nbfollowers.toString();
-        //   document.getElementById("nbfollowers").innerHTML+=nbfollowers+"K"
-        //
-        // }else if(json.nbfollowers>999999){
-        //   Math.floor(json.nbfollowers/1000000)
-        //   var nbfollowers=json.nbfollowers.toString();
-        //   document.getElementById("nbfollowers").innerHTML+=nbfollowers+"M"
-        //
-        // }
+
 
       },
       error: function (xhr, ajaxOptions, thrownError) {
@@ -356,21 +347,47 @@
  }
 
  }
-  $(function() {
+ $("#follow").click(function(){
+
+  var buttonClass=document.getElementById("follow").class
+  console.log(buttonClass);
+  $("#follow").removeClass("btn btn-danger btn-sm btn-block");
+  $(this).addClass("btn btn-success btn-sm btn-block");
+  $("#follow").text("Unfollow");
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/api/users/follow",
+      dataType:"json",
+      data: {
+          "id":id
+      },
+      success: function (json) {
+
+
+        //mettre l'id dans l'url
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+      }
+  });
+
+
+});
+
 
     // contact form animations
-    $('#follow').click(function() {
-      alert("request sent !");
-    })
-    function getUrlVars() {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-            vars[key] = value;
-        });
-        return vars;
-    }
+    // $('#follow').click(function() {
+    //   alert("request sent !");
+    // })
+    // function getUrlVars() {
+    //     var vars = {};
+    //     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    //         vars[key] = value;
+    //     });
+    //     return vars;
+    // }
 
-  });
+
 
   </script>
 </html>

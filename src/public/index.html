@@ -1393,8 +1393,18 @@ function hideMarker() {
    $('#jstree').on('move_node.jstree', function (e, data) {
         let node = data.node;
         let newParent=data.parent;
-        let newPosition=data.position;
-        console.log($('#jstree').jstree(true).get_path(newParent));
+        let oldParent=data.old_parent;
+
+        let new_path="";
+        let tab=$('#jstree').jstree(true).get_path(newParent);
+        for (var i = 0; i < tab.length; i++) {
+          new_path+=tab[i]+"/"
+        }
+        data.node.original.path=new_path
+        //let tab=$('#jstree').jstree(true).get_path(newParent);
+        console.log(data);
+        console.log(new_path);
+      
         // console.log($('#jstree').get_path(newParent));
         // let old_path = node.original.path;
         // let new_path = old_path.replace(/\/[^\/]*$/, `/${node.text}`)

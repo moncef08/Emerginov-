@@ -57,8 +57,25 @@ export async function getUsersByProject(req,res){
     }
 
 }
+export async function newFollower(req,res){
+    const { id }=req.body;
+    console.log(id);
+    const user= await Users.findOne({
+      where:{
+        id
+      }
+    });
+    if (user!=null) {
+      return res.json(user);
 
-export async function getUserById(req,res){
+    }else {
+      return res.json({
+        message:'User does not exist '
+      });
+    }
+
+  }
+  export async function getUserById(req,res){
     const { id }=req.body;
     console.log(id);
     const user= await Users.findOne({

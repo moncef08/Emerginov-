@@ -19,9 +19,15 @@ export async function create_DirectoryOrFile(req,res){
     var directory=fs.mkdir(path, { recursive: true }, (err) => {
       if (err) throw err;
     });
+    var fictiveDirectory=fs.mkdir("fictiveProjects/"+path, { recursive: true }, (err) => {
+      if (err) throw err;
+    });
 
   }else {
     var file=fs.open(path,'w', (err) => {
+      if (err) throw err;
+    });
+    var fictiveFile=fs.open("fictiveProjects/"+path,'w', (err) => {
       if (err) throw err;
     });
   }
@@ -39,6 +45,10 @@ export async function update_DirectoryOrFile(req,res){
         if (err) throw err;
         console.log('Rename complete!');
        });
+    var fictiveDirectoryOrFile=fs.rename("fictiveProjects/"+old_path, "fictiveProjects/"+new_path, (err) => {
+           if (err) throw err;
+           console.log('Rename complete!');
+          });
 
   //var data=fs.readFileSync('./public/home.html','utf-8');
   res.json({
@@ -56,12 +66,21 @@ export async function delete_DirectoryOrFile(req,res){
       if (err) throw err;
       console.log("folder successfully deleted");
     });
+    fs.rmdir("fictiveProjects/"+path, { recursive: true },(err) => {
+      if (err) throw err;
+      console.log("folder successfully deleted");
+    });
   }else{
     fs.unlink(path, (err) => {
+      if (err) throw err;
+      console.log("file successfully deleted");
+
+  });
+  fs.unlink("fictiveProjects/"+path, (err) => {
     if (err) throw err;
     console.log("file successfully deleted");
 
-  });
+});
   }
   //var data=fs.readFileSync('./public/home.html','utf-8');
   res.json({
