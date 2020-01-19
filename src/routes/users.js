@@ -8,7 +8,7 @@ import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject
 router.post('/',createUser);
 router.get('/', getUsers);
 // /api/users/:userID
-router.get('/:id',getUserById);
+router.post('/id',getUserById);
 router.post('/login',getUserByLogin);
 router.post('/name',getUserByName);
 

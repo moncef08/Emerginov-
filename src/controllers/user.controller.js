@@ -59,7 +59,8 @@ export async function getUsersByProject(req,res){
 }
 
 export async function getUserById(req,res){
-    const { id }=req.params;
+    const { id }=req.body;
+    console.log(id);
     const user= await Users.findOne({
       where:{
         id
@@ -80,7 +81,7 @@ export async function getUserByName(req,res){
         const { name }=req.body;
         const user= await Users.findAll({
           where:{
-            name : {
+            login : {
               [Op.like]:`%${name}%`
             }
           }
@@ -103,7 +104,7 @@ export async function getUserByLogin(req,res){
           }
         });
         if (user!=null) {
-            return res.redirect('/home.html');
+            return res.json(user);
 
         }else {
           return res.json({

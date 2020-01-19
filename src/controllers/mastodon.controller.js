@@ -38,9 +38,11 @@ export async function putMessage(req,res){
       console.log("success, id: "+data.id+" ");
       console.log(data);
       var username=data.account.username;
+      var avatar=data.account.avatar
       console.log(username);
       res.json({
         "name":username,
+        "avatar":avatar,
         "sender":true
       })
     }
@@ -51,15 +53,18 @@ export async function putMessage(req,res){
 
   const listener = M.stream('streaming/user')
   var value=null;
+  var avatar=null;
   var history=[];
   listener.on('message', msg =>{
     value=msg.data.account.username+":"+msg.data.content;
+    avatar=msg.data.account.avatar;
     //console.log(value);
     //newMessage(msg);
     if (value!=null) {
       history.push(value)
       history = history.slice(-10);
-      io.sockets.emit('message',value);
+      io.sockets.emit('message',{value:value,avatar:avatar});
+
       console.log("done");
       console.log(history);
 
@@ -74,7 +79,7 @@ io.sockets.on('connection', function (socket) {
     if (value!=null) {
       console.log(value);
       for (var i = 0; i < history.length; i++) {
-        socket.emit('message',history[i]);
+      //  socket.emit('message',history[i]);
       }
     }
 

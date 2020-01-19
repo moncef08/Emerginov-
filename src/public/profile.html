@@ -112,18 +112,19 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item ">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="http://localhost:3000/">Home <span class="sr-only">(current)</span></a>
           </li>
-
-
-
-
-
         </ul>
-        <form style="margin-left:540px;"class="form-inline my-2 my-lg-0 ">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        <ul class="form-inline my-2 my-lg-0" >
+          <li  id="alertSearch" class="nav-item">
+            <a class="alert alert-danger"  role="alert"> Sorry, this user does not exist.
+            </a>
+          </li>
+         <input onkeypress="pressEnter(event)" id="search" list="livesearch" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onkeyup="showResult(this.value)" >
+
+         <datalist id="livesearch">
+         </datalist>
+         <button onclick="gotoProfile()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         <div  class="collapse navbar-collapse" id="navbar-list-4">
       <ul class="navbar-nav">
           <li class="nav-item dropdown">
@@ -138,6 +139,7 @@
         </li>
       </ul>
     </div>
+  </ul>
       <!--  <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>-->
 
       </div>
@@ -152,10 +154,10 @@
           <div class="bg-white shadow rounded overflow-hidden">
               <div class="px-4 pt-0 pb-4 bg-dark">
                   <div class="media align-items-end profile-header">
-                      <div  class="profile mr-3"><img src="https://d19m59y37dris4.cloudfront.net/university/1-1-1/img/teacher-4.jpg" alt="..." width="130" class="rounded mb-2 img-thumbnail"><a id="follow" href="#"class="btn btn-danger btn-sm btn-block">Follow</a></div>
+                      <div  class="profile mr-3"><img src="./assets/Moncef.jpg" alt="..." width="130" class="rounded mb-2 img-thumbnail"><a id="follow" href="#"class="btn btn-danger btn-sm btn-block">Follow</a></div>
                       <div class="media-body mb-5 text-white">
-                          <h4 class="mt-0 mb-0">Manuella Tarly</h4>
-                          <p class="small mb-4"> <i class="fa fa-map-marker mr-2"></i>San Farcisco</p>
+                          <h4 id="name" class="mt-0 mb-0"></h4>
+                          <p id="location"class="small mb-4"> <i class="fa fa-map-marker mr-2"></i></p>
                       </div>
                   </div>
               </div>
@@ -163,10 +165,10 @@
               <div class="bg-light p-4 d-flex justify-content-end text-center">
                   <ul class="list-inline mb-0">
                       <li class="list-inline-item">
-                          <h5 class="font-weight-bold mb-0 d-block">241</h5><small class="text-muted"> <i class="fa fa-picture-o mr-1"></i>Photos</small>
+                          <h5 id="Job" class="font-weight-bold mb-0 d-block"></h5><small id="SchoolOrwork" class="text-muted"> <i class="fa fa-briefcase" ></i> </small>
                       </li>
                       <li class="list-inline-item">
-                          <h5 class="font-weight-bold mb-0 d-block">84K</h5><small class="text-muted"> <i class="fa fa-user-circle-o mr-1"></i>Followers</small>
+                          <h5 id="nbfollowers" class="font-weight-bold mb-0 d-block"></h5><small class="text-muted"> <i class="fa fa-user-circle-o mr-1"></i>Followers</small>
                       </li>
                   </ul>
               </div>
@@ -178,17 +180,12 @@
                   <div class="row">
                       <div class="col-lg-6 mb-2 pr-lg-1"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556294928/nicole-honeywill-546848-unsplash_ymprvp.jpg" alt="" class="img-fluid rounded shadow-sm"></div>
                       <div class="col-lg-6 mb-2 pl-lg-1"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556294927/dose-juice-1184444-unsplash_bmbutn.jpg" alt="" class="img-fluid rounded shadow-sm"></div>
-                      <div class="col-lg-6 pr-lg-1 mb-2"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556294926/cody-davis-253925-unsplash_hsetv7.jpg" alt="" class="img-fluid rounded shadow-sm"></div>
-                      <div class="col-lg-6 pl-lg-1"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556294928/tim-foster-734470-unsplash_xqde00.jpg" alt="" class="img-fluid rounded shadow-sm"></div>
-                  </div>
+                      </div>
                   <div class="py-4">
                       <h5 class="mb-3">Recent projects</h5>
                       <div class="p-4 bg-light rounded shadow-sm">
-                          <p class="font-italic mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                          <ul class="list-inline small text-muted mt-3 mb-0">
-                              <li class="list-inline-item"><i class="fa fa-comment-o mr-2"></i>12 Comments</li>
-                              <li class="list-inline-item"><i class="fa fa-heart-o mr-2"></i>200 Likes</li>
-                          </ul>
+                          <p class="font-italic mb-0">Emerginov II</p>
+
                       </div>
                   </div>
               </div>
@@ -214,6 +211,151 @@
   </div>
   </body>
   <script>
+  var tableOfProfiles=[];
+  $("#alertSearch").hide()
+
+  var url=window.location.href;
+  var idOfUser = url.substring(url.lastIndexOf('=') + 1);
+  id=parseInt(idOfUser)
+  console.log("l'id est : "+id);
+  function pressEnter() {
+     var code=event.which || event.keyCode; //Selon le navigateur c'est which ou keyCode
+     if (code==13) { //le code de la touche Enter
+        console.log("pressed");
+        gotoProfile();
+    }
+  }
+
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/api/users/id",
+      dataType:"json",
+      data: {
+          "id":id
+      },
+      success: function (json) {
+        document.getElementById("name").innerHTML=json.name
+        document.getElementById("location").innerHTML+=json.location
+        document.getElementById("Job").innerHTML+=json.job
+        if (json.company!=undefined) {
+          console.log("hey");
+          document.getElementById("SchoolOrwork").innerHTML+=json.company
+
+        }else {
+          document.getElementById("SchoolOrwork").innerHTML+=json.school
+
+        }
+
+        var nbfollowers=json.nbfollowers
+        if(nbfollowers>=1000000){
+          nbfollowers=(nbfollowers/1000000).toFixed(1)+"M"
+          document.getElementById("nbfollowers").innerHTML+=nbfollowers
+
+        }
+        else if(nbfollowers>=1000){
+          nbfollowers=(nbfollowers/1000).toFixed(1)+"K";
+          document.getElementById("nbfollowers").innerHTML+=nbfollowers
+
+        }else {
+          document.getElementById("nbfollowers").innerHTML+=nbfollowers
+        }
+        // if (json.nbfollowers>999) {
+        //   var nbfollowers=json.nbfollowers/1000)
+        //   =json.nbfollowers.toString();
+        //   document.getElementById("nbfollowers").innerHTML+=nbfollowers+"K"
+        //
+        // }else if(json.nbfollowers>999999){
+        //   Math.floor(json.nbfollowers/1000000)
+        //   var nbfollowers=json.nbfollowers.toString();
+        //   document.getElementById("nbfollowers").innerHTML+=nbfollowers+"M"
+        //
+        // }
+
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+      }
+  });
+  function gotoProfile(){
+    var login=document.getElementById("search").value;
+    console.log(login);
+    if (login!="") {
+      $.ajax({
+          async: true,
+          type: "POST",
+          url: "http://localhost:3000/api/users/login",
+          dataType:"json",
+          data: {
+              "login":login
+          },
+          success: function (json) {
+            console.log(json);
+            if (json.id!=undefined) {
+
+              $("#alertSearch").hide()
+              var id=json.id;
+              document.location.href = `http://localhost:3000/profile.html?id=${id}`
+            }else {
+              $("#alertSearch").show()
+            }
+
+            //mettre l'id dans l'url
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+          }
+      });
+
+    }
+
+
+  }
+  function showResult(str) {
+    console.log(str);
+
+
+    if (str!="") {
+      $.ajax({
+          async: true,
+          type: "POST",
+          url: "http://localhost:3000/api/users/name",
+          dataType:"json",
+          data:{
+            "name":str
+          },
+          success: function (json) {
+               if (typeof json.message !== 'undefined') {
+                   $("datalist").prepend(`<option>${json.message}</option>`)
+               }else {
+                 console.log(json[0]);
+                 console.log(json.length);
+                 for (var i = 0; i < json.length; i++) {
+                   if (!tableOfProfiles.includes(json[i].login)) {
+                     $("datalist").prepend(`<option>${json[i].login}</option>`)
+                     tableOfProfiles.push(json[i].login)
+                   }
+                 }
+
+               }
+
+
+             //  console.log(json.description);
+              // if (json.message!=NULL) {
+              //   if (json.message==" this project does nt exist ") {
+              //   }
+              // }
+              //
+
+
+           // document.getElementById("livesearch").innerHTML+=`<option>${json.message}</option>`
+
+            console.log(json);
+
+
+    }
+   });
+ }
+
+ }
   $(function() {
 
     // contact form animations

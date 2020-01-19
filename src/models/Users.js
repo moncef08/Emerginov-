@@ -17,6 +17,21 @@ const Users=sequelize.define('users',{
   },
   projectid:{
     type: Sequelize.INTEGER
+  },
+  location:{
+    type: Sequelize.TEXT
+  },
+  job:{
+    type: Sequelize.TEXT
+  },
+  school:{
+    type: Sequelize.TEXT
+  },
+  company:{
+    type: Sequelize.TEXT
+  },
+  nbfollowers:{
+    type: Sequelize.INTEGER
   }
 },{
   timestamps:false

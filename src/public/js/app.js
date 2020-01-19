@@ -1,6 +1,4 @@
 
-
-
 let vm=new Vue({
   el: '#app',
   data:{
@@ -68,7 +66,7 @@ let vm1=new Vue({
      if(!this.login) {
        this.errors.push('Login required.');
      }
-     
+
 
 
      if (!this.errors.length) {
