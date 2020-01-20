@@ -349,27 +349,51 @@
  }
  $("#follow").click(function(){
 
-  var buttonClass=document.getElementById("follow").class
-  console.log(buttonClass);
-  $("#follow").removeClass("btn btn-danger btn-sm btn-block");
-  $(this).addClass("btn btn-success btn-sm btn-block");
-  $("#follow").text("Unfollow");
-  $.ajax({
-      async: true,
-      type: "POST",
-      url: "http://localhost:3000/api/users/follow",
-      dataType:"json",
-      data: {
-          "id":id
-      },
-      success: function (json) {
+  var text=$("#follow").text();
+  console.log(text);
+  if (text=="Follow") {
+    $("#follow").removeClass("btn btn-danger btn-sm btn-block");
+    $(this).addClass("btn btn-success btn-sm btn-block");
+    $("#follow").text("Unfollow");
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/follow",
+        dataType:"json",
+        data: {
+            "id":id
+        },
+        success: function (json) {
 
 
-        //mettre l'id dans l'url
-      },
-      error: function (xhr, ajaxOptions, thrownError) {
-      }
-  });
+          //mettre l'id dans l'url
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+
+  }else {
+    $("#follow").removeClass("btn btn-success btn-sm btn-block");
+    $(this).addClass("btn btn-danger btn-sm btn-block");
+    $("#follow").text("Unfollow");
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/unfollow",
+        dataType:"json",
+        data: {
+            "id":id
+        },
+        success: function (json) {
+
+
+          //mettre l'id dans l'url
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+
+  }
 
 
 });

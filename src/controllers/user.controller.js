@@ -57,6 +57,31 @@ export async function getUsersByProject(req,res){
     }
 
 }
+export async function unFollow(req,res){
+    const { id }=req.body;
+    console.log(id);
+    const user= await Users.findOne({
+      where:{
+        id
+      }
+    })
+    user.update({
+
+        nbfollowers: user.nbfollowers-1
+
+    })
+
+
+    if (user!=null) {
+      return res.json(user);
+
+    }else {
+      return res.json({
+        message:'User does not exist '
+      });
+    }
+
+  }
 export async function newFollower(req,res){
     const { id }=req.body;
     console.log(id);
@@ -64,7 +89,14 @@ export async function newFollower(req,res){
       where:{
         id
       }
-    });
+    })
+    user.update({
+
+        nbfollowers: user.nbfollowers+1
+
+    })
+
+
     if (user!=null) {
       return res.json(user);
 
