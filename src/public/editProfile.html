@@ -326,7 +326,14 @@
         document.getElementById("location").innerHTML+=json.location
         document.getElementById("Job").innerHTML+=json.job
         console.log(json);
-        document.getElementById('photo').src="data:image/png;base64," + json.picture
+        if (json.picture==undefined) {
+          console.log("hi");
+          document.getElementById('photo').src="./assets/unknown.jpg"
+
+        }else {
+          document.getElementById('photo').src="data:image/png;base64," + json.picture
+        }
+
 
         if (json.company!=undefined) {
           console.log("hey");
