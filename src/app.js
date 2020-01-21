@@ -20,10 +20,10 @@ import zipRoutes from './routes/zip';
 app.use(morgan('dev'));
 app.use(json());
 // support parsing of application/json type post data
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '10mb', extended: true}));
 
 //support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({limit:'50mb', extended: true }));
 app.use('/login',function(req,res){res.redirect('/login.html')});
 
 app.use(express.static(__dirname + '/public'));

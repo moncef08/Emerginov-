@@ -132,7 +132,7 @@
             <img src="./assets/Moncef.jpg" width="40" height="40" class="rounded-circle">
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Dashboard</a>
+            <a class="dropdown-item" href="#">Database</a>
             <a class="dropdown-item" href="#">Edit Profile</a>
             <a class="dropdown-item" href="#">Log Out</a>
           </div>
@@ -146,7 +146,6 @@
     </nav>
     </div>
 
-
   <div class="row py-5 px-4">
       <div class="col-xl-4 col-md-6 col-sm-10 mx-auto">
 
@@ -154,12 +153,14 @@
           <div class="bg-white shadow rounded overflow-hidden">
               <div class="px-4 pt-0 pb-4 bg-dark">
                   <div class="media align-items-end profile-header">
-                      <div  class="profile mr-3"><img src="./assets/Moncef.jpg" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"   href=""  class="btn btn-danger btn-sm btn-block">Follow</button></div>
+                      <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"   href=""  class="btn btn-danger btn-sm btn-block">Follow</button></div>
                       <div class="media-body mb-5 text-white">
                           <h4 id="name" class="mt-0 mb-0"></h4>
                           <p id="location"class="small mb-4"> <i class="fa fa-map-marker mr-2"></i></p>
                       </div>
+
                   </div>
+
               </div>
 
               <div class="bg-light p-4 d-flex justify-content-end text-center">
@@ -235,10 +236,20 @@
           "id":id
       },
       success: function (json) {
+
         window.parent.document.title = json.name
         document.getElementById("name").innerHTML=json.name
         document.getElementById("location").innerHTML+=json.location
         document.getElementById("Job").innerHTML+=json.job
+        console.log(json);
+        if (json.picture==undefined) {
+          console.log("hi");
+          document.getElementById('photo').src="./assets/unknown.jpg"
+
+        }else {
+          document.getElementById('photo').src="data:image/png;base64," + json.picture
+        }
+
         if (json.company!=undefined) {
           console.log("hey");
           document.getElementById("SchoolOrwork").innerHTML+=json.company

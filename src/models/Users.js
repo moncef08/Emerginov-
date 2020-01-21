@@ -32,7 +32,15 @@ const Users=sequelize.define('users',{
   },
   nbfollowers:{
     type: Sequelize.INTEGER
+  },
+  listoffollow:{
+    type: Sequelize.JSON
+  },
+  picture:{
+    type: Sequelize.TEXT
+
   }
+
 },{
   timestamps:false
 });

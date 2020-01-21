@@ -56,8 +56,11 @@ export async function putMessage(req,res){
   var avatar=null;
   var history=[];
   listener.on('message', msg =>{
-    value=msg.data.account.username+":"+msg.data.content;
-    avatar=msg.data.account.avatar;
+    if (msg.data.account!=undefined) {
+      value=msg.data.account.username+":"+msg.data.content;
+      avatar=msg.data.account.avatar;
+
+    }
     //console.log(value);
     //newMessage(msg);
     if (value!=null) {

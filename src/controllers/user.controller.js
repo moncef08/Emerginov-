@@ -40,6 +40,31 @@ export async function getUsers(req,res){
    }
   }
 
+  export async function updatePicture(req,res){
+    const { id,picture }=req.body;
+    const user= await Users.findOne({
+      where:{
+        id
+      }
+    });
+    if (user!=null) {
+      console.log(user);
+      user.update({
+
+          picture
+
+      })
+      return res.json(user);
+
+    }else {
+      console.log("hp");
+      return res.json({
+        message:'User does not exist '
+      });
+    }
+
+  }
+
 export async function getUsersByProject(req,res){
     const {projectId}= req.params;
     const ProjectUsers = await Users.findAll({

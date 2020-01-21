@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 
-import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject,getUserByLogin,getUserByName,newFollower,unFollow} from '../controllers/user.controller';
+import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject,getUserByLogin,getUserByName,newFollower,unFollow,updatePicture} from '../controllers/user.controller';
 
 // /api/users/
 router.post('/',createUser);
@@ -12,7 +12,7 @@ router.post('/id',getUserById);
 router.post('/login',getUserByLogin);
 router.post('/follow',newFollower);
 router.post('/unfollow',unFollow);
-
+router.post('/picture',updatePicture);
 router.post('/name',getUserByName);
 
 router.get('/projects/:projectId',getUsersByProject);
