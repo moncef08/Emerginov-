@@ -11,6 +11,7 @@ var server = http.createServer(function(req, res) {
 });
 // Chargement de socket.io
 var io = require('socket.io').listen(server);
+var isRecievedMessage=true;
 // Quand un client se connecte, on le note dans la console
 
 
@@ -27,7 +28,7 @@ const M=new Mastodon({
 
 
 export async function putMessage(req,res){
-
+  isRecievedMessage=false;
   const params={
     status:req.body.message
   }
@@ -54,7 +55,8 @@ export async function putMessage(req,res){
   const listener = M.stream('streaming/user')
   var value=null;
   var avatar=null;
-  var history=[];
+  var history= new Map();
+  var avatars=[]
   listener.on('message', msg =>{
     if (msg.data.account!=undefined) {
       value=msg.data.account.username+":"+msg.data.content;
@@ -64,13 +66,21 @@ export async function putMessage(req,res){
     //console.log(value);
     //newMessage(msg);
     if (value!=null) {
-      history.push(value)
-      history = history.slice(-10);
+      if (isRecievedMessage==true) {
+        history.set(value,true);
+        avatars.push(avatar)
+      }else {
+        history.set(value,false);
+        avatars.push(avatar)
+
+      }
+
+    //  history = history.slice(-10);
       io.sockets.emit('message',{value:value,avatar:avatar});
 
       console.log("done");
       console.log(history);
-
+      isRecievedMessage=true
     }
 
   });
@@ -81,8 +91,10 @@ export async function putMessage(req,res){
 io.sockets.on('connection', function (socket) {
     if (value!=null) {
       console.log(value);
-      for (var i = 0; i < history.length; i++) {
-      //  socket.emit('message',history[i]);
+      var i=0
+      for (var k of history.keys()) {
+        socket.emit('message',{value:k,avatar:avatars[i],sender:history.get(k)});
+        i++
       }
     }
 

@@ -133,7 +133,7 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="#">Database</a>
-            <a class="dropdown-item" href="#">Edit Profile</a>
+            <a class="dropdown-item" onclick="editprofile()"href="">Edit Profile</a>
             <a class="dropdown-item" href="#">Log Out</a>
           </div>
         </li>
@@ -356,6 +356,13 @@
     }
    });
  }
+
+ }
+ function editProfile(){
+   var url=window.location.href;
+   var idOfUser = url.substring(url.lastIndexOf('=') + 1);
+   id=parseInt(idOfUser)
+   document.location.href = `http://localhost:3000/editprofile.html?id=${id}`
 
  }
  $("#follow").click(function(){

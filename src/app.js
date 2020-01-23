@@ -24,7 +24,10 @@ app.use(bodyParser.json({limit: '10mb', extended: true}));
 
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({limit:'50mb', extended: true }));
-app.use('/login',function(req,res){res.redirect('/login.html')});
+
+
+//app.get('/',function(req,res){res.redirect('/login')});
+app.get('/login',function(req,res){res.redirect('/login.html')});
 
 app.use(express.static(__dirname + '/public'));
 

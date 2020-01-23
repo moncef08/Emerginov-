@@ -1,12 +1,6 @@
 
-#form
-{
-position: absolute;
-margin-left : 900px ;
-margin-top : -40px ;
 
-font-family: Comic sans ms;
-}
+
 #link
 {
 position: absolute;
@@ -15,14 +9,7 @@ margin-top : -40px ;
 
 font-family: Comic sans ms;
 }
-#form1
-{
-position: absolute;
-margin-left : 950px ;
-margin-top : 50px ;
 
-font-family: Comic sans ms;
-}
 #button
 {
 position: absolute;

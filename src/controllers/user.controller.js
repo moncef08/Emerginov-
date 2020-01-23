@@ -1,18 +1,24 @@
 import Users from '../models/Users';
 import Project from '../models/Project';
+var passwordHash = require('password-hash');
+
 
 const { Op } = require("sequelize");
 
 export async function createUser(req, res){
-  const { name,login,profession}= req.body;
-
+  const { name,login,Job,school,Mastodon,password}= req.body;
+  var hashedPassword = passwordHash.generate(password);
+  console.log(hashedPassword);
   try{
     let newUser= await Users.create({
       name,
       login,
-      profession,
+      Job,
+      school,
+      Mastodon,
+      hashedPassword
     },{
-      fields:['name','login','profession']
+      fields:['name','login','Job','school','Mastodon','password']
     });
     if(newUser){
       return res.json({
