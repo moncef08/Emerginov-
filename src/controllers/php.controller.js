@@ -109,8 +109,8 @@ function reloadApache2(){
     //const {name}= req.body;
     rights()
     setTimeout(copyFiles_And_CreateVirtualHost, 1100);
-    setTimeout(a2ensite, 110);
-    setTimeout(reloadApache2, 120);
+    setTimeout(a2ensite, 1200);
+    setTimeout(reloadApache2, 1300);
 
 //sudo chmod 777 /etc/hosts
 //sudo chmod 777 /etc/apache2/sites-available

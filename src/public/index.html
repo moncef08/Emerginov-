@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="icon" href="./assets/Emerginov.ico" />
+  <link rel="stylesheet" type="text/css" href="./css/index.css">
+  <script type="text/javascript" src="./js/index.js"></script>
   <!-- 2 load the theme CSS file -->
   <link rel="stylesheet" href="plugin/codemirror/addon/display/fullscreen.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
@@ -292,7 +294,7 @@
     margin-left: 100px;
     margin-top: -30px;
     width: 100%;
-    height: 748px;
+    height: 648px;
     resize: vertical;
     border: 1px solid #3498db
    }
@@ -329,7 +331,8 @@
 .option{
    display:none;
 }
-}</style>
+
+</style>
 </head>
 
 <body>
@@ -352,9 +355,7 @@ Emerginov Editor
         <li class="nav-item">
           <a class="nav-link " id="saved" onkeypress="pressControlS(event)" onclick="save()" href="#">save</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link " id="add" href="#">add friend +</a>
-        </li>
+
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Github
@@ -378,23 +379,53 @@ Emerginov Editor
           </div>
 
         </li>
-
+        <li  id="alertSearch" class="nav-item">
+          <a class="alert alert-danger" role="alert"> Sorry, this user does not exist.
+          </a>
+        </li>
 
        </ul>
 
 
+       <ul>
+       <div class="dropdown nav-button notifications-button hidden-sm-down">
 
+         <a class="btn btn-secondary dropdown-toggle" href="#" id="notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           <i id="notificationsIcon" class="fa fa-bell-o" aria-hidden="true"></i>
+           <span id="notificationsBadge" class="badge badge-danger"><i class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></i></span>
+         </a>
 
-       <ul class="form-inline my-2 my-lg-0" >
-         <li  id="alertSearch" class="nav-item">
-           <a class="alert alert-danger" role="alert"> Sorry, this user does not exist.
+         <!-- NOTIFICATIONS -->
+         <div class="dropdown-menu notification-dropdown-menu" aria-labelledby="notifications-dropdown">
+           <h6 class="dropdown-header">Notifications</h6>
+
+           <!-- CHARGEMENT -->
+           <a id="notificationsLoader" class="dropdown-item dropdown-notification" href="#">
+             <p class="notification-solo text-center"><i id="notificationsIcon" class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></i> Chargement des dernières notifications...</p>
            </a>
-         </li>
+
+           <div id="notificationsContainer" class="notifications-container"></div>
+
+           <!-- AUCUNE NOTIFICATION -->
+           <a id="notificationAucune" class="dropdown-item dropdown-notification" href="#">
+             <p class="notification-solo text-center">Aucune nouvelle notification</p>
+           </a>
+
+           <!-- TOUTES -->
+           <a class="dropdown-item dropdown-notification-all" href="#">
+             Voir toutes les notifications
+           </a>
+
+         </div>
+       </ul>
+       <ul class="form-inline my-2 my-lg-0" >
+
         <input onkeypress="pressEnterInSearch()" id="search" list="livesearch" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onkeyup="showResult(this.value)" >
 
         <datalist id="livesearch">
         </datalist>
         <button  onclick="gotoProfile()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
         <div  class="collapse navbar-collapse" id="navbar-list-4">
       <ul style="margin-right:30px;" class="navbar-nav">
           <li class="nav-item dropdown">
@@ -519,11 +550,274 @@ Emerginov Editor
    </div>
 </div>
 </div>
+<script src="https://use.fontawesome.com/48bbc759d5.js"></script>
 
  <p id="demo"></p>
 <!-- include the minified jstree source -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<script id="notificationTemplate" type="text/html">
+  <!-- NOTIFICATION -->
+  <a class="dropdown-item dropdown-notification" href="{{href}}">
+    <div class="notification-read">
+      <i class="fa fa-times" aria-hidden="true"></i>
+    </div>
+    <img class="notification-img" src="https://placehold.it/48x48" alt="Icone Notification" />
+    <div class="notifications-body">
+      <p class="notification-texte">{{texte}}</p>
+      <p class="notification-date text-muted">
+        <i class="fa fa-clock-o" aria-hidden="true"></i> {{date}}
+      </p>
+    </div>
+  </a>
+</script>
 <script>
+$(function () {
+
+  var count = 6;
+  var lastCount = 0;
+
+  // Pour la maquette
+  var notifications = new Array();
+  notifications.push({
+    href: "#",
+    image: "Modification",
+    texte: "Votre incident " + makeBadge("17-0253") + " a été modifié",
+    date: "Mercredi 10 Mai, à 9h53"
+  });
+  notifications.push({
+    href: "#",
+    image: "Horloge",
+    texte: "Vous avez " + makeBadge("13") + " incidents en retards",
+    date: "Mercredi 10 Mai, à 8h00"
+  });
+  notifications.push({
+    href: "#",
+    image: "Visible",
+    texte: "Un nouvel incident dans votre groupe " + makeBadge("réseau"),
+    date: "Mardi 9 Mai, à 18h12"
+  });
+  notifications.push({
+    href: "#",
+    image: "Ajout",
+    texte: "Ouverture du problème " + makeBadge("17-0008"),
+    date: "Mardi 9 Mai, à 15h23"
+  });
+  notifications.push({
+    href: "#",
+    image: "Annulation",
+    texte: "Clotûre du problème " + makeBadge("17-0007"),
+    date: "Mardi 9 Mai, à 12h16"
+  });
+  notifications.push({
+    href: "#",
+    image: "Recherche",
+    texte: "Ouverture de l'incident " + makeBadge("17-1234") + " depuis le portail web",
+    date: "Mardi 9 Mai, à 10h14"
+  });
+
+  function makeBadge(texte) {
+    return "<span class=\"badge badge-default\">" + texte + "</span>";
+  }
+
+  appNotifications = {
+
+    // Initialisation
+    init: function () {
+      // On masque les éléments
+      $("#notificationsBadge").hide();
+      $("#notificationAucune").hide();
+
+      // On bind le clic sur les notifications
+      $("#notifications-dropdown").on('click', function () {
+
+        var open = $("#notifications-dropdown").attr("aria-expanded");
+
+        // Vérification si le menu est ouvert au moment du clic
+        if (open === "false") {
+          appNotifications.loadAll();
+        }
+
+      });
+
+      // On charge les notifications
+      appNotifications.loadAll();
+
+      // Polling
+      // Toutes les 3 minutes on vérifie si il n'y a pas de nouvelles notifications
+      setInterval(function () {
+        appNotifications.loadNumber();
+      }, 180000);
+
+      // Binding de marquage comme lue desktop
+      $('.notification-read-desktop').on('click', function (event) {
+        appNotifications.markAsReadDesktop(event, $(this));
+      });
+
+    },
+
+    // Déclenche le chargement du nombre et des notifs
+    loadAll: function () {
+
+      // On ne charge les notifs que si il y a une différence
+      // Ou si il n'y a aucune notifs
+      if (count !== lastCount || count === 0) {
+        appNotifications.load();
+      }
+      appNotifications.loadNumber();
+
+    },
+
+    // Masque de chargement pour l'icône et le badge
+    badgeLoadingMask: function (show) {
+      if (show === true) {
+        $("#notificationsBadge").html(appNotifications.badgeSpinner);
+        $("#notificationsBadge").show();
+        // Mobile
+        $("#notificationsBadgeMobile").html(count);
+        $("#notificationsBadgeMobile").show();
+      }
+      else {
+        $("#notificationsBadge").html(count);
+        if (count > 0) {
+          $("#notificationsIcon").removeClass("fa-bell-o");
+          $("#notificationsIcon").addClass("fa-bell");
+          $("#notificationsBadge").show();
+          // Mobile
+          $("#notificationsIconMobile").removeClass("fa-bell-o");
+          $("#notificationsIconMobile").addClass("fa-bell");
+          $("#notificationsBadgeMobile").show();
+        }
+        else {
+          $("#notificationsIcon").addClass("fa-bell-o");
+          $("#notificationsBadge").hide();
+          // Mobile
+          $("#notificationsIconMobile").addClass("fa-bell-o");
+          $("#notificationsBadgeMobile").hide();
+        }
+
+      }
+    },
+
+    // Indique si chargement des notifications
+    loadingMask: function (show) {
+
+      if (show === true) {
+        $("#notificationAucune").hide();
+        $("#notificationsLoader").show();
+      } else {
+        $("#notificationsLoader").hide();
+        if (count > 0) {
+          $("#notificationAucune").hide();
+        }
+        else {
+          $("#notificationAucune").show();
+        }
+      }
+
+    },
+
+    // Chargement du nombre de notifications
+    loadNumber: function () {
+      appNotifications.badgeLoadingMask(true);
+
+      // TODO : API Call pour récupérer le nombre
+
+      // TEMP : pour le template
+      setTimeout(function () {
+        $("#notificationsBadge").html(count);
+        appNotifications.badgeLoadingMask(false);
+      }, 1000);
+    },
+
+    // Chargement de notifications
+    load: function () {
+      appNotifications.loadingMask(true);
+
+      // On vide les notifs
+      $('#notificationsContainer').html("");
+
+      // Sauvegarde du nombre de notifs
+      lastCount = count;
+
+      // TEMP : pour le template
+      setTimeout(function () {
+
+        // TEMP : pour le template
+        for (i = 0; i < count; i++) {
+
+          var template = $('#notificationTemplate').html();
+          template = template.replace("{{href}}", notifications[i].href);
+          template = template.replace("{{image}}", notifications[i].image);
+          template = template.replace("{{texte}}", notifications[i].texte);
+          template = template.replace("{{date}}", notifications[i].date);
+
+          $('#notificationsContainer').append(template);
+        }
+
+        // On bind le marquage comme lue
+        $('.notification-read').on('click', function (event) {
+          appNotifications.markAsRead(event, $(this));
+        });
+
+        // On arrête le chargement
+        appNotifications.loadingMask(false);
+
+        // On réactive le bouton
+        $("#notifications-dropdown").prop("disabled", false);
+      }, 1000);
+    },
+
+    // Marquer une notification comme lue
+    markAsRead: function (event, elem) {
+      // Permet de garde la liste ouverte
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Suppression de la notification
+      elem.parent('.dropdown-notification').remove();
+
+      // TEMP : pour le template
+      count--;
+
+      // Mise à jour du nombre
+      appNotifications.loadAll();
+    },
+
+    // Marquer une notification comme lue version bureau
+    markAsReadDesktop: function (event, elem) {
+      // Permet de ne pas change de page
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Suppression de la notification
+      elem.parent('.dropdown-notification').removeClass("notification-unread");
+      elem.remove();
+
+      // On supprime le focus
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+
+      // TEMP : pour le template
+      count--;
+
+      // Mise à jour du nombre
+      appNotifications.loadAll();
+    },
+
+    add: function () {
+      lastCount = count;
+      count++;
+    },
+
+    // Template du badge
+    badgeSpinner: '<i class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></i>'
+  };
+
+  appNotifications.init();
+
+});
+
 localStorage.setItem('selected_path',"");
 $("#alertSearch").hide()
 $(document).ready(function(){
@@ -972,7 +1266,7 @@ function hideMarker() {
 }
 
 
-    editor.setSize(400,750);   //set editor size
+    editor.setSize(400,650);   //set editor size
     CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
      cm.showHint({hint: CodeMirror.hint.anyword});
     }
