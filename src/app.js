@@ -1,9 +1,20 @@
 import express, {json} from 'express';
 import morgan from 'morgan';
 import bodyParser from "body-parser";
-
+import session from "./controllers/user.controller.js"
 const app=express();
+const TWO_HOURS=1000*60*60*2;
+const  {
+  port=3000,
+  SESS_NAME='sid',
+  SESS_SECRET='ssh!quiet,it\'asecret!',
+  NODE_ENV='development',
+  SESS_LIFETIME=TWO_HOURS
 
+}=process.env
+
+const IN_PROD=NODE_ENV=='production'
+console.log(session);
 //Importing routes
 import gitRoutes from './routes/git'
 import projectRoutes from './routes/projects';
@@ -17,6 +28,7 @@ import mailRoutes from './routes/mail';
 import mastodonRoutes from './routes/mastodon';
 import zipRoutes from './routes/zip';
 //middlewares
+const storage = require('node-sessionstorage')
 app.use(morgan('dev'));
 app.use(json());
 // support parsing of application/json type post data
@@ -26,8 +38,6 @@ app.use(bodyParser.json({limit: '10mb', extended: true}));
 app.use(bodyParser.urlencoded({limit:'50mb', extended: true }));
 
 
-//app.get('/',function(req,res){res.redirect('/login')});
-app.get('/login',function(req,res){res.redirect('/login.html')});
 
 app.use(express.static(__dirname + '/public'));
 

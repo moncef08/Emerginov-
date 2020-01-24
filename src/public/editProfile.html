@@ -138,8 +138,8 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="#">Database</a>
-            <a class="dropdown-item" onclick="editProfile()"href="">Edit Profile</a>
-            <a class="dropdown-item" href="#">Log Out</a>
+            <a class="dropdown-item" onclick="editProfile()">Edit Profile</a>
+            <a class="dropdown-item" onclick="logout()">Log Out</a>
           </div>
         </li>
       </ul>
@@ -299,9 +299,11 @@
   var tableOfProfiles=[];
   $("#alertSearch").hide()
 
-  var url=window.location.href;
-  var idOfUser = url.substring(url.lastIndexOf('=') + 1);
-  id=parseInt(idOfUser)
+  var id=sessionStorage.getItem("userID")
+  if (id==null) {
+    document.location.href = `http://localhost:3000/login.html`
+
+  }
   console.log("l'id est : "+id);
   function pressEnter() {
      var code=event.which || event.keyCode; //Selon le navigateur c'est which ou keyCode
@@ -381,7 +383,8 @@
 
               $("#alertSearch").hide()
               var id=json.id;
-              document.location.href = `http://localhost:3000/profile.html?id=${id}`
+
+              document.location.href = `http://localhost:3000/profile.html?ProfileID=${id}`
             }else {
               $("#alertSearch").show()
             }
@@ -396,13 +399,30 @@
 
 
   }
+
   function editProfile(){
-    var url=window.location.href;
-    var idOfUser = url.substring(url.lastIndexOf('=') + 1);
-    id=parseInt(idOfUser)
-    document.location.href = `http://localhost:3000/editprofile.html?id=${id}`
+
+    var id=sessionStorage.getItem("userID")
+    console.log(id);
+  //  document.location.href = `http://localhost:3000/editProfile.html?id=${id}`
 
   }
+  function logout(){
+    var sessionkey=sessionStorage.removeItem("userID")
+    document.location.href = `http://localhost:3000/login.html`
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/logout",
+        dataType:"json",
+        success: function (json) {
+
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+  }
+
   function showResult(str) {
     console.log(str);
 

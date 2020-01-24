@@ -1,24 +1,44 @@
 import Users from '../models/Users';
 import Project from '../models/Project';
 var passwordHash = require('password-hash');
-
+const storage = require('node-sessionstorage')
+storage.setItem('userID', "")
 
 const { Op } = require("sequelize");
 
 export async function createUser(req, res){
-  const { name,login,Job,school,Mastodon,password}= req.body;
-  var hashedPassword = passwordHash.generate(password);
+  var { name,login,Email,profession,job,school,hashedPassword,mastodon}= req.body;
+  console.log(req.body);
   console.log(hashedPassword);
+  hashedPassword = passwordHash.generate(hashedPassword);
+  var id= Math.floor(Math.random() * Math.floor(1000000000000));
+  console.log(id);
+  console.log(req.body);
+  var projectid=2;
+  var location=null;
+  var company=null;
+  var nbfollowers=0;
+  var listoffollow=0;
+  var picture=null;
   try{
     let newUser= await Users.create({
+      id,
       name,
       login,
-      Job,
+      Email,
+      profession,
       school,
-      Mastodon,
-      hashedPassword
+      projectid,
+      location,
+      job,
+      company,
+      nbfollowers,
+      listoffollow,
+      picture,
+      hashedPassword,
+      mastodon
     },{
-      fields:['name','login','Job','school','Mastodon','password']
+      fields:['id','name','login','Email','profession','school','projectid','location','job','company','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
     });
     if(newUser){
       return res.json({
@@ -34,6 +54,7 @@ export async function createUser(req, res){
     });
   }
 }
+//console.log(passwordHash.verify('password123', hashedPassword)); // true
 
 export async function getUsers(req,res){
    try{
@@ -176,8 +197,9 @@ export async function getUserByName(req,res){
         }
 
       }
-export async function getUserByLogin(req,res){
+ export async function searchUserByLogin(req,res){
         const {login}= req.body;
+
         const user= await Users.findOne({
           where:{
             login
@@ -193,6 +215,42 @@ export async function getUserByLogin(req,res){
         }
 
       }
+export async function getSession(req,res){
+  var session=storage.getItem('userID')
+  res.json({"session":session})
+
+}
+export async function logout(req,res){
+  storage.setItem('userID', "")
+
+}
+export async function getUserByLoginAndPassword(req,res){
+        const {login,password}= req.body;
+        const user= await Users.findOne({
+          where:{
+            login
+          }
+        });
+        if (user!=null ) {
+          if ( passwordHash.verify(password, user.hashedPassword)) {
+            storage.setItem('userID', user.id)
+
+            return res.redirect(`http://localhost:3000/`);
+
+          }else {
+            return res.json({
+              message:'User does not exist '
+            });
+          }
+
+
+
+      }else {
+        return res.json({
+          message:'User does not exist '
+        });
+      }
+    }
 
 export async function deleteUser(req,res){
     const { id }=req.params;
@@ -220,6 +278,7 @@ export async function updateUser(req,res){
         id
       }
     });
+
     if (users.length>0) {
       users.forEach(async user => {
         await user.update({

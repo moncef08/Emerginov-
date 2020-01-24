@@ -12,6 +12,9 @@ const Users=sequelize.define('users',{
   login:{
     type: Sequelize.TEXT
   },
+  Email:{
+    type: Sequelize.TEXT
+  },
   profession:{
     type: Sequelize.TEXT
   },
@@ -39,7 +42,15 @@ const Users=sequelize.define('users',{
   picture:{
     type: Sequelize.TEXT
 
-  }
+  },
+  hashedPassword:{
+    type: Sequelize.TEXT
+
+  },
+  mastodon:{
+     type: Sequelize.TEXT
+
+    }
 
 },{
   timestamps:false

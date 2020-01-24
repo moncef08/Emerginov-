@@ -133,8 +133,8 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="#">Database</a>
-            <a class="dropdown-item" onclick="editprofile()"href="">Edit Profile</a>
-            <a class="dropdown-item" href="#">Log Out</a>
+            <a class="dropdown-item" onclick="editProfile()">Edit Profile</a>
+            <a class="dropdown-item" onclick="logout()">Log Out</a>
           </div>
         </li>
       </ul>
@@ -214,9 +214,13 @@
   <script>
   var tableOfProfiles=[];
   $("#alertSearch").hide()
+  if (sessionStorage.getItem("userID")==null) {
+    document.location.href = `http://localhost:3000/login.html`
 
+  }
   var url=window.location.href;
-  var idOfUser = url.substring(url.lastIndexOf('=') + 1);
+  var idOfUser = url.substring(url.lastIndexOf('D') + 2);
+
   id=parseInt(idOfUser)
   console.log("l'id est : "+id);
   function pressEnter() {
@@ -293,10 +297,11 @@
           success: function (json) {
             console.log(json);
             if (json.id!=undefined) {
-
+              console.log(json.id);
               $("#alertSearch").hide()
               var id=json.id;
-              document.location.href = `http://localhost:3000/profile.html?id=${id}`
+
+              document.location.href = `http://localhost:3000/profile.html?ProfileID=${id}`
             }else {
               $("#alertSearch").show()
             }
@@ -311,6 +316,34 @@
 
 
   }
+  function editProfile(){
+    var sessionkey=sessionStorage.getItem("userID")
+    if (sessionkey=="") {
+      document.location.href = `http://localhost:3000/login.html`
+
+    }else {
+      document.location.href = `http://localhost:3000/editProfile.html?id=${sessionkey}`
+
+    }
+
+
+  }
+  function logout(){
+    var sessionkey=sessionStorage.removeItem("userID")
+    document.location.href = `http://localhost:3000/login.html`
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/logout",
+        dataType:"json",
+        success: function (json) {
+
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+  }
+
   function showResult(str) {
     console.log(str);
 
@@ -358,13 +391,7 @@
  }
 
  }
- function editProfile(){
-   var url=window.location.href;
-   var idOfUser = url.substring(url.lastIndexOf('=') + 1);
-   id=parseInt(idOfUser)
-   document.location.href = `http://localhost:3000/editprofile.html?id=${id}`
 
- }
  $("#follow").click(function(){
 
   var text=$("#follow").text();

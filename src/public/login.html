@@ -31,13 +31,13 @@ form{
         <form
         id="app1"
         @submit="checkLogin"
-        action="http://localhost:3000/api/users/login"
+        action="http://localhost:3000/api/users/search"
         method="post"
         novalidate="true"
         class="form-inline my-2 my-lg-0">
           <input id="login"  name="login" v-model="login"  type="text" class="form-control mr-sm-2" placeholder="E-mail" aria-label="Search">
           <input  id="password" name="password" v-model="password" type="password"class="form-control mr-sm-2" type="search" placeholder="Password" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Connexion</button>
+          <button onclick="sessionStorage()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Connexion</button>
 
 
           <ul>
@@ -107,8 +107,11 @@ form{
         <input  id="name" name="name" v-model="name" type="text" class="form-control" placeholder="name">
       </div>
       <div   class="col">
-        <input id="login"  v-model="login" type="text" class="form-control" placeholder="login">
+        <input id="login1" name="login" v-model="login" type="text" class="form-control" placeholder="login">
       </div>
+  </div>
+  <div class="form-group">
+      <input id="Email"  name="Email" v-model="Email" type="text" class="form-control" placeholder="E-mail">
   </div>
   <div class="form-group">
       <input id="profession"  name="profession" v-model="profession" type="text" class="form-control" id="formGroupExampleInput2" placeholder="profession">
@@ -117,17 +120,17 @@ form{
     <input id="school" v-model="school" name="school" type="text" class="form-control" id="formGroupExampleInput2" placeholder="School/Company">
   </div>
   <div class="form-group">
-    <input id="password" v-model="password" type="password" class="form-control" id="formGroupExampleInput2" placeholder="Password">
+    <input id="hashedPassword" name="hashedPassword" v-model="password" type="password" class="form-control" id="formGroupExampleInput2" placeholder="Password">
   </div>
   <div class="form-group">
-    <input id="password" v-model="password" type="password" class="form-control"  name="password" id="formGroupExampleInput2" placeholder=" New Password">
+    <input id="password2" v-model="password" type="password" class="form-control"   id="formGroupExampleInput2" placeholder=" New Password">
   </div>
 
   <div class="form-group">
-    <input id="Job" v-model="Job" type="Job" class="form-control" name="Job" placeholder="Job">
+    <input id="Job" v-model="Job" type="Job" class="form-control" name="job" placeholder="Job">
   </div>
   <div class="form-group">
-    <input id="Mastodon" v-model="Mastodon" type="text" class="form-control" name="Mastodon" placeholder="Mastodon token">
+    <input id="mastodon" v-model="mastodon" type="text" class="form-control" name="mastodon" placeholder="Mastodon token">
   </div>
 
   <button style="margin-left: 160px;"type="submit" class="btn btn-outline-success btn-lg my-2 my-sm-0">Register</button>
@@ -142,5 +145,8 @@ form{
     </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.0-rc.5/vue.js"></script>
     <script src="js/app.js"></script>
+<script type="text/javascript">
 
+
+</script>
 </html>
