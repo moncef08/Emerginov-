@@ -30,9 +30,9 @@ import zipRoutes from './routes/zip';
 //middlewares
 const storage = require('node-sessionstorage')
 app.use(morgan('dev'));
-app.use(json());
+app.use(json({limit:'50mb'}));
 // support parsing of application/json type post data
-app.use(bodyParser.json({limit: '10mb', extended: true}));
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({limit:'50mb', extended: true }));

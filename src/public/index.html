@@ -505,7 +505,7 @@ Emerginov Editor
 
              <div class="d-flex bd-highlight">
                <div class="img_cont">
-                 <img src="./assets/Moncef.jpg" class="rounded-circle user_img">
+                 <img id="chatphoto"  class="rounded-circle user_img">
                  <span class="online_icon"></span>
                </div>
                <div class="user_info">
@@ -572,49 +572,78 @@ Emerginov Editor
   </a>
 </script>
 <script>
+$.ajax({
+    async: true,
+    type: "POST",
+    url: "http://localhost:3000/api/users/session",
+    dataType:"json",
+    success: function (json) {
+     if (json.session=="") {
+       document.location.href = `http://localhost:3000/login.html`
+
+     }else {
+       sessionStorage.setItem("userID",json.session)
+
+
+     }
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+    }
+});
+
 $(function () {
 
-  var count = 6;
+  var count = 0;
   var lastCount = 0;
-
+  var myID=sessionStorage.getItem("userID")
   // Pour la maquette
   var notifications = new Array();
-  notifications.push({
-    href: "#",
-    image: "Modification",
-    texte: "Votre incident " + makeBadge("17-0253") + " a été modifié",
-    date: "Mercredi 10 Mai, à 9h53"
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/api/users/id",
+      dataType:"json",
+      data:{
+        "id":BigInt(myID)
+      },
+      success: function (json) {
+        console.log(json);
+      if (json.requests!=null) {
+
+       for (var i = 0; i < json.requests.length; i++) {
+         var projectName=json.requests[i].projectName
+         $.ajax({
+             async: true,
+             type: "POST",
+             url: "http://localhost:3000/api/users/id",
+             dataType:"json",
+             data:{
+               "id":json.requests[i].senderID
+             },
+             success: function (user) {
+               notifications.push({
+                 href: "#",
+                 image:`data:image/png;base64,${user.picture}`,
+                 texte: user.name +" veut participer au projet "+ projectName,
+               });
+               count++
+
+             },
+             error: function (xhr, ajaxOptions, thrownError) {
+             }
+         });
+
+
+            }
+
+      }
+
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+      }
   });
-  notifications.push({
-    href: "#",
-    image: "Horloge",
-    texte: "Vous avez " + makeBadge("13") + " incidents en retards",
-    date: "Mercredi 10 Mai, à 8h00"
-  });
-  notifications.push({
-    href: "#",
-    image: "Visible",
-    texte: "Un nouvel incident dans votre groupe " + makeBadge("réseau"),
-    date: "Mardi 9 Mai, à 18h12"
-  });
-  notifications.push({
-    href: "#",
-    image: "Ajout",
-    texte: "Ouverture du problème " + makeBadge("17-0008"),
-    date: "Mardi 9 Mai, à 15h23"
-  });
-  notifications.push({
-    href: "#",
-    image: "Annulation",
-    texte: "Clotûre du problème " + makeBadge("17-0007"),
-    date: "Mardi 9 Mai, à 12h16"
-  });
-  notifications.push({
-    href: "#",
-    image: "Recherche",
-    texte: "Ouverture de l'incident " + makeBadge("17-1234") + " depuis le portail web",
-    date: "Mardi 9 Mai, à 10h14"
-  });
+
+
 
   function makeBadge(texte) {
     return "<span class=\"badge badge-default\">" + texte + "</span>";
@@ -1079,10 +1108,15 @@ function setVisibility(){
 
              $("#alertSearch").hide()
              var id=json.id;
-             var url=window.location.href;
-             var idOfUser = url.substring(url.lastIndexOf('=') + 1);
-             var ProfileID=parseInt(idOfUser)
-             document.location.href = `http://localhost:3000/profile.html?ProfileID=${id}`
+             var myID=sessionStorage.getItem("userID")
+             if (BigInt(id)==BigInt(myID)) {
+               document.location.href = `http://localhost:3000/editProfile.html`
+
+             }else {
+               document.location.href = `http://localhost:3000/profile.html?ProfileID=${id}`
+
+             }
+
            }else {
              $("#alertSearch").show()
            }
@@ -1891,19 +1925,18 @@ function checkPageFocus() {
         url: "http://localhost:3000/api/users/logout",
         dataType:"json",
         success: function (json) {
-      
+
         },
         error: function (xhr, ajaxOptions, thrownError) {
         }
     });
   }
 
-  function addElement (value,avatar) {
+  function addElement (value) {
     let date=new Date()
     var time1=timeid.toString();
-    var url=window.location.href;
-    var idOfUser = url.substring(url.lastIndexOf('=') + 1);
-    id=parseInt(idOfUser)
+    let idOfUser=sessionStorage.getItem("userID")
+    let id=parseInt(idOfUser)
     $.ajax({
         async: true,
         type: "POST",
@@ -1912,8 +1945,13 @@ function checkPageFocus() {
           "id":id
         },
         success: function (json) {
-          var image=`data:image/png;base64,${json.picture}`
+          if (json.picture==null) {
+            var image=`./assets/unknown.jpg`
 
+          }else {
+            var image=`data:image/png;base64,${json.picture}`
+          }
+          console.log(image);
           $("#msgs").append(`<div2 class="d-flex justify-content-start mb-4">
             <div id="msg1" class="img_cont_msg">
               <img src=${image} class="rounded-circle user_img_msg">
@@ -1956,27 +1994,38 @@ function checkPageFocus() {
   //console.log(currentDiv);
 //  parentDiv.insertBefore(newDiv, sp2);
 }
-// var id=sessionStorage.getItem("userID")
-// $.ajax({
-//     async: true,
-//     type: "POST",
-//     url: "http://localhost:3000/api/users/id",
-//     data: {
-//       "id":id
-//     },
-//     success: function (json) {
-//       console.log(json.picture);
-//       $("#LogoutImage").attr('src',"data:image/jpg;base64"+ json.picture);
-//
-//         //  document.getElementById('chatBox').srcdoc+="<br>"+value;
-//       },
-//       // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
-//       // document.getElementById('chatBox').srcdoc+=response;
-//     error: function (xhr, ajaxOptions, thrownError) {
-//         alert(thrownError);
-//     }
-//
-// });
+var id=sessionStorage.getItem("userID")
+console.log(id);
+$.ajax({
+    async: true,
+    type: "POST",
+    url: "http://localhost:3000/api/users/id",
+    data: {
+      "id":id
+    },
+    success: function (json) {
+      console.log(json.picture);
+      if (json.picture==null) {
+        $("#LogoutImage").attr('src',"./assets/unknown.jpg");
+        $("#chatphoto").attr('src',"./assets/unknown.jpg");
+
+
+      }else {
+        let profilephoto=`data:image/png;base64,${json.picture}`
+        $("#LogoutImage").attr('src',profilephoto);
+        $("#chatphoto").attr('src',profilephoto);
+
+      }
+
+        //  document.getElementById('chatBox').srcdoc+="<br>"+value;
+      },
+      // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+      // document.getElementById('chatBox').srcdoc+=response;
+    error: function (xhr, ajaxOptions, thrownError) {
+        alert(thrownError);
+    }
+
+});
 
 
       function putMastodonMessage(){
@@ -2005,23 +2054,7 @@ function checkPageFocus() {
         $('#inputSlack').val('');
 
 }
-$.ajax({
-    async: true,
-    type: "POST",
-    url: "http://localhost:3000/api/users/session",
-    dataType:"json",
-    success: function (json) {
-     if (json.session=="") {
-       document.location.href = `http://localhost:3000/login.html`
 
-     }else {
-       sessionStorage.setItem("userID",json.session)
-
-     }
-    },
-    error: function (xhr, ajaxOptions, thrownError) {
-    }
-});
 function pressEnter() {
                var code=event.which || event.keyCode; //Selon le navigateur c'est which ou keyCode
                if (code==13) { //le code de la touche Enter

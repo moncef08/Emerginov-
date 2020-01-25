@@ -2,6 +2,7 @@
 import Project from '../models/Project';
 import Users from '../models/Users';
 const { Op } = require("sequelize");
+var newRequests=[]
 
 export async function createProject(req, res){
   const { name,priority,description,deliverydate}= req.body;
@@ -45,12 +46,10 @@ export async function getProjects(req,res){
 }
 export async function getProjectByName(req,res){
   const { name }=req.body;
-
-  const project= await Project.findAll({
+console.log(name);
+  const project= await Project.findOne({
     where:{
-      name : {
-        [Op.like]:`%${name}%`
-      }
+      name
     }
   });
   if (project!=null) {
@@ -63,8 +62,112 @@ export async function getProjectByName(req,res){
 
 
 }
+export async function verifyRequest(req,res){
+  var { projectName,myID,profileID }=req.body;
+  var id=BigInt(profileID)
+  var test=false;
+  console.log("his id is : "+id);
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+  console.log(user.requests);
+  if (user.requests!=null) {
+    for (var i = 0; i < user.requests.length; i++) {
+      if (user.requests[i].senderID==myID && user.requests[i].projectName==projectName) {
+        console.log("true");
+        test=true
+      }
+    }
+    if (test==true) {
+      console.log("hy");
+      res.json({
+        "verification":"yes"
+      })
+    }else {
+      console.log("ho");
+      res.json({
+        "verification":"no"
+      })
+    }
+  }else {
+    res.json({
+      "verification":"no"
+    })
+  }
+}
+
+export async function sendReq(req,res){
+  var { projectID,projectName,myID,profileID }=req.body;
+  var id=BigInt(profileID)
+  console.log(id);
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+  if (user!=null) {
+    console.log(user.requests);
+
+    newRequests=user.requests
+    let alreadysent=false
+    if (newRequests!=null) {
+      for (var i = 0; i < newRequests.length; i++) {
+
+        if (newRequests[i].senderID==myID) {
+          console.log("true");
+           alreadysent =true
+        }
+      }
+      if (alreadysent==false) {
+
+
+        newRequests.push(
+          {
+            "projectName":projectName,
+            "senderID":myID,
+            "status": "waitForResponse"
+
+          }
+        )
+        user.update({
+
+            requests: newRequests
+
+        })
+
+      }
+    }else {
+      console.log("firsttime");
+      user.update({
+
+          requests:   [{
+              "projectName":projectName,
+              "senderID":myID,
+              "status": "waitForResponse"
+
+            }]
+
+      })
+
+    }
+
+
+
+
+
+  }else {
+
+    return res.json({
+      message:' this project does not exist '
+    });
+  }
+
+
+}
 export async function getProjectById(req,res){
-  const { id }=req.params;
+  const { id }=req.body;
   const project= await Project.findOne({
     where:{
       id

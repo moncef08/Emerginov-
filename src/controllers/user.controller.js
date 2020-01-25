@@ -238,9 +238,7 @@ export async function getUserByLoginAndPassword(req,res){
             return res.redirect(`http://localhost:3000/`);
 
           }else {
-            return res.json({
-              message:'User does not exist '
-            });
+           res.redirect(`http://localhost:3000/login.html`)
           }
 
 

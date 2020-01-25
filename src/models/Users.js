@@ -50,7 +50,11 @@ const Users=sequelize.define('users',{
   mastodon:{
      type: Sequelize.TEXT
 
-    }
+   },
+   requests:{
+      type: Sequelize.DataTypes.ARRAY(JSON)
+
+     }
 
 },{
   timestamps:false

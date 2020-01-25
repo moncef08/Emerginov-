@@ -129,7 +129,7 @@
       <ul class="navbar-nav">
           <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="./assets/Moncef.jpg" width="40" height="40" class="rounded-circle">
+            <img id="LogoutImage" width="40" height="40" class="rounded-circle">
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="#">Database</a>
@@ -153,7 +153,7 @@
           <div class="bg-white shadow rounded overflow-hidden">
               <div class="px-4 pt-0 pb-4 bg-dark">
                   <div class="media align-items-end profile-header">
-                      <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"   href=""  class="btn btn-danger btn-sm btn-block">Follow</button></div>
+                      <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"     class="btn btn-danger btn-sm btn-block">Follow</button></div>
                       <div class="media-body mb-5 text-white">
                           <h4 id="name" class="mt-0 mb-0"></h4>
                           <p id="location"class="small mb-4"> <i class="fa fa-map-marker mr-2"></i></p>
@@ -184,10 +184,13 @@
                       </div>
                   <div class="py-4">
                       <h5 class="mb-3">Recent projects</h5>
-                      <div class="p-4 bg-light rounded shadow-sm">
-                          <p class="font-italic mb-0">Emerginov II</p>
+                      <div  class="p-4 bg-light rounded shadow-sm">
+                        <!-- <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"   href=""  class="btn btn-danger btn-sm btn-block">Follow</button></div> -->
+
+                         <p id="projects" class="font-italic mb-0"><button id="send" onclick="send_Req()"></button></p>
 
                       </div>
+
                   </div>
               </div>
           </div><!-- End profile widget -->
@@ -212,6 +215,7 @@
   </div>
   </body>
   <script>
+  var projectName=""
   var tableOfProfiles=[];
   $("#alertSearch").hide()
   if (sessionStorage.getItem("userID")==null) {
@@ -245,13 +249,67 @@
         document.getElementById("name").innerHTML=json.name
         document.getElementById("location").innerHTML+=json.location
         document.getElementById("Job").innerHTML+=json.job
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/api/projects/id",
+            dataType:"json",
+            data: {
+                "id":json.projectid
+            },
+            success: function (json) {
+              console.log(json);
+              if (json.id!=undefined) {
+                var url=window.location.href;
+                var idOfUser = url.substring(url.lastIndexOf('D') + 2);
+                id=parseInt(idOfUser)
+                document.getElementById("projects").innerHTML+=" "+json.name
+                projectName=$("#projects").text().replace(" ","");
+                console.log(projectName);
+
+                var myID=sessionStorage.getItem("userID")
+                $.ajax({
+                    async: true,
+                    type: "POST",
+                    url: "http://localhost:3000/api/projects/verifyRequest",
+                    dataType:"json",
+                    data: {
+                        "projectName":projectName,
+                        "myID":myID,
+                        "profileID":id
+                    },
+                    success: function (json) {
+                      console.log(json);
+                      if (json.verification=="yes") {
+                        console.log("yes");
+                        $("#send").addClass("btn btn-success btn-sm fa fa-check")
+                        $( "#send" ).prop( "disabled", true );
+
+                      }else {
+                        console.log("no");
+                        $("#send").addClass("btn btn-success btn-sm fa fa-plus")
+
+                      }
+
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                    }
+                });
+              }else {
+              }
+
+              //mettre l'id dans l'url
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+            }
+        });
         console.log(json);
         if (json.picture==undefined) {
-          console.log("hi");
           document.getElementById('photo').src="./assets/unknown.jpg"
 
         }else {
           document.getElementById('photo').src="data:image/png;base64," + json.picture
+
         }
 
         if (json.company!=undefined) {
@@ -282,6 +340,58 @@
       error: function (xhr, ajaxOptions, thrownError) {
       }
   });
+
+  function send_Req(){
+    let ProjectName=$("#projects").text().replace(" ","");
+    var url=window.location.href;
+    var idOfUser = url.substring(url.lastIndexOf('D') + 2);
+    id=parseInt(idOfUser)
+    var myID=sessionStorage.getItem("userID")
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/projects/name",
+        dataType:"json",
+        data: {
+            "name":ProjectName
+        },
+        success: function (json) {
+          var projectID=json.id
+          $.ajax({
+              async: true,
+              type: "POST",
+              url: "http://localhost:3000/api/projects/sendReq",
+              dataType:"json",
+              data: {
+                  "projectID":projectID,
+                  "projectName":json.name,
+                  "myID":myID,
+                  "profileID":id
+              },
+              success: function (json) {
+
+
+              },
+              error: function (xhr, ajaxOptions, thrownError) {
+              }
+          });
+          console.log("hey");
+            $( "#send" ).toggleClass( "fa-plus" );
+            $( "#send" ).addClass( "fa-check" );
+            $( "#send" ).text("sent !");
+            $( "#send" ).prop( "disabled", true );
+
+
+
+
+          //mettre l'id dans l'url
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+
+  }
+
   function gotoProfile(){
     var login=document.getElementById("search").value;
     console.log(login);
@@ -300,8 +410,15 @@
               console.log(json.id);
               $("#alertSearch").hide()
               var id=json.id;
+              var myID=sessionStorage.getItem("userID")
+              if (BigInt(id)==BigInt(myID)) {
+                document.location.href = `http://localhost:3000/editProfile.html`
 
-              document.location.href = `http://localhost:3000/profile.html?ProfileID=${id}`
+              }else {
+                document.location.href = `http://localhost:3000/profile.html?ProfileID=${id}`
+
+              }
+
             }else {
               $("#alertSearch").show()
             }
@@ -316,6 +433,37 @@
 
 
   }
+  var id=sessionStorage.getItem("userID")
+  console.log(id);
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/api/users/id",
+      data: {
+        "id":id
+      },
+      success: function (json) {
+        console.log(json.picture);
+        if (json.picture==null) {
+          $("#LogoutImage").attr('src',"./assets/unknown.jpg");
+
+
+        }else {
+          let profilephoto=`data:image/png;base64,${json.picture}`
+          $("#LogoutImage").attr('src',profilephoto);
+
+        }
+
+          //  document.getElementById('chatBox').srcdoc+="<br>"+value;
+        },
+        // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
+        // document.getElementById('chatBox').srcdoc+=response;
+      error: function (xhr, ajaxOptions, thrownError) {
+          alert(thrownError);
+      }
+
+  });
+
   function editProfile(){
     var sessionkey=sessionStorage.getItem("userID")
     if (sessionkey=="") {
@@ -391,6 +539,39 @@
  }
 
  }
+ $("#sendRequest").click(function(){
+
+  var text=$("#sendRequest").text();
+  console.log(text);
+  if (text=="send request") {
+    $("#sendRequest").removeClass("btn btn-danger btn-sm btn-block");
+    $(this).addClass("btn btn-success btn-sm btn-block");
+    $("#sendRequest").text("sent");
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/sendRequest",
+        dataType:"json",
+        data: {
+            "id":id
+        },
+        success: function (json) {
+
+
+          //mettre l'id dans l'url
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+
+  }else {
+
+
+  }
+
+
+});
+
 
  $("#follow").click(function(){
 

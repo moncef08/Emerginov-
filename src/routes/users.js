@@ -11,7 +11,6 @@ router.get('/', getUsers);
 router.post('/id',getUserById);
 router.post('/session',getSession);
 router.post('/logout',logout);
-
 router.post('/login',searchUserByLogin);
 router.post('/search',getUserByLoginAndPassword);
 router.post('/follow',newFollower);
