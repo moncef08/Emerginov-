@@ -3,6 +3,7 @@
 
 <head lang="en">
   <meta charset="utf-8" />
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="icon" href="./assets/Emerginov.ico" />
@@ -412,10 +413,6 @@ Emerginov Editor
              <p class="notification-solo text-center">Aucune nouvelle notification</p>
            </a>
 
-           <!-- TOUTES -->
-           <a class="dropdown-item dropdown-notification-all" href="#">
-             Voir toutes les notifications
-           </a>
          </ul>
 
          </div>
@@ -553,6 +550,7 @@ Emerginov Editor
 </div>
 <script src="https://use.fontawesome.com/48bbc759d5.js"></script>
 
+
  <p id="demo"></p>
 <!-- include the minified jstree source -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
@@ -562,16 +560,23 @@ Emerginov Editor
     <div class="notification-read">
       <i class="fa fa-times" aria-hidden="true"></i>
     </div>
-    <img class="notification-img" src="https://placehold.it/48x48" alt="Icone Notification" />
+    <img id="notifImage" src={{image}} class="notification-img" />
     <div class="notifications-body">
       <p class="notification-texte">{{texte}}</p>
       <p class="notification-date text-muted">
-        <i class="fa fa-clock-o" aria-hidden="true"></i> {{date}}
+
       </p>
+      <i type="button" onclick="acceptRequest()"style="color:green"class="btn btn-danger btn-sm fa fa-plus"> accept ?</i>
+      <i type="button" onclick="refuseRequest()"style="color:red"class="btn btn-success btn-sm fa fa-times"> refuse ?</i>
+
     </div>
+
   </a>
 </script>
 <script>
+function acceptRequest(){
+  console.log("éhey");
+}
 $.ajax({
     async: true,
     type: "POST",
@@ -594,7 +599,7 @@ $.ajax({
 $(function () {
 
   var count = 0;
-  var lastCount = 0;
+  var lastCount = count;
   var myID=sessionStorage.getItem("userID")
   // Pour la maquette
   var notifications = new Array();
@@ -604,7 +609,7 @@ $(function () {
       url: "http://localhost:3000/api/users/id",
       dataType:"json",
       data:{
-        "id":BigInt(myID)
+        "id":myID
       },
       success: function (json) {
         console.log(json);
@@ -612,6 +617,8 @@ $(function () {
 
        for (var i = 0; i < json.requests.length; i++) {
          var projectName=json.requests[i].projectName
+         var status=json.requests[i].status
+         console.log(status);
          $.ajax({
              async: true,
              type: "POST",
@@ -621,12 +628,27 @@ $(function () {
                "id":json.requests[i].senderID
              },
              success: function (user) {
-               notifications.push({
-                 href: "#",
-                 image:`data:image/png;base64,${user.picture}`,
-                 texte: user.name +" veut participer au projet "+ projectName,
-               });
-               count++
+               var image=user.picture
+
+               if (status=="waitForResponse") {
+                 if (image==null) {
+                   notifications.push({
+                     href: "#",
+                     image:`./assets/unknown.jpg`,
+                     texte: user.name +" wants to participate to "+ projectName,
+                   });
+                   count++
+                 }else {
+                   notifications.push({
+                     href: "#",
+                     image:`data:image/png;base64,${user.picture}`,
+                     texte: user.name +" wants to participate to "+ projectName,
+                   });
+                   count++
+
+                 }
+
+               }
 
              },
              error: function (xhr, ajaxOptions, thrownError) {
@@ -676,7 +698,7 @@ $(function () {
       // Toutes les 3 minutes on vérifie si il n'y a pas de nouvelles notifications
       setInterval(function () {
         appNotifications.loadNumber();
-      }, 180000);
+      }, 18000);
 
       // Binding de marquage comme lue desktop
       $('.notification-read-desktop').on('click', function (event) {
@@ -2137,11 +2159,11 @@ function pressEnter() {
 
       }
 
-
-   // var msg2=document.getElementById("msg2")
-   // console.log(msg2);
-
-
+    setTimeout(function(){
+      if(window.location.href.substr(-2) !== "?r") {
+      window.location = window.location.href + "?r";
+    }
+  },100)
   </script>
   </body>
   </html>

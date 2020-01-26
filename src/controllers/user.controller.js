@@ -1,7 +1,8 @@
 import Users from '../models/Users';
 import Project from '../models/Project';
 var passwordHash = require('password-hash');
-const storage = require('node-sessionstorage')
+var storage = require('node-sessionstorage')
+var storage1="";
 storage.setItem('userID', "")
 
 const { Op } = require("sequelize");
@@ -234,6 +235,7 @@ export async function getUserByLoginAndPassword(req,res){
         if (user!=null ) {
           if ( passwordHash.verify(password, user.hashedPassword)) {
             storage.setItem('userID', user.id)
+            storage1=user.id
 
             return res.redirect(`http://localhost:3000/`);
 
@@ -293,3 +295,4 @@ export async function updateUser(req,res){
       data:users
     })
   }
+  export default storage1;

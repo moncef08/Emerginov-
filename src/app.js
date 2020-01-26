@@ -28,7 +28,7 @@ import mailRoutes from './routes/mail';
 import mastodonRoutes from './routes/mastodon';
 import zipRoutes from './routes/zip';
 //middlewares
-const storage = require('node-sessionstorage')
+import  { storage1 } from './controllers/user.controller'
 app.use(morgan('dev'));
 app.use(json({limit:'50mb'}));
 // support parsing of application/json type post data
@@ -36,6 +36,7 @@ app.use(bodyParser.json({limit: '50mb', extended: true}));
 
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({limit:'50mb', extended: true }));
+
 
 
 
