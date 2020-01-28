@@ -189,8 +189,7 @@
                       </div>
                   <div class="py-4">
                       <h5 class="mb-3">Recent projects</h5>
-                      <div class="p-4 bg-light rounded shadow-sm">
-                          <p class="font-italic mb-0">Emerginov II</p>
+                      <div id="project"class="p-4 bg-light rounded shadow-sm">
 
                       </div>
                   </div>
@@ -361,9 +360,36 @@
         }else {
           document.getElementById("nbfollowers").innerHTML+=nbfollowers
         }
+        if (json.projectid!=null) {
+        for (var i = 0; i < json.projectid.length; i++) {
+
+          $.ajax({
+            async: true,
+            type: "POST",
+            url: "http://localhost:3000/api/projects/id",
+            dataType:"json",
+            data: {
+                "id":json.projectid[i]
+            },
+            success: function (json) {
+              console.log(json);
+
+              if (json.id!=undefined) {
+                var  buttonid=  Math.floor(Math.random() * 1000);
+                var  textid=  Math.floor(Math.random() * 1000);
+
+                $('#project').append(`<p id="${textid}" class="font-italic mb-0"><button class="btn btn-danger btn-sm fa fa-minus-circle" id="${buttonid}" onclick="delete_Project(this.id,${textid})"></button> ${json.name}</p><br>`);
 
 
-      },
+               }else {}
+
+
+
+
+      }
+    });
+  }}
+  },
       error: function (xhr, ajaxOptions, thrownError) {
       }
   });

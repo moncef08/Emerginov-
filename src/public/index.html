@@ -350,6 +350,18 @@ Emerginov Editor
         <li class="nav-item ">
           <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            New Project
+          </a>
+          <div style="  background-color: #505050;"  class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+          <input id="NewProjectName" class="form-control mr-sm-2" type="text" placeholder="    Project Name" >
+          <button style="margin-top: 5px;margin-left:40px;" id="createProject" onclick=""  type="submit" class="btn btn-secondary">create</button>
+          </div>
+
+        </li>
+
         <li class="nav-item">
           <a id="run" class="nav-link"  target="viewer" href="http://project3.ci/">Run</a>
         </li>
@@ -361,22 +373,22 @@ Emerginov Editor
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Github
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#" onclick="push()">Push</a>
-            <a class="dropdown-item" href="#"onclick="theme2()">Commit</a>
-            <a class="dropdown-item" href="#"onclick="theme1()">Pull</a>
+          <div style="  background-color: #505050;"class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" style="color: #DDDCDB"href="#" onclick="push()">Push</a>
+            <a class="dropdown-item" style="color: #DDDCDB"href="#"onclick="theme2()">Commit</a>
+            <a class="dropdown-item" style="color: #DDDCDB"href="#"onclick="theme1()">Pull</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Themes
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#" onclick="theme3()">The Dark</a>
-            <a class="dropdown-item" href="#"onclick="theme2()">BlackBoard</a>
-            <a class="dropdown-item" href="#"onclick="theme1()">Dracula</a>
+          <div style="  background-color: #505050;" class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a style="color: #DDDCDB"class="dropdown-item" href="#" onclick="theme3()">The Dark</a>
+            <a class="dropdown-item" style="color: #DDDCDB;" href="#"onclick="theme2()">BlackBoard</a>
+            <a class="dropdown-item"  style="color:#DDDCDB;" href="#"onclick="theme1()">Dracula</a>
 
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#"  onclick="theme0()">Default</a>
+            <a class="dropdown-item" href="#"  style="color: #DDDCDB;" onclick="theme0()">Default</a>
           </div>
 
         </li>
@@ -577,6 +589,34 @@ Emerginov Editor
 function acceptRequest(){
   console.log("éhey");
 }
+$("#createProject").click(function(){
+  let id=sessionStorage.getItem("userID")
+  console.log(id);
+  let projectName=document.getElementById("NewProjectName").value
+  console.log(projectName);
+  if (projectName!="") {
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/repos/create",
+        dataType:"json",
+        data:{
+          "myID":id,
+          "name":projectName
+        },
+        success: function (json) {
+          $("#alertSearch").show()
+
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+
+  }
+
+
+
+})
 $.ajax({
     async: true,
     type: "POST",

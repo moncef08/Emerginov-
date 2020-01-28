@@ -64,6 +64,7 @@ console.log(name);
 }
 export async function verifyRequest(req,res){
   var { projectName,myID,profileID }=req.body;
+  console.log(req.body);
   var id=BigInt(profileID)
   var test=false;
   console.log("his id is : "+id);
@@ -99,6 +100,7 @@ export async function verifyRequest(req,res){
 }
 
 export async function sendReq(req,res){
+  console.log(req.body);
   var { projectID,projectName,myID,profileID }=req.body;
   var id=BigInt(profileID)
   console.log(id);
@@ -160,7 +162,7 @@ export async function sendReq(req,res){
   }else {
 
     return res.json({
-      message:' this project does not exist '
+      message:' this user does not exist '
     });
   }
 
@@ -171,7 +173,8 @@ export async function getProjectById(req,res){
   const project= await Project.findOne({
     where:{
       id
-    }
+
+  }
   });
   if (project!=null) {
       res.json(project);

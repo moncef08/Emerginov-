@@ -2,23 +2,62 @@
 const octokit = require('@octokit/rest');
 var $ = require("jquery");
 import copyFiles_And_CreateVirtualHost from './php.controller.js'
+import Users from '../models/Users';
+import Project from '../models/Project';
 
 export async function create_Git_Repository(req,res){
-  const {name,token}= req.body;
+  const {myID,name}= req.body;
+  const user= await Users.findOne({
+    where:{
+      id:myID
+    }
+  });
+  console.log(req.body);
+  var idProject= Math.floor(Math.random() * Math.floor(100000));
+  console.log(idProject);
+  let id=idProject;
+  let priority=null;
+  let deliverydate=null;
+  let newProject= await Project.create({
+    id,
+    name,
+    priority,
+    deliverydate
+  },{
+    fields:['id','name','priority','deliverydate']
+  });
+
+  var projID=user.projectid
+  console.log(projID);
+  if (user.projectid!=null) {
+    projID.push(idProject)
+    console.log(projID);
+    user.update({
+      projectid:projID
+    })
+  }else {
+    var newProjectid=[idProject]
+    console.log(newProjectid);
+    user.update({
+
+      projectid:newProjectid
+    })
+  }
+
   const clientWithAuth = new octokit({
   //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
-  auth:token
+  auth:user.gitToken
   })
   clientWithAuth.repos.createForAuthenticatedUser({
   name:name
   }).then(data =>{
+
   console.log("repo successfully created");
   }).catch(e =>{
   console.log(e);
-//  alert("ERROR check your informations");
+  //  alert("ERROR check your informations");
   })
 
-  return res.redirect('/home.html');
 
 
 }

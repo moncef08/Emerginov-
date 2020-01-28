@@ -184,10 +184,9 @@
                       </div>
                   <div class="py-4">
                       <h5 class="mb-3">Recent projects</h5>
-                      <div  class="p-4 bg-light rounded shadow-sm">
+                      <div  id="project" class="p-4 bg-light rounded shadow-sm">
                         <!-- <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"   href=""  class="btn btn-danger btn-sm btn-block">Follow</button></div> -->
 
-                         <p id="projects" class="font-italic mb-0"><button id="send" onclick="send_Req()"></button></p>
 
                       </div>
 
@@ -249,13 +248,17 @@
         document.getElementById("name").innerHTML=json.name
         document.getElementById("location").innerHTML+=json.location
         document.getElementById("Job").innerHTML+=json.job
-        $.ajax({
+        console.log(json.projectid);
+        if (json.projectid!=null) {
+        for (var i = 0; i < json.projectid.length; i++) {
+
+          $.ajax({
             async: true,
             type: "POST",
             url: "http://localhost:3000/api/projects/id",
             dataType:"json",
             data: {
-                "id":json.projectid
+                "id":json.projectid[i]
             },
             success: function (json) {
               console.log(json);
@@ -263,9 +266,14 @@
                 var url=window.location.href;
                 var idOfUser = url.substring(url.lastIndexOf('D') + 2);
                 id=parseInt(idOfUser)
-                document.getElementById("projects").innerHTML+=" "+json.name
-                projectName=$("#projects").text().replace(" ","");
+                var  buttonid=  Math.floor(Math.random() * 1000);
+                var  textid=  Math.floor(Math.random() * 1000);
+                console.log(buttonid);    // returns a random integer from 0 to 99
+                var projectName=json.name
                 console.log(projectName);
+                buttonid=buttonid.toString()
+
+                $('#project').append(`<p id="${textid}" class="font-italic mb-0"><button  id="${buttonid}" onclick="send_Req(this.id,${textid})"></button> ${json.name}</p><br>`);
 
                 var myID=sessionStorage.getItem("userID")
                 $.ajax({
@@ -282,12 +290,14 @@
                       console.log(json);
                       if (json.verification=="yes") {
                         console.log("yes");
-                        $("#send").addClass("btn btn-success btn-sm fa fa-check")
-                        $( "#send" ).prop( "disabled", true );
+                        $(`#${buttonid}`).addClass("btn btn-success btn-sm fa fa-check")
+                        $( `#${buttonid}` ).prop( "disabled", true );
+                        $( `#${buttonid}` ).text("sent !");
 
                       }else {
                         console.log("no");
-                        $("#send").addClass("btn btn-success btn-sm fa fa-plus")
+                        $(`#${buttonid}`).addClass("btn btn-success btn-sm fa fa-plus")
+
 
                       }
 
@@ -295,14 +305,19 @@
                     error: function (xhr, ajaxOptions, thrownError) {
                     }
                 });
-              }else {
-              }
+
+               }else {}
 
               //mettre l'id dans l'url
             },
             error: function (xhr, ajaxOptions, thrownError) {
             }
         });
+
+      }
+    }else {
+
+    }
         console.log(json);
         if (json.picture==undefined) {
           document.getElementById('photo').src="./assets/unknown.jpg"
@@ -341,12 +356,17 @@
       }
   });
 
-  function send_Req(){
-    let ProjectName=$("#projects").text().replace(" ","");
+  function send_Req(e,n){
+
+    var ProjectName=document.getElementById(n).innerText.replace(" ","");
+    console.log(ProjectName);
     var url=window.location.href;
     var idOfUser = url.substring(url.lastIndexOf('D') + 2);
     id=parseInt(idOfUser)
     var myID=sessionStorage.getItem("userID")
+    // ProjectName.splice(ProjectName.indexOf(""), 1);
+    // ProjectName=ProjectName.replace(" ","");
+    // console.log(ProjectName);
     $.ajax({
         async: true,
         type: "POST",
@@ -375,11 +395,15 @@
               error: function (xhr, ajaxOptions, thrownError) {
               }
           });
-          console.log("hey");
-            $( "#send" ).toggleClass( "fa-plus" );
-            $( "#send" ).addClass( "fa-check" );
-            $( "#send" ).text("sent !");
-            $( "#send" ).prop( "disabled", true );
+          // console.log(document.getElementById("projects"));
+          // var ids = $('#projects ').children().map(function(){
+          //   return $(this).attr('id');
+          // }).get();
+
+          $(`#${e}`).toggleClass( "fa-plus" );
+          $(`#${e}`).addClass( "fa-check" );
+          $(`#${e}`).text("sent !");
+          $(`#${e}`).prop( "disabled", true );
 
 
 
@@ -389,8 +413,9 @@
         error: function (xhr, ajaxOptions, thrownError) {
         }
     });
-
   }
+
+
 
   function gotoProfile(){
     var login=document.getElementById("search").value;

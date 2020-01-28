@@ -13,4 +13,5 @@
   function calculate(){
 	document.write(1+1+1+1)
   }
+  
 </script>

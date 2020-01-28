@@ -6,13 +6,13 @@ export const sequelize=new Sequelize(
 'Moncef18',
 'azerty',
 
-
+  //
   // 'lpjibasl',
   // 'lpjibasl',
   // '6o5Zh4iXTCgAdrpg9SGsRoYlM70c0X3o',
   {
-    host:'localhost',
-    //host: 'manny.db.elephantsql.com',
+    // host:'manny.db.elephantsql.com',
+    host: 'localhost',
     dialect:'postgres',
     pool:{
       max:1000,

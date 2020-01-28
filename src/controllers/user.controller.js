@@ -8,26 +8,26 @@ storage.setItem('userID', "")
 const { Op } = require("sequelize");
 
 export async function createUser(req, res){
-  var { name,login,Email,profession,job,school,hashedPassword,mastodon}= req.body;
+  var { name,login,Email,gitToken,job,school,hashedPassword,mastodon}= req.body;
   console.log(req.body);
   console.log(hashedPassword);
   hashedPassword = passwordHash.generate(hashedPassword);
   var id= Math.floor(Math.random() * Math.floor(1000000000000));
   console.log(id);
   console.log(req.body);
-  var projectid=2;
+  var projectid=null;
   var location=null;
   var company=null;
   var nbfollowers=0;
-  var listoffollow=0;
+  var listoffollow=null;
   var picture=null;
+  var gitToken=null
   try{
     let newUser= await Users.create({
       id,
       name,
       login,
       Email,
-      profession,
       school,
       projectid,
       location,
@@ -39,7 +39,7 @@ export async function createUser(req, res){
       hashedPassword,
       mastodon
     },{
-      fields:['id','name','login','Email','profession','school','projectid','location','job','company','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
+      fields:['id','name','login','Email','gitToken','school','projectid','location','job','company','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
     });
     if(newUser){
       return res.json({
@@ -96,10 +96,14 @@ export async function getUsers(req,res){
 export async function getUsersByProject(req,res){
     const {projectId}= req.params;
     const ProjectUsers = await Users.findAll({
-      attributes: ['name', 'profession', 'projectid'],
+      attributes: ['name', 'projectid'],
       where:{
-        projectId
+        projectid:{
+         [Op.contains]:projectId
+
+
       }
+    }
     });
     if (ProjectUsers.length>0) {
       return res.json(ProjectUsers);
@@ -270,10 +274,10 @@ export async function deleteUserFromProject(req,res){}
 
 export async function updateUser(req,res){
     const { id } = req.params;
-    const{ name,login, profession, projectid } = req.body;
+    const{ name,login, gitToken, projectid } = req.body;
 
     const users = await Users.findAll({
-      attributes: ['id', 'name','login', 'profession', 'projectid'],
+      attributes: ['id', 'name','login', 'gitToken', 'projectid'],
       where:{
         id
       }
@@ -284,8 +288,8 @@ export async function updateUser(req,res){
         await user.update({
           name,
           login,
-          profession,
-          projectId
+          gitToken,
+          projectid
         });
       })
 

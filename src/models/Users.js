@@ -15,11 +15,11 @@ const Users=sequelize.define('users',{
   Email:{
     type: Sequelize.TEXT
   },
-  profession:{
+  gitToken:{
     type: Sequelize.TEXT
   },
   projectid:{
-    type: Sequelize.INTEGER
+    type: Sequelize.DataTypes.ARRAY(Sequelize.INTEGER)
   },
   location:{
     type: Sequelize.TEXT
@@ -37,7 +37,7 @@ const Users=sequelize.define('users',{
     type: Sequelize.INTEGER
   },
   listoffollow:{
-    type: Sequelize.JSON
+    type: Sequelize.DataTypes.ARRAY(JSON)
   },
   picture:{
     type: Sequelize.TEXT
