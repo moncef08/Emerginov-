@@ -12,6 +12,22 @@ export async function create_Git_Repository(req,res){
       id:myID
     }
   });
+
+
+  if (user.projectid!=null) {
+    for (var i = 0; i < user.projectid.length; i++) {
+      const project= await Project.findOne({
+        where:{
+          id:user.projectid[i]
+        }
+      });
+      if (name==project.name) {
+        return res.json({
+          "message":"this project already exist"
+        })
+      }
+    }
+  }
   console.log(req.body);
   var idProject= Math.floor(Math.random() * Math.floor(100000));
   console.log(idProject);

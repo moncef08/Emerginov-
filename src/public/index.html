@@ -605,10 +605,14 @@ $("#createProject").click(function(){
           "name":projectName
         },
         success: function (json) {
-          $("#alertSearch").show()
+          if (json.message!=null) {
+            alert("please change the name of your project")
+
+          }
 
         },
         error: function (xhr, ajaxOptions, thrownError) {
+
         }
     });
 

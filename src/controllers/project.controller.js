@@ -170,6 +170,7 @@ export async function sendReq(req,res){
 }
 export async function getProjectById(req,res){
   const { id }=req.body;
+  console.log(req.body);
   const project= await Project.findOne({
     where:{
       id
@@ -177,6 +178,7 @@ export async function getProjectById(req,res){
   }
   });
   if (project!=null) {
+      console.log(project.name);
       res.json(project);
   }else {
     return res.json({
@@ -216,7 +218,36 @@ export async function getProjectByUserId(req,res){
     }
   }
 }
+export async function deleteProjectFromAllTables(req,res){
+  var { idofProject, idOfUser} = req.body
+  console.log(req.body);
+  const deleteRowCount = await Project.destroy({
+    where:{
+      id:idofProject
+    }
+  });
+  const user= await Users.findOne({
+    where:{
+      id:idOfUser
+    }
+  });
+  let projects=user.projectid;
+  let newProjectid=[]
 
+
+  for (var i = 0; i < projects.length; i++) {
+   if (idofProject!=projects[i]) {
+     newProjectid.push(projects[i])
+   }
+  }
+  if (newProjectid.length==0) {
+    newProjectid=null
+  }
+  console.log(newProjectid);
+  user.update({
+    projectid:newProjectid
+  })
+}
 export async function deleteProject(req,res){
   const { id }=req.params;
   const deleteRowCount = await Project.destroy({

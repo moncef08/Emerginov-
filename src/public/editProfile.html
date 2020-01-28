@@ -361,7 +361,7 @@
           document.getElementById("nbfollowers").innerHTML+=nbfollowers
         }
         if (json.projectid!=null) {
-        for (var i = 0; i < json.projectid.length; i++) {
+          for (var i = 0; i < json.projectid.length; i++) {
 
           $.ajax({
             async: true,
@@ -377,22 +377,87 @@
               if (json.id!=undefined) {
                 var  buttonid=  Math.floor(Math.random() * 1000);
                 var  textid=  Math.floor(Math.random() * 1000);
-
                 $('#project').append(`<p id="${textid}" class="font-italic mb-0"><button class="btn btn-danger btn-sm fa fa-minus-circle" id="${buttonid}" onclick="delete_Project(this.id,${textid})"></button> ${json.name}</p><br>`);
 
 
-               }else {}
+               }
+             },
+             error: function(xhr, ajaxOptions, thrownError){
 
-
-
-
-      }
-    });
-  }}
+             }
+           });
+         }
+       }
   },
       error: function (xhr, ajaxOptions, thrownError) {
       }
   });
+  function delete_Project(buttonid,textid){
+    console.log(textid);
+
+    console.log(document.getElementById("project"));
+    let projectName=document.getElementById(textid).innerText.replace(" ","")
+    console.log(projectName);
+
+    let myID=sessionStorage.getItem("userID");
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/id",
+        dataType:"json",
+        data: {
+            "id":myID
+        },
+        success: function (user) {
+          console.log(user.projectid);
+          for (var i = 0; i < user.projectid.length; i++) {
+            let projectid=user.projectid[i]
+            $.ajax({
+                async: true,
+                type: "POST",
+                url: "http://localhost:3000/api/projects/id",
+                dataType:"json",
+                data: {
+                    "id":user.projectid[i]
+                },
+                success: function (project) {
+                  if (project.name==projectName) {
+                    console.log(project.name);
+                    $.ajax({
+                        async: true,
+                        type: "POST",
+                        url: "http://localhost:3000/api/projects/deleteAll",
+                        dataType:"json",
+                        data: {
+                            "idOfUser":myID,
+                            "idofProject":projectid
+                        },
+                        success: function (project) {
+
+
+                          //mettre l'id dans l'url
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                        }
+                    });
+
+                  }
+
+                  //mettre l'id dans l'url
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                }
+            });
+          }
+
+          //mettre l'id dans l'url
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+    $(`#${buttonid}`).remove();
+    $(`#${textid}`).remove();
+  }
   function gotoProfile(){
     var login=document.getElementById("search").value;
     console.log(login);
