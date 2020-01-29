@@ -1,0 +1,78 @@
+<html>
+   <head>
+      <style>
+         body{
+            text-align:center;
+         }
+         canvas{
+            border-top:solid 4px #EEE;
+            border-right:solid 4px #EEE;
+            margin:auto;
+            margin-top:50px;
+            display:block;
+            margin-bottom:40px;
+         }
+      </style>
+      <script>
+         x=0;
+         y=0;
+         window.onload=function(){
+            can=document.getElementById("can");
+            cont=can.getContext("2d");
+            cont.fillStyle="#E70";
+            fonc();
+         }
+
+         dirX="inc";
+         dirY="inc";
+         function fonc(){
+            t=setTimeout("fonc()",10);
+            cont.fillStyle="#FFF";
+            cont.fillRect(0,0,600,400);
+            cont.fillStyle="#E70";
+            cont.beginPath();
+            cont.arc(x,y,20,0,2*Math.PI);
+            cont.fill();
+            cont.closePath();
+            cont.fillStyle="#EEE";
+            cont.fillRect(0,y-80/2,4,80);
+            cont.fillRect(x-80/2,396,80,4);
+
+            if(dirX=="inc")
+               x+=5;
+            if(dirY=="inc")
+               y+=5;
+            if(dirX=="dec")
+               x-=5;
+            if(dirY=="dec")
+               y-=5;
+
+            if(x>=600-20){
+               dirX="dec";
+            }
+            if(y>=400-20){
+               dirY="dec";
+            }
+            if(x<=24){
+               dirX="inc";
+            }
+            if(y<=24){
+               dirY="inc";
+            }
+
+            if(y>400-40){
+               cont.fillStyle="#E70";
+               cont.fillRect(x-80/2,396,80,4);
+            }
+            if(x<=40){
+               cont.fillStyle="#E70";
+               cont.fillRect(0,y-80/2,4,80);
+            }
+         }
+      </script>
+   </head>
+   <body>
+      <canvas width="600" height="400" id="can">
+      </canvas>
+   </body>
+</html>

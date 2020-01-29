@@ -568,7 +568,7 @@ Emerginov Editor
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script id="notificationTemplate" type="text/html">
   <!-- NOTIFICATION -->
-  <a class="dropdown-item dropdown-notification" href="{{href}}">
+  <a id="{{allid}}"class="dropdown-item dropdown-notification" href="{{href}}">
     <div class="notification-read">
       <i class="fa fa-times" aria-hidden="true"></i>
     </div>
@@ -578,16 +578,58 @@ Emerginov Editor
       <p class="notification-date text-muted">
 
       </p>
-      <i type="button" onclick="acceptRequest()"style="color:green"class="btn btn-danger btn-sm fa fa-plus"> accept ?</i>
-      <i type="button" onclick="refuseRequest()"style="color:red"class="btn btn-success btn-sm fa fa-times"> refuse ?</i>
+
+      <i id="{{Acceptid}}" type="button" onclick="acceptRequest(this.id)"style="color:green"class="btn btn-danger btn-sm fa fa-plus"> accept ?</i>
+      <i id="{{Refuseid}}" type="button" onclick="refuseRequest(this.id)"style="color:red"class="btn btn-success btn-sm fa fa-times"> refuse ?</i>
 
     </div>
 
   </a>
 </script>
 <script>
-function acceptRequest(){
-  console.log("éhey");
+function acceptRequest(e){
+  var identifyid=e.replace("Accept","")
+  identifyid=parseInt(identifyid)
+  var myID=sessionStorage.getItem("userID");
+  var texte=notifications[identifyid].texte.split(" ");
+  console.log(texte);
+  var projectName=""
+  var senderLogin=notifications[identifyid].texte.split(" ")[0];
+  if (texte.length>6) {
+    for (var i = 5; i < texte.length; i++) {
+      projectName+=texte[i]+" "
+
+    }
+  }else {
+    console.log("hhello");
+     projectName=notifications[identifyid].texte.split(" ")[5];
+
+  }
+  console.log(projectName);
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/api/users/acceptRequest",
+      dataType:"json",
+      data:{
+        "id":myID,
+        "senderLogin":senderLogin,
+        "name":projectName
+      },
+      success: function (json) {
+
+
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+
+      }
+  });
+  $(`#${e}`).parent().parent()[0].remove();
+  notifications.splice( identifyid, 1 );
+  console.log(notifications);
+
+
+
 }
 $("#createProject").click(function(){
   let id=sessionStorage.getItem("userID")
@@ -607,6 +649,10 @@ $("#createProject").click(function(){
         success: function (json) {
           if (json.message!=null) {
             alert("please change the name of your project")
+
+          }
+          if (json.error!=null) {
+            alert("your token does not exist")
 
           }
 
@@ -639,6 +685,14 @@ $.ajax({
     error: function (xhr, ajaxOptions, thrownError) {
     }
 });
+var notifications = new Array();
+// for (var x = 0; x < notifications.length; x++) {
+//   for (var y = 0; y < notifications.length; y++){
+//     if (notifications[x]==notifications[y]) {
+//       notifications.splice(x,1)
+//     }
+//   }
+// }
 
 $(function () {
 
@@ -646,7 +700,6 @@ $(function () {
   var lastCount = count;
   var myID=sessionStorage.getItem("userID")
   // Pour la maquette
-  var notifications = new Array();
   $.ajax({
       async: true,
       type: "POST",
@@ -673,24 +726,33 @@ $(function () {
              },
              success: function (user) {
                var image=user.picture
-
+               var alreadyexist=false;
                if (status=="waitForResponse") {
-                 if (image==null) {
-                   notifications.push({
-                     href: "#",
-                     image:`./assets/unknown.jpg`,
-                     texte: user.name +" wants to participate to "+ projectName,
-                   });
-                   count++
-                 }else {
-                   notifications.push({
-                     href: "#",
-                     image:`data:image/png;base64,${user.picture}`,
-                     texte: user.name +" wants to participate to "+ projectName,
-                   });
-                   count++
-
+                 for (var i = 0; i < notifications.length; i++) {
+                   if (notifications[i].texte==user.login +" wants to participate to "+ projectName) {
+                     alreadyexist=true
+                   }
                  }
+                 if (alreadyexist==false) {
+                   if (image==null) {
+
+                     notifications.push({
+                       href: "#",
+                       image:`./assets/unknown.jpg`,
+                       texte: user.login +" wants to participate to "+ projectName,
+                     });
+                     count++
+                   }else {
+                     notifications.push({
+                       href: "#",
+                       image:`data:image/png;base64,${user.picture}`,
+                       texte: user.login +" wants to participate to "+ projectName,
+                     });
+                     count++
+
+                   }
+                 }
+
 
                }
 
@@ -846,6 +908,9 @@ $(function () {
           template = template.replace("{{image}}", notifications[i].image);
           template = template.replace("{{texte}}", notifications[i].texte);
           template = template.replace("{{date}}", notifications[i].date);
+          template = template.replace("{{allid}}",`allid${i}`);
+          template = template.replace("{{Acceptid}}",`Accept${i}`);
+          template = template.replace("{{Refuseid}}",`Refuse${i}`);
 
           $('#notificationsContainer').append(template);
         }

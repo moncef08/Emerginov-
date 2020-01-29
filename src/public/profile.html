@@ -289,10 +289,23 @@
                     success: function (json) {
                       console.log(json);
                       if (json.verification=="yes") {
+                        console.log(json.status);
+                        if (json.status=="waitForResponse") {
+                          $(`#${buttonid}`).addClass("btn btn-info btn-sm")
+                          $( `#${buttonid}` ).prop( "disabled", true );
+                          $( `#${buttonid}` ).text("waiting for approuvement");
+
+                        }else if(json.status=="approved"){
+                          $(`#${buttonid}`).addClass("btn btn-success btn-sm fa fa-check")
+                          $( `#${buttonid}` ).prop( "disabled", true );
+                          $( `#${buttonid}` ).text(" approved");
+
+                        }else {
+
+                        }
                         console.log("yes");
-                        $(`#${buttonid}`).addClass("btn btn-success btn-sm fa fa-check")
-                        $( `#${buttonid}` ).prop( "disabled", true );
-                        $( `#${buttonid}` ).text("waiting for approuvement");
+                        //fa fa check vert for approuvement
+
 
                       }else {
                         console.log("no");
@@ -383,7 +396,6 @@
               url: "http://localhost:3000/api/projects/sendReq",
               dataType:"json",
               data: {
-                  "projectID":projectID,
                   "projectName":json.name,
                   "myID":myID,
                   "profileID":id
@@ -400,9 +412,11 @@
           //   return $(this).attr('id');
           // }).get();
 
-          $(`#${e}`).toggleClass( "fa-plus" );
-          $(`#${e}`).addClass( "fa-check" );
-          $(`#${e}`).text("sent !");
+
+          $(`#${e}`).toggleClass("btn btn-success btn-sm fa fa-plus")
+          $(`#${e}`).addClass("btn btn-info btn-sm")
+
+          $(`#${e}`).text(" waiting for approuvement");
           $(`#${e}`).prop( "disabled", true );
 
 

@@ -182,6 +182,63 @@ export async function newFollower(req,res){
     }
 
   }
+  export async function acceptRequest(req,res){
+    const { id,senderLogin,name }=req.body;
+    console.log(id);
+    const sender= await Users.findOne({
+      where:{
+        login:senderLogin
+      }
+    });
+    const user= await Users.findOne({
+      where:{
+        id
+      }
+    });
+    if (user.requests!=null) {
+      var newRequests=[]
+      for (var i = 0; i < user.requests.length; i++) {
+        if(user.requests[i].senderID!=sender.id || user.requests[i].projectName!=name){
+          newRequests.push(user.requests[i])
+        }else {
+          newRequests.push({
+            "projectName":name,
+            "senderID":sender.id,
+            "status":"approved"
+          })
+        }
+
+      }
+      user.update({
+        requests:newRequests
+      })
+
+    }
+
+
+
+    var newProjectid=sender.projectid
+    console.log(name);
+
+    console.log("les anciens projets sont "+newProjectid);
+    const project= await Project.findOne({
+      where:{
+        name:name
+      }
+    });
+    console.log("yes "+project.name);
+    console.log(project.id);
+    if (newProjectid!=null) {
+      newProjectid.push(project.id)
+    }else {
+      console.log(newProjectid);
+      var newProjectid=[project.id]
+    }
+    sender.update({
+      projectid:newProjectid
+    })
+
+  }
 
 export async function getUserByName(req,res){
         const { name }=req.body;

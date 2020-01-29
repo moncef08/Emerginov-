@@ -7,6 +7,7 @@ import Project from '../models/Project';
 
 export async function create_Git_Repository(req,res){
   const {myID,name}= req.body;
+  console.log(req.body);
   const user= await Users.findOne({
     where:{
       id:myID
@@ -15,13 +16,14 @@ export async function create_Git_Repository(req,res){
 
 
   if (user.projectid!=null) {
+    console.log("heeloo");
     for (var i = 0; i < user.projectid.length; i++) {
       const project= await Project.findOne({
         where:{
           id:user.projectid[i]
         }
       });
-      if (name==project.name) {
+      if (project!=null && name==project.name) {
         return res.json({
           "message":"this project already exist"
         })
@@ -70,6 +72,9 @@ export async function create_Git_Repository(req,res){
 
   console.log("repo successfully created");
   }).catch(e =>{
+    res.json({
+      "error":"your token does not exist"
+    })
   console.log(e);
   //  alert("ERROR check your informations");
   })

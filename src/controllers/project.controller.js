@@ -64,44 +64,45 @@ console.log(name);
 }
 export async function verifyRequest(req,res){
   var { projectName,myID,profileID }=req.body;
-  console.log(req.body);
   var id=BigInt(profileID)
-  var test=false;
-  console.log("his id is : "+id);
+  var test=false
+  var status=""
   const user= await Users.findOne({
     where:{
       id
     }
   });
-  console.log(user.requests);
   if (user.requests!=null) {
+    var i=0;
+    console.log(user.requests);
     for (var i = 0; i < user.requests.length; i++) {
       if (user.requests[i].senderID==myID && user.requests[i].projectName==projectName) {
-        console.log("true");
         test=true
+        status=user.requests[i].status
       }
     }
-    if (test==true) {
-      console.log("hy");
-      res.json({
-        "verification":"yes"
-      })
+    if (test==false) {
+      return res.json({
+        "verification":"no",
+      });
     }else {
-      console.log("ho");
-      res.json({
-        "verification":"no"
-      })
+      return res.json({
+        "verification":"yes",
+        "status":status
+      });
     }
-  }else {
-    res.json({
-      "verification":"no"
-    })
-  }
+
+
+}else {
+  return res.json({
+    "verification":"no",
+  });
+}
 }
 
 export async function sendReq(req,res){
   console.log(req.body);
-  var { projectID,projectName,myID,profileID }=req.body;
+  var { projectName,myID,profileID }=req.body;
   var id=BigInt(profileID)
   console.log(id);
   const user= await Users.findOne({
@@ -117,7 +118,7 @@ export async function sendReq(req,res){
     if (newRequests!=null) {
       for (var i = 0; i < newRequests.length; i++) {
 
-        if (newRequests[i].senderID==myID) {
+        if (newRequests[i].senderID==myID && projectName==newRequests[i].projectName) {
           console.log("true");
            alreadysent =true
         }
@@ -138,8 +139,9 @@ export async function sendReq(req,res){
             requests: newRequests
 
         })
-
       }
+
+
     }else {
       console.log("firsttime");
       user.update({

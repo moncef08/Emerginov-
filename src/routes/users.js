@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 
-import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject,searchUserByLogin,getUserByName,newFollower,unFollow,updatePicture,getUserByLoginAndPassword,getSession,logout} from '../controllers/user.controller';
+import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject,searchUserByLogin,acceptRequest,getUserByName,newFollower,unFollow,updatePicture,getUserByLoginAndPassword,getSession,logout} from '../controllers/user.controller';
 
 // /api/users/
 router.post('/',createUser);
@@ -17,6 +17,7 @@ router.post('/follow',newFollower);
 router.post('/unfollow',unFollow);
 router.post('/picture',updatePicture);
 router.post('/name',getUserByName);
+router.post('/acceptRequest',acceptRequest);
 
 router.get('/projects/:projectId',getUsersByProject);
 router.delete('/:id',deleteUser);
