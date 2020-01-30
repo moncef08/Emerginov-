@@ -363,7 +363,7 @@ Emerginov Editor
         </li>
 
         <li class="nav-item">
-          <a id="run" class="nav-link"  target="viewer" href="http://project3.ci/">Run</a>
+          <a id="run" class="nav-link"  target="viewer" href="http://project.ci/">Run</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " id="saved" onkeypress="pressControlS(event)" onclick="save()" href="#">save</a>
@@ -396,8 +396,8 @@ Emerginov Editor
 
        </ul>
        <ul class="navbar-nav mr-auto">
-         <li  id="alertSearch" class="nav-item">
-           <a class="alert alert-danger" role="alert"> Sorry, this user does not exist.
+         <li class="alert alert-danger" id="alertSearch" class="nav-item">
+           <a  role="alert"> Sorry, this user does not exist.
            </a>
          </li>
        </ul>
@@ -634,9 +634,23 @@ function acceptRequest(e){
 $("#createProject").click(function(){
   let id=sessionStorage.getItem("userID")
   console.log(id);
+  let spaceProblem=false;
   let projectName=document.getElementById("NewProjectName").value
   console.log(projectName);
-  if (projectName!="") {
+  for (var i = 0; i < projectName.length; i++) {
+    if (projectName[i]==" ") {
+    spaceProblem=true;
+    }
+
+  }
+  if (spaceProblem==true) {
+    console.log("heyt");
+    $("#alertSearch").text("No space permitted")
+    $("#alertSearch").show()
+
+  }
+  console.log(projectName);
+  if (projectName!="" && spaceProblem==false) {
     $.ajax({
         async: true,
         type: "POST",
@@ -648,12 +662,15 @@ $("#createProject").click(function(){
         },
         success: function (json) {
           if (json.message!=null) {
-            alert("please change the name of your project")
+            $("#alertSearch").text("This project already exist in Git")
+            $("#alertSearch").show()
+            return ;
 
           }
           if (json.error!=null) {
-            alert("your token does not exist")
-
+            $("#alertSearch").text("Your Token is not valid")
+            $("#alertSearch").show()
+            return;
           }
 
         },
@@ -694,7 +711,7 @@ var notifications = new Array();
 //   }
 // }
 
-$(function () {
+$(function  () {
 
   var count = 0;
   var lastCount = count;
@@ -1593,12 +1610,16 @@ function hideMarker() {
 
    });
 
-   $(function () {
+  $(function () {
+     let myID=sessionStorage.getItem("userID")
               $.ajax({
                   async: true,
-                  type: "GET",
+                  type: "POST",
                   url: "http://localhost:3000/home/editor",
                   dataType: "json",
+                  data:{
+                    "id":myID
+                  },
                   success: function (json) {
                       create_tree(json);
                   },
@@ -2268,11 +2289,11 @@ function pressEnter() {
 
       }
 
-    setTimeout(function(){
-      if(window.location.href.substr(-2) !== "?r") {
-      window.location = window.location.href + "?r";
-    }
-  },100)
+  //   setTimeout(function(){
+  //     if(window.location.href.substr(-2) !== "?r") {
+  //     window.location = window.location.href + "?r";
+  //   }
+  // },100)
   </script>
   </body>
   </html>

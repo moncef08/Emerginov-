@@ -5,7 +5,7 @@
   const fs = require('fs-extra');
   //const { exec } = require('child_process');
   sudo.setPassword('Moncef18');
-  var projectName="project3"
+  var projectName="project"
   var newVirtualHost =`
   <VirtualHost *:80>
     ServerAdmin adminr@${projectName}.ci

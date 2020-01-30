@@ -12,6 +12,9 @@ const Users=sequelize.define('users',{
   login:{
     type: Sequelize.TEXT
   },
+  gitUsername:{
+    type: Sequelize.TEXT
+  },
   Email:{
     type: Sequelize.TEXT
   },
@@ -45,6 +48,10 @@ const Users=sequelize.define('users',{
   },
   hashedPassword:{
     type: Sequelize.TEXT
+
+  },
+  currentProject:{
+    type: Sequelize.JSON
 
   },
   mastodon:{
