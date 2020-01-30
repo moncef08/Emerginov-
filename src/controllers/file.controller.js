@@ -1,17 +1,22 @@
 const dirTree = require("directory-tree");
 var fs = require('fs');
+import Users from '../models/Users';
 
 
 export async function getFile(req, res){
- var tree = dirTree("projects");
+
+  const {id}=req.body
+
+
+ var tree = dirTree("project");
  tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
      try{
       res.json(tree);
      }catch(e){
       console.log(e)
      }
-
 }
+
 
 export async function create_DirectoryOrFile(req,res){
   const {path,type}= req.body;

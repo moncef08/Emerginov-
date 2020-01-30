@@ -8,7 +8,7 @@ storage.setItem('userID', "")
 const { Op } = require("sequelize");
 
 export async function createUser(req, res){
-  var { name,login,Email,gitToken,job,school,hashedPassword,mastodon}= req.body;
+  var { name,login,Email,gitToken,gitUsername,job,school,hashedPassword,mastodon}= req.body;
   console.log(req.body);
   console.log(hashedPassword);
   hashedPassword = passwordHash.generate(hashedPassword);
@@ -33,13 +33,14 @@ export async function createUser(req, res){
       location,
       job,
       company,
+      gitUsername,
       nbfollowers,
       listoffollow,
       picture,
       hashedPassword,
       mastodon
     },{
-      fields:['id','name','login','Email','gitToken','school','projectid','location','job','company','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
+      fields:['id','name','login','Email','gitToken','school','projectid','location','job','company','gitUsername','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
     });
     if(newUser){
       return res.json({

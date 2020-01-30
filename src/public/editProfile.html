@@ -410,8 +410,30 @@
         },
         success: function (user) {
           console.log(user.projectid);
+          var gitToken=user.gitToken
+          var gitUsername=user.gitUsername;
+          console.log("deletion");
+          $.ajax({
+              async: true,
+              type: "POST",
+              url: "http://localhost:3000/repos/delete",
+              dataType:"json",
+              data: {
+                  "gitUsername":gitUsername,
+                  "name":projectName,
+                  "token":gitToken
+              },
+              success: function (project) {
+
+
+                //mettre l'id dans l'url
+              },
+              error: function (xhr, ajaxOptions, thrownError) {
+              }
+          });
           for (var i = 0; i < user.projectid.length; i++) {
             let projectid=user.projectid[i]
+
             $.ajax({
                 async: true,
                 type: "POST",
@@ -434,7 +456,6 @@
                         },
                         success: function (project) {
 
-
                           //mettre l'id dans l'url
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
@@ -455,6 +476,7 @@
         error: function (xhr, ajaxOptions, thrownError) {
         }
     });
+
     $(`#${buttonid}`).remove();
     $(`#${textid}`).remove();
   }
