@@ -2,8 +2,8 @@ import Sequelize from 'sequelize';
 
 //connexion to database
 export const sequelize=new Sequelize(
-'Moncef18',
-'Moncef18',
+'postgres',
+'moncef',
 'azerty',
 
 
@@ -11,8 +11,8 @@ export const sequelize=new Sequelize(
   // 'lpjibasl',
   // '6o5Zh4iXTCgAdrpg9SGsRoYlM70c0X3o',
   {
-    // host:'manny.db.elephantsql.com',
-    host: 'localhost',
+     host:'localhost',
+    // host: 'localhost',
     dialect:'postgres',
     pool:{
       max:1000,
