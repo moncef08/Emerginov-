@@ -4,6 +4,9 @@ var $ = require("jquery");
 import copyFiles_And_CreateVirtualHost from './php.controller.js'
 import Users from '../models/Users';
 import Project from '../models/Project';
+var Git = require("nodegit");
+var fs = require('fs-extra');
+
 
 export async function create_Git_Repository(req,res){
   const {myID,name}= req.body;
@@ -14,9 +17,41 @@ export async function create_Git_Repository(req,res){
     }
   });
 
+  const clientWithAuth = new octokit({
+  //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
+  auth:user.gitToken
+  })
+  clientWithAuth.repos.createForAuthenticatedUser({
+  name:name
+  }).then(data =>{
+
+  console.log("repo successfully created");
+
+  }).catch(e =>{
+    res.json({
+      "error":"your token does not exist"
+    })
+
+  console.log(e);
+  //  alert("ERROR check your informations");
+  })
+
+
+
+
+    console.log("yes");
+    var url = `https://github.com/${user.gitUsername}/${name}`;
+    var clonePath="project/project.ci/"
+    var opts = {
+        fetchOpts: {
+          callbacks: {
+            certificateCheck: () => 0
+        }
+      }
+    };
+    Git.Clone(url, clonePath, opts);
 
   if (user.projectid!=null) {
-    console.log("heeloo");
     for (var i = 0; i < user.projectid.length; i++) {
       const project= await Project.findOne({
         where:{
@@ -51,7 +86,12 @@ export async function create_Git_Repository(req,res){
     projID.push(idProject)
     console.log(projID);
     user.update({
-      projectid:projID
+      projectid:projID,
+      currentProject:{
+        "id":idProject,
+        "name":newProject.name
+      }
+
     })
   }else {
     var newProjectid=[idProject]
@@ -62,40 +102,25 @@ export async function create_Git_Repository(req,res){
     })
   }
 
-  const clientWithAuth = new octokit({
-  //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
-  auth:user.gitToken
-  })
-  clientWithAuth.repos.createForAuthenticatedUser({
-  name:name
-  }).then(data =>{
 
-  console.log("repo successfully created");
-  }).catch(e =>{
-    res.json({
-      "error":"your token does not exist"
-    })
-  console.log(e);
-  //  alert("ERROR check your informations");
-  })
 
 
 
 }
 export async function delete_Git_Repository(req,res){
-  const {username,name,token}= req.body;
+  const {gitUsername,name,token}= req.body;
+  console.log(req.body);
   const clientWithAuth = new octokit({
   auth:token
   })
   clientWithAuth.repos.delete({
-    owner: username,
+    owner: gitUsername,
     repo:name
   }).then(data =>{
     console.log("repo successfully deleted");
   }).catch(e =>{
     console.log(e);
   })
-  return res.redirect('/home.html');
 
 }
 

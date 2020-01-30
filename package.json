@@ -37,6 +37,7 @@
     "mysql2": "^2.1.0",
     "node-sessionstorage": "^1.0.0",
     "node-zip": "^1.1.1",
+    "nodegit": "^0.26.4",
     "nodemailer": "^6.3.1",
     "nodemailer-smtp-transport": "^2.7.4",
     "password-hash": "^1.2.2",
