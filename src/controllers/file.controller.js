@@ -8,7 +8,7 @@ export async function getFile(req, res){
   const {id}=req.body
 
 
- var tree = dirTree("project");
+ var tree = dirTree("projects");
  tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
      try{
       res.json(tree);
