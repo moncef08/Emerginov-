@@ -223,14 +223,25 @@ export async function getProjectByUserId(req,res){
 export async function deleteProjectFromAllTables(req,res){
   var { idofProject, idOfUser} = req.body
   console.log(req.body);
-  const deleteRowCount = await Project.destroy({
+  const proj = await Project.findOne({
     where:{
       id:idofProject
     }
   });
+
   const user= await Users.findOne({
     where:{
       id:idOfUser
+    }
+  });
+  if (user.currentProject.name==proj.name) {
+    user.update({
+      currentProject:null
+    })
+  }
+  const deleteRowCount = await Project.destroy({
+    where:{
+      id:idofProject
     }
   });
   let projects=user.projectid;

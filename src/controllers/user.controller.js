@@ -3,6 +3,10 @@ import Project from '../models/Project';
 var passwordHash = require('password-hash');
 var storage = require('node-sessionstorage')
 var storage1="";
+var rimraf = require("rimraf");
+var fs = require('fs-extra');
+var Git = require("nodegit");
+
 storage.setItem('userID', "")
 
 const { Op } = require("sequelize");
@@ -43,6 +47,7 @@ export async function createUser(req, res){
       fields:['id','name','login','Email','gitToken','school','projectid','location','job','company','gitUsername','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
     });
     if(newUser){
+      res.redirect("/login.html")
       return res.json({
         message:'User created successfully',
         data:newUser
@@ -69,7 +74,50 @@ export async function getUsers(req,res){
    }
   }
 
-  export async function updatePicture(req,res){
+   export async function changeCurrent(req,res){
+     rimraf("fictiveProjects/projects/", function () { console.log("done"); });
+     rimraf("projects/", function () { console.log("done"); });
+      const { id,newCurrentid,newCurrentname }=req.body;
+      const user= await Users.findOne({
+        where:{
+          id
+        }
+      });
+      if (user!=null) {
+        user.update({
+
+            currentProject:{
+              id:newCurrentid,
+              name:newCurrentname
+            }
+
+        })
+       var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
+
+
+        var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
+          if (err) throw err;
+        });
+        var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
+              if (err) throw err;
+            });
+        var localPath = "fictiveProjects/projects";
+        var opts = {
+            fetchOpts: {
+              callbacks: {
+                certificateCheck: () => 0
+            }
+          }
+        };
+        var cloneRepository = Git.Clone(url, localPath, opts);
+        setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
+
+        return res.json(user);
+
+    }
+
+    }
+    export async function updatePicture(req,res){
     const { id,picture }=req.body;
     const user= await Users.findOne({
       where:{

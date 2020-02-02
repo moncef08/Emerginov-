@@ -6,26 +6,47 @@ import Users from '../models/Users';
 import Project from '../models/Project';
 var Git = require("nodegit");
 var fs = require('fs-extra');
+var rimraf = require("rimraf");
 
 
 export async function create_Git_Repository(req,res){
-  const {myID,name}= req.body;
-  console.log(req.body);
+  rimraf("fictiveProjects/projects/", function () { console.log("done"); });
+  rimraf("projects/", function () { console.log("done"); });
+
+  var {myID,name}= req.body;
   const user= await Users.findOne({
     where:{
       id:myID
     }
   });
+  var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
+    if (err) throw err;
+  });
 
-  const clientWithAuth = new octokit({
+ const clientWithAuth = new octokit({
   //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
+
   auth:user.gitToken
   })
   clientWithAuth.repos.createForAuthenticatedUser({
   name:name
   }).then(data =>{
-
+  console.log(data.data.html_url);
   console.log("repo successfully created");
+  //
+
+  var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
+        if (err) throw err;
+      });
+  var localPath = "fictiveProjects/projects";
+  var opts = {
+      fetchOpts: {
+        callbacks: {
+          certificateCheck: () => 0
+      }
+    }
+  };
+  var cloneRepository = Git.Clone(data.data.html_url, localPath, opts);
 
   }).catch(e =>{
     res.json({
@@ -35,21 +56,7 @@ export async function create_Git_Repository(req,res){
   console.log(e);
   //  alert("ERROR check your informations");
   })
-
-
-
-
-    console.log("yes");
-    var url = `https://github.com/${user.gitUsername}/${name}`;
-    var clonePath="project/project.ci/"
-    var opts = {
-        fetchOpts: {
-          callbacks: {
-            certificateCheck: () => 0
-        }
-      }
-    };
-    Git.Clone(url, clonePath, opts);
+  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
 
   if (user.projectid!=null) {
     for (var i = 0; i < user.projectid.length; i++) {
@@ -97,7 +104,10 @@ export async function create_Git_Repository(req,res){
     var newProjectid=[idProject]
     console.log(newProjectid);
     user.update({
-
+      currentProject:{
+        "id":idProject,
+        "name":newProject.name
+      },
       projectid:newProjectid
     })
   }
@@ -123,6 +133,7 @@ export async function delete_Git_Repository(req,res){
   })
 
 }
+
 
 /*clientWithAuth.repos.delete({
   owner: "moncef08",

@@ -180,12 +180,15 @@
               </div>
 
               <div class="py-4 px-4">
-                  <div class="d-flex align-items-center justify-content-between mb-3">
-                      <h5 class="mb-0">Recent photos</h5><a href="#" class="btn btn-link text-muted">Show all</a>
-                  </div>
-                  <div class="row">
-                      <div class="col-lg-6 mb-2 pr-lg-1"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556294928/nicole-honeywill-546848-unsplash_ymprvp.jpg" alt="" class="img-fluid rounded shadow-sm"></div>
-                      <div class="col-lg-6 mb-2 pl-lg-1"><img src="https://res.cloudinary.com/mhmd/image/upload/v1556294927/dose-juice-1184444-unsplash_bmbutn.jpg" alt="" class="img-fluid rounded shadow-sm"></div>
+
+
+                      <div class="py-4">
+                          <h5 class="mb-3">Current project</h5>
+                          <select onchange="changeCurrent()" id="currentProject" class="browser-default custom-select custom-select-lg mb-3">
+                              <option  selected>select your project</option>
+
+                        </select>
+
                       </div>
                   <div class="py-4">
                       <h5 class="mb-3">Recent projects</h5>
@@ -215,6 +218,35 @@
 </body>
 
   <script>
+  function changeCurrent(){
+    var x = document.getElementById('currentProject').value;
+    var y = document.getElementById(x).innerText;
+    console.log(y);
+    let id=parseInt(x)
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "http://localhost:3000/api/users/changeCurrent",
+        dataType:"json",
+        data: {
+            "id":sessionStorage.getItem("userID"),
+            "newCurrentid":x,
+            "newCurrentname":y
+
+
+        },
+        success: function (json) {
+
+          console.log("done");
+
+          //mettre l'id dans l'url
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        }
+    });
+
+
+  }
   var pic;
   function handleFileSelect(evt) {
      var files = evt.target.files; // FileList object
@@ -361,8 +393,12 @@
           document.getElementById("nbfollowers").innerHTML+=nbfollowers
         }
         if (json.projectid!=null) {
+          var currentProject=""
           for (var i = 0; i < json.projectid.length; i++) {
-
+            if (json.currentProject!=null) {
+              var currentProject=json.currentProject.name
+            }
+            var projectid=json.projectid[i]
           $.ajax({
             async: true,
             type: "POST",
@@ -377,6 +413,22 @@
               if (json.id!=undefined) {
                 var  buttonid=  Math.floor(Math.random() * 1000);
                 var  textid=  Math.floor(Math.random() * 1000);
+                console.log(json.id);
+
+                if (currentProject==json.name) {
+                  var id1=json.id
+                  $('#currentProject').append(`<option id="${id1}"  selected value="${id1}">${json.name}</option>`)
+                  //(`${projectid}`).hide()
+                  console.log(document.getElementById(`${id1}`));
+                }else {
+                  var id2=json.id
+
+                  $('#currentProject').append(`<option id="${id2}"  value="${id2}">${json.name}</option>`)
+                  //(`${projectid}`).hide()
+                  console.log(document.getElementById(`${id2}`));
+
+                  }
+
                 $('#project').append(`<p id="${textid}" class="font-italic mb-0"><button class="btn btn-danger btn-sm fa fa-minus-circle" id="${buttonid}" onclick="delete_Project(this.id,${textid})"></button> ${json.name}</p><br>`);
 
 
@@ -392,6 +444,33 @@
       error: function (xhr, ajaxOptions, thrownError) {
       }
   });
+  // $.ajax({
+  //     async: true,
+  //     type: "POST",
+  //     url: "http://localhost:3000/api/users/id",
+  //     dataType:"json",
+  //     data: {
+  //       "id":sessionStorage.getItem("userID")
+  //     },
+  //     success: function (user) {
+  //       console.log(user.currentProject.name);
+  //       if (user.currentProject!=null) {
+  //         <option value="1">One</option>
+  //
+  //         $('#currentProject').append(`<option value=${user.currentProject.id}>One</option>`)
+  //         $('#currentProject').append(`<p id="currentid"  hidden class="font-italic mb-0">${user.currentProject.id}</p>`)
+  //         console.log(document.getElementById('currentid').innerText);
+  //
+  //       }
+  //
+  //
+  //       //mettre l'id dans l'url
+  //     },
+  //     error: function (xhr, ajaxOptions, thrownError) {
+  //     }
+  //
+  // });
+
   function delete_Project(buttonid,textid){
     console.log(textid);
 
@@ -477,8 +556,36 @@
         }
     });
 
-    $(`#${buttonid}`).remove();
-    $(`#${textid}`).remove();
+    // var texte=document.getElementById(`${textid}`).innerText.replace(" ","");
+    // console.log(texte);
+    //
+    // console.log(texte==document.getElementById(`currentProject`).innerText);
+    // if (texte==document.getElementById(`currentProject`).innerText) {
+    //   $.ajax({
+    //       async: true,
+    //       type: "POST",
+    //       url: "http://localhost:3000/api/users/deleteCurrent",
+    //       dataType:"json",
+    //       data: {
+    //           "id":sessionStorage.getItem('userID')
+    //       },
+    //       success: function (user) {
+    //         if (user) {
+    //
+    //         }
+    //         $(`#currentid`).remove();
+    //
+    //
+    //         //mettre l'id dans l'url
+    //       },
+    //       error: function (xhr, ajaxOptions, thrownError) {
+    //       }
+    //   });
+    //
+    // }
+
+        $(`#${buttonid}`).remove();
+        $(`#${textid}`).remove();
   }
   function gotoProfile(){
     var login=document.getElementById("search").value;

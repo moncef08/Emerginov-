@@ -295,7 +295,7 @@
     margin-left: 100px;
     margin-top: -30px;
     width: 100%;
-    height: 648px;
+    height: 848px;
     resize: vertical;
     border: 1px solid #3498db
    }
@@ -635,7 +635,8 @@ $("#createProject").click(function(){
   let id=sessionStorage.getItem("userID")
   console.log(id);
   let spaceProblem=false;
-  let projectName=document.getElementById("NewProjectName").value
+  var projectName= $("#NewProjectName").val()
+  //let projectName=document.getElementById("NewProjectName").text
   console.log(projectName);
   for (var i = 0; i < projectName.length; i++) {
     if (projectName[i]==" ") {
@@ -659,6 +660,8 @@ $("#createProject").click(function(){
         data:{
           "myID":id,
           "name":projectName
+        //  "url": `https://github.com/${userName}/${name}.git`
+
         },
         success: function (json) {
           if (json.message!=null) {
@@ -1453,7 +1456,7 @@ function hideMarker() {
 }
 
 
-    editor.setSize(400,650);   //set editor size
+    editor.setSize(400,850);   //set editor size
     CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
      cm.showHint({hint: CodeMirror.hint.anyword});
     }
@@ -2289,11 +2292,11 @@ function pressEnter() {
 
       }
 
-  //   setTimeout(function(){
-  //     if(window.location.href.substr(-2) !== "?r") {
-  //     window.location = window.location.href + "?r";
-  //   }
-  // },100)
+    setTimeout(function(){
+      if(window.location.href.substr(-2) !== "?r") {
+      window.location = window.location.href + "?r";
+    }
+  },100)
   </script>
   </body>
   </html>

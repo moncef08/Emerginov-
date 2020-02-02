@@ -2,12 +2,13 @@ import { Router } from 'express';
 
 const router = Router();
 
-import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject,searchUserByLogin,acceptRequest,getUserByName,newFollower,unFollow,updatePicture,getUserByLoginAndPassword,getSession,logout} from '../controllers/user.controller';
+import { createUser,getUsers,getUserById,deleteUser,updateUser,getUsersByProject,searchUserByLogin,acceptRequest,getUserByName,newFollower,unFollow,updatePicture,getUserByLoginAndPassword,getSession,logout,changeCurrent} from '../controllers/user.controller';
 
 // /api/users/
 router.post('/',createUser);
 router.get('/', getUsers);
 // /api/users/:userID
+router.post('/changeCurrent',changeCurrent);
 router.post('/id',getUserById);
 router.post('/session',getSession);
 router.post('/logout',logout);

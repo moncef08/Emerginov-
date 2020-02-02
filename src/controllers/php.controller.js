@@ -4,7 +4,7 @@
   var sudo = require('sudo-js');
   const fs = require('fs-extra');
   //const { exec } = require('child_process');
-  sudo.setPassword('Moncef18');
+  //sudo.setPassword('Moncef18');
   var projectName="project"
   var newVirtualHost =`
   <VirtualHost *:80>
