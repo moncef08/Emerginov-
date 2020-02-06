@@ -35,7 +35,7 @@ form{
         method="post"
         novalidate="true"
         class="form-inline my-2 my-lg-0">
-          <input id="login"  name="login" v-model="login"  type="text" class="form-control mr-sm-2" placeholder="Login" aria-label="Search">
+          <input style="margin-left:-100px;" id="login"  name="login" v-model="login"  type="text" class="form-control mr-sm-2" placeholder="Login" aria-label="Search">
           <input  id="password" name="password" v-model="password" type="password"class="form-control mr-sm-2" type="search" placeholder="Password" aria-label="Search">
           <button onclick="sessionStorage()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Connexion</button>
 
@@ -49,7 +49,7 @@ form{
             </div>
           </ul>
           <ul class="form-inline my-2 my-lg-0">
-            <a style="color:white" href="https://example.com">I forgot my password</a>
+            <!-- <a style="color:white" href="https://example.com">I forgot my password</a> -->
 
           </ul>
 
@@ -91,17 +91,10 @@ form{
   action="http://localhost:3000/api/users/"
   method="post"
   novalidate="true"
+  style="margin-left:400px"
 >
-<div style="color:gold">
-  <p v-if="errors.length">
-    <b>Please correct the following error(s):</b>
-    <ul>
-      <li v-for="error in errors">{{ error }}</li>
-    </ul>
-  </p>
-</div>
 
-<br><br>  <div  style="margin-left: 130px; color:gold;"  class="p-3 mb-2 h1 font-weight-bold">Register</div>
+<br><br>  <div  style="margin-left: 130px; margin-top: -50px;color:gold;"  class="p-3 mb-2 h1 font-weight-bold">Register</div>
   <div  class="row form-group">
       <div  class="col">
         <input  id="name" name="name" v-model="name" type="text" class="form-control" placeholder="name">
@@ -124,23 +117,35 @@ form{
     <input id="password2" v-model="password" type="password" class="form-control"   id="formGroupExampleInput2" placeholder=" New Password">
   </div>
 
+    <div class="form-group">
+      <input id="location" v-model="location" type="text" class="form-control" name="location" placeholder="Location">
+    </div>
   <div class="form-group">
-    <input id="Job" v-model="Job" type="Job" class="form-control" name="job" placeholder="Job">
+    <input id="Job" v-model="Job" type="text" class="form-control" name="job" placeholder="Job">
   </div>
 
   <div class="form-group">
-      <input id="gitUsername"  name="gitUsername" v-model="profession" type="text" class="form-control" id="formGroupExampleInput2" placeholder="Git Username">
+      <input id="gitUsername"  name="gitUsername" v-model="gitUsername" type="text" class="form-control" id="formGroupExampleInput2" placeholder="Git Username">
   </div>
   <div class="form-group">
-      <input id="gitToken"  name="gitToken"  type="password" class="form-control" id="formGroupExampleInput2" placeholder="Git token">
+      <input id="gitToken"  name="gitToken" v-model="gitToken"  type="password" class="form-control" id="formGroupExampleInput2" placeholder="Git token">
   </div>
   <div class="form-group">
     <input id="mastodon" v-model="mastodon" type="password" class="form-control" name="mastodon" placeholder="Mastodon token">
   </div>
   <button style="margin-left: 160px;"type="submit" class="btn btn-outline-success btn-lg my-2 my-sm-0">Register</button>
-
+  <div style="margin-left:-300px; margin-top: -650px;color:gold">
+    <p v-if="errors.length">
+      <b>Please correct the following error(s):</b>
+      <ul>
+        <li v-for="error in errors">{{ error }}</li>
+      </ul>
+    </p>
+  </div>
 </form>
+
       </form>
+
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

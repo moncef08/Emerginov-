@@ -4,8 +4,14 @@ let vm=new Vue({
   data:{
     errors: [],
      name: null,
+     Email: null,
+     location: null,
+     school: null,
      login: null,
-     profession: null,
+     Job: null,
+     gitUsername:null,
+     gitToken:null,
+     mastodon:null,
      school:null,
      password:null
   },
@@ -16,8 +22,23 @@ let vm=new Vue({
      if (!this.password) {
        this.errors.push("Password required.");
      }
-     if (!this.profession) {
-       this.errors.push("Profession required.");
+     if (!this.mastodon) {
+       this.errors.push("mastodon Token required.");
+     }
+     if (!this.location) {
+       this.errors.push("location required.");
+     }
+     if (!this.gitUsername) {
+       this.errors.push("gitUsername required.");
+     }
+     if (!this.gitToken) {
+       this.errors.push("gitToken required.");
+     }
+     if (!this.Email) {
+       this.errors.push("Email required.");
+     }
+     if (!this.Job) {
+       this.errors.push("Job required.");
      }
      if (!this.school) {
        this.errors.push("School required.");

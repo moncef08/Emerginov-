@@ -153,7 +153,7 @@
           <div class="bg-white shadow rounded overflow-hidden">
               <div class="px-4 pt-0 pb-4 bg-dark">
                   <div class="media align-items-end profile-header">
-                      <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"     class="btn btn-danger btn-sm btn-block">Follow</button></div>
+                      <div  class="profile mr-3"><img id="photo" alt="..." width="130" class="rounded mb-2 img-thumbnail"><button id="follow"    >Follow</button></div>
                       <div class="media-body mb-5 text-white">
                           <h4 id="name" class="mt-0 mb-0"></h4>
                           <p id="location"class="small mb-4"> <i class="fa fa-map-marker mr-2"></i></p>
@@ -610,15 +610,46 @@
 
 
 });
+var notmyid=window.location.href.substring(url.lastIndexOf('D') + 2);
+notmyid=parseInt(notmyid)
+console.log(notmyid);
+$.ajax({
+    async: true,
+    type: "POST",
+    url: "http://localhost:3000/api/users/checkFollower",
+    dataType:"json",
+    data: {
+        "id":notmyid,
+        "myid":sessionStorage.getItem("userID")
+          },
+    success: function (json) {
+      console.log(json);
+      if (json.check==true) {
+        $("#follow").addClass("btn btn-success btn-sm btn-block");
+        $("#follow").text("Unfollow");
+      }else {
+        $("#follow").addClass("btn btn-danger btn-sm btn-block");
+        $("#follow").text("Follow");
+      }
+
+      //mettre l'id dans l'url
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+    }
+});
 
 
  $("#follow").click(function(){
+   let url=window.location.href;
+   let idOfUser = url.substring(url.lastIndexOf('D') + 2);
+
+    let id=parseInt(idOfUser)
 
   var text=$("#follow").text();
   console.log(text);
   if (text=="Follow") {
     $("#follow").removeClass("btn btn-danger btn-sm btn-block");
-    $(this).addClass("btn btn-success btn-sm btn-block");
+    $("#follow").addClass("btn btn-success btn-sm btn-block");
     $("#follow").text("Unfollow");
     $.ajax({
         async: true,
@@ -626,7 +657,8 @@
         url: "http://localhost:3000/api/users/follow",
         dataType:"json",
         data: {
-            "id":id
+            "id":id,
+            "myid":sessionStorage.getItem("userID")
         },
         success: function (json) {
 
@@ -639,15 +671,16 @@
 
   }else {
     $("#follow").removeClass("btn btn-success btn-sm btn-block");
-    $(this).addClass("btn btn-danger btn-sm btn-block");
-    $("#follow").text("Unfollow");
+    $("#follow").addClass("btn btn-danger btn-sm btn-block");
+    $("#follow").text("Follow");
     $.ajax({
         async: true,
         type: "POST",
         url: "http://localhost:3000/api/users/unfollow",
         dataType:"json",
         data: {
-            "id":id
+            "id":id,
+            "myid":sessionStorage.getItem("userID")
         },
         success: function (json) {
 

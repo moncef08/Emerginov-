@@ -295,7 +295,7 @@
     margin-left: 100px;
     margin-top: -30px;
     width: 100%;
-    height: 848px;
+    height: 658px;
     resize: vertical;
     border: 1px solid #3498db
    }
@@ -443,9 +443,9 @@ Emerginov Editor
             <img id="LogoutImage" src=""  width="40" height="40" class="rounded-circle">
           </a>
           <div  class="dropdown-menu p-1" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Database</a>
-            <a class="dropdown-item" onclick="editProfile()" >Edit Profile</a>
-            <a class="dropdown-item" onclick="logout()">Log Out</a>
+            <a type="button" class="dropdown-item" href="#">Database</a>
+            <a type="button"class="dropdown-item" onclick="editProfile()" >Edit Profile</a>
+            <a type="button"class="dropdown-item" onclick="logout()">Log Out</a>
           </div>
         </li>
       </ul>
@@ -1456,7 +1456,7 @@ function hideMarker() {
 }
 
 
-    editor.setSize(400,850);   //set editor size
+    editor.setSize(400,658);   //set editor size
     CodeMirror.commands.autocomplete = function(cm) {   //use the autocomplete for the editor
      cm.showHint({hint: CodeMirror.hint.anyword});
     }
@@ -2068,7 +2068,7 @@ function checkPageFocus() {
   }
   function editProfile(){
     var sessionkey=sessionStorage.getItem("userID")
-    document.location.href = `http://localhost:3000/editprofile.html?id=${sessionkey}`
+    document.location.href = `http://localhost:3000/editProfile.html?id=${sessionkey}`
 
   }
   function logout(){

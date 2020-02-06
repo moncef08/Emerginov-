@@ -1,5 +1,5 @@
 //require("dotenv").config();
-const octokit = require('@octokit/rest');
+const octokit= require('@octokit/rest');
 var $ = require("jquery");
 import copyFiles_And_CreateVirtualHost from './php.controller.js'
 import Users from '../models/Users';
@@ -12,16 +12,21 @@ var rimraf = require("rimraf");
 export async function create_Git_Repository(req,res){
   rimraf("fictiveProjects/projects/", function () { console.log("done"); });
   rimraf("projects/", function () { console.log("done"); });
-
+  fs.rmdir("fictiveProjects/projects/", { recursive: true },(err) => {
+    if (err) throw err;
+    console.log("folder successfully deleted");
+  });
+  fs.rmdir("projects/", { recursive: true },(err) => {
+    if (err) throw err;
+    console.log("folder successfully deleted");
+  });
   var {myID,name}= req.body;
   const user= await Users.findOne({
     where:{
       id:myID
     }
   });
-  var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
-    if (err) throw err;
-  });
+
 
  const clientWithAuth = new octokit({
   //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
@@ -34,7 +39,9 @@ export async function create_Git_Repository(req,res){
   console.log(data.data.html_url);
   console.log("repo successfully created");
   //
-
+  var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
+    if (err) throw err;
+  });
   var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
         if (err) throw err;
       });
