@@ -12,7 +12,7 @@ storage.setItem('userID', "")
 const { Op } = require("sequelize");
 
 export async function createUser(req, res){
-  var { name,login,Email,gitToken,gitUsername,job,school,hashedPassword,mastodon}= req.body;
+  var { name,login,Email,gitToken,gitUsername,job,location,school,hashedPassword,mastodon}= req.body;
   console.log(req.body);
   console.log(hashedPassword);
   hashedPassword = passwordHash.generate(hashedPassword);
@@ -20,18 +20,17 @@ export async function createUser(req, res){
   console.log(id);
   console.log(req.body);
   var projectid=null;
-  var location=null;
   var company=null;
   var nbfollowers=0;
   var listoffollow=null;
   var picture=null;
-  var gitToken=null
   try{
     let newUser= await Users.create({
       id,
       name,
       login,
       Email,
+      gitToken,
       school,
       projectid,
       location,
@@ -163,19 +162,70 @@ export async function getUsersByProject(req,res){
     }
 
 }
+export async function checkFollower(req,res){
+  const { id,myid }=req.body;
+  let check=false
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+  if (user.listoffollow!=null) {
+    console.log(user.listoffollow[0]);
+
+    let myinfo={"id":myid}
+    console.log(myinfo);
+    console.log(user.listoffollow[0].json==myid);
+    for (var i = 0; i < user.listoffollow.length; i++) {
+      if (user.listoffollow[i].id==myid) {
+        check=true
+        console.log(check);
+      }
+    }
+    if (check==true) {
+        res.json({
+          "check":true
+        })
+    }
+  }else {
+    res.json({
+      "check":false
+
+    })
+  }
+
+
+}
 export async function unFollow(req,res){
-    const { id }=req.body;
+    const { id,myid }=req.body;
     console.log(id);
     const user= await Users.findOne({
       where:{
         id
       }
     })
-    user.update({
+    var listoffollow=user.listoffollow
+    if (listoffollow!=null) {
+      if (listoffollow.length==1) {
+        user.update({
 
-        nbfollowers: user.nbfollowers-1
+            nbfollowers: user.nbfollowers-1,
+            listoffollow:null
 
-    })
+        })
+      }else{
+        listoffollow.splice( listoffollow.indexOf({"id":myid}), 1 );
+        user.update({
+
+            nbfollowers: user.nbfollowers-1,
+            listoffollow:listoffollow
+
+        })
+      }
+
+    }
+
+
 
 
     if (user!=null) {
@@ -189,18 +239,36 @@ export async function unFollow(req,res){
 
   }
 export async function newFollower(req,res){
-    const { id }=req.body;
+    var { id,myid}=req.body;
+    myid=parseInt(myid)
+    console.log(req.body);
     console.log(id);
     const user= await Users.findOne({
       where:{
         id
       }
     })
-    user.update({
+    var listoffollow=user.listoffollow
+    if (listoffollow!=null) {
+      listoffollow.append({
+        "id":myid
+      })
+      console.log(listoffollow);
+      user.update({
 
-        nbfollowers: user.nbfollowers+1
+          nbfollowers: user.nbfollowers+1,
+          listoffollow:listoffollow
 
-    })
+      })
+
+    }else {
+      user.update({
+
+          nbfollowers: user.nbfollowers+1,
+          listoffollow:[{"id":myid}]
+
+      })
+    }
 
 
     if (user!=null) {

@@ -2,8 +2,8 @@ import Sequelize from 'sequelize';
 
 //connexion to database
 export const sequelize=new Sequelize(
-'Moncef18',
-'Moncef18',
+'postgres',
+'moncef',
 'azerty',
 
 
