@@ -11,15 +11,7 @@ var rimraf = require("rimraf");
 
 export async function create_Git_Repository(req,res){
   rimraf("fictiveProjects/projects/", function () { console.log("done"); });
-  rimraf("projects/", function () { console.log("done"); });
-  fs.rmdir("fictiveProjects/projects/", { recursive: true },(err) => {
-    if (err) throw err;
-    console.log("folder successfully deleted");
-  });
-  fs.rmdir("projects/", { recursive: true },(err) => {
-    if (err) throw err;
-    console.log("folder successfully deleted");
-  });
+
   var {myID,name}= req.body;
   const user= await Users.findOne({
     where:{
@@ -39,13 +31,11 @@ export async function create_Git_Repository(req,res){
   console.log(data.data.html_url);
   console.log("repo successfully created");
   //
-  var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
-    if (err) throw err;
-  });
-  var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
+
+  var directory1=fs.mkdir(name, { recursive: true }, (err) => {
         if (err) throw err;
       });
-  var localPath = "fictiveProjects/projects";
+  var localPath = name;
   var opts = {
       fetchOpts: {
         callbacks: {
@@ -63,7 +53,6 @@ export async function create_Git_Repository(req,res){
   console.log(e);
   //  alert("ERROR check your informations");
   })
-  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
 
   if (user.projectid!=null) {
     for (var i = 0; i < user.projectid.length; i++) {

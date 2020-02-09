@@ -74,9 +74,9 @@ export async function getUsers(req,res){
   }
 
    export async function changeCurrent(req,res){
-     rimraf("fictiveProjects/projects/", function () { console.log("done"); });
-     rimraf("projects/", function () { console.log("done"); });
-      const { id,newCurrentid,newCurrentname }=req.body;
+     const { id,newCurrentid,newCurrentname }=req.body;
+     rimraf(`fictiveProjects/${newCurrentname}/`, function () { console.log("done"); });
+
       const user= await Users.findOne({
         where:{
           id
@@ -94,13 +94,9 @@ export async function getUsers(req,res){
        var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
 
 
-        var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
-          if (err) throw err;
-        });
-        var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
-              if (err) throw err;
-            });
-        var localPath = "fictiveProjects/projects";
+
+
+        var localPath =`${newCurrentname}`;
         var opts = {
             fetchOpts: {
               callbacks: {
@@ -109,7 +105,7 @@ export async function getUsers(req,res){
           }
         };
         var cloneRepository = Git.Clone(url, localPath, opts);
-        setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
+      //  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
 
         return res.json(user);
 
