@@ -15,6 +15,7 @@ export async function getFile(req, res){
     }
   });
   if (user.currentProject!=null) {
+console.log(user.currentProject.name);
     fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
     var tree = dirTree(user.currentProject.name);
     tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
