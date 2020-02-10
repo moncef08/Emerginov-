@@ -376,7 +376,7 @@ Emerginov Editor
           <div style="  background-color: #505050;"class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" style="color: #DDDCDB"href="#" onclick="push()">Push</a>
             <a class="dropdown-item" style="color: #DDDCDB"href="#"onclick="theme2()">Commit</a>
-            <a class="dropdown-item" style="color: #DDDCDB"href="#"onclick="theme1()">Pull</a>
+            <a class="dropdown-item" style="color: #DDDCDB" id="pull" >Pull</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -2149,6 +2149,25 @@ function checkPageFocus() {
   //console.log(currentDiv);
 //  parentDiv.insertBefore(newDiv, sp2);
 }
+$("#pull").click(function pullRepo(){
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/repos/pull",
+      data: {
+        "id":sessionStorage.getItem("userID")
+      },
+      success: function (json) {
+
+        },
+      error: function (xhr, ajaxOptions, thrownError) {
+          alert(thrownError);
+      }
+
+  });
+
+
+})
 var id=sessionStorage.getItem("userID")
 console.log(id);
 $.ajax({

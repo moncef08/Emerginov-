@@ -3,6 +3,8 @@ import Project from '../models/Project';
 import Users from '../models/Users';
 const { Op } = require("sequelize");
 var newRequests=[]
+var fs = require('fs');
+var rimraf = require("rimraf");
 
 export async function createProject(req, res){
   const { name,priority,description,deliverydate}= req.body;
@@ -170,6 +172,7 @@ export async function sendReq(req,res){
 
 
 }
+
 export async function getProjectById(req,res){
   const { id }=req.body;
   console.log(req.body);
@@ -228,6 +231,9 @@ export async function deleteProjectFromAllTables(req,res){
       id:idofProject
     }
   });
+
+  rimraf(`${proj.name}`, function () { console.log("done"); });
+  rimraf(`fictiveProjects/${proj.name}`, function () { console.log("done"); });
 
   const user= await Users.findOne({
     where:{

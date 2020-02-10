@@ -8,7 +8,12 @@ var Git = require("nodegit");
 var fs = require('fs-extra');
 var rimraf = require("rimraf");
 
-
+// Simple-git without promise
+const simpleGit = require('simple-git')();
+// Shelljs package for running shell tasks optional
+const shellJs = require('shelljs');
+// Simple Git with Promise for handling success and failure
+const simpleGitPromise = require('simple-git/promise')();
 export async function create_Git_Repository(req,res){
   rimraf("fictiveProjects/projects/", function () { console.log("done"); });
 
@@ -112,6 +117,70 @@ export async function create_Git_Repository(req,res){
 
 
 
+}
+export async function pullRepo(req,res){
+  const { id }=req.body;
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+
+  const clientWithAuth = new octokit({
+  auth:user.gitToken
+  })
+
+ if (user.currentProject!=null) {
+   const project= await Project.findOne({
+     where:{
+       id:user.currentProject.id
+
+   }
+   });
+   if (project!=null) {
+
+
+    // console.log();
+   }
+ }
+
+ // change current directory to repo directory in local
+ shellJs.cd(user.currentProject.name);
+ // Repo name
+ const repo = user.currentProject.name;  //Repo name
+ // User name and password of your GitHub
+ const userName = 'moncef08';
+ const password = 'Sfar18:**';
+ // Set up GitHub url like this so no manual entry of user pass needed
+ const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
+ // add local git config like username and email
+ simpleGit.addConfig('user.email','mrejebsf@enssat.fr');
+ simpleGit.addConfig('user.name','moncef08');
+ // Add remore repo url as origin to repo
+ //simpleGitPromise.addRemote('origin',gitHubUrl);
+ // Add all files for commit
+   simpleGitPromise.add('.')
+     .then(
+        (addSuccess) => {
+           console.log(addSuccess);
+        }, (failedAdd) => {
+           console.log('adding files failed');
+     });
+ // Commit files as Initial Commit
+  simpleGitPromise.commit('Intial commit by simplegit')
+    .then(
+       (successCommit) => {
+         console.log(successCommit);
+      }, (failed) => {
+         console.log('failed commmit');
+  });
+ // Finally push to online repository
+  simpleGitPromise.push('origin','master')
+     .then((success) => {
+        console.log('repo successfully pushed');
+     },(failed)=> {
+        console.log('repo push failed');
+  });
 }
 export async function delete_Git_Repository(req,res){
   const {gitUsername,name,token}= req.body;
