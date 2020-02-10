@@ -162,6 +162,7 @@ console.log(user.currentProject.name);
    simpleGitPromise.add('.')
      .then(
         (addSuccess) => {
+          console.log("tes");
            console.log(addSuccess);
         }, (failedAdd) => {
            console.log('adding files failed');
@@ -170,6 +171,7 @@ console.log(user.currentProject.name);
   simpleGitPromise.commit('Intial commit by simplegit')
     .then(
        (successCommit) => {
+         console.log("get");
          console.log(successCommit);
       }, (failed) => {
          console.log('failed commmit');
