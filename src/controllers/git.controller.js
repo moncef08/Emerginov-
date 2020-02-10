@@ -143,7 +143,7 @@ export async function pullRepo(req,res){
     // console.log();
    }
  }
-
+console.log(user.currentProject.name);
  // change current directory to repo directory in local
  shellJs.cd(user.currentProject.name);
  // Repo name
