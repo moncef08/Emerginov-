@@ -9,7 +9,7 @@ var fs = require('fs-extra');
 var rimraf = require("rimraf");
 
 // Simple-git without promise
-const simpleGit = require('simple-git')();
+const simpleGit = require('simple-git')("testforPull");
 // Shelljs package for running shell tasks optional
 const shellJs = require('shelljs');
 // Simple Git with Promise for handling success and failure
@@ -145,11 +145,13 @@ export async function pullRepo(req,res){
  }
 console.log(user.currentProject.name);
  // change current directory to repo directory in local
- shellJs.cd(user.currentProject.name);
+ shellJs.cd("testforPull");
  // Repo name
  const repo = user.currentProject.name;  //Repo name
  // User name and password of your GitHub
  const userName = 'moncef08';
+ console.log("tes");
+
  const password = 'Sfar18:**';
  // Set up GitHub url like this so no manual entry of user pass needed
  const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
@@ -168,7 +170,7 @@ console.log(user.currentProject.name);
            console.log('adding files failed');
      });
  // Commit files as Initial Commit
-  simpleGitPromise.commit('Intial commit by simplegit')
+  simpleGitPromise.commit(' commit by simplegit')
     .then(
        (successCommit) => {
          console.log("get");
