@@ -105,6 +105,7 @@ export async function getUsers(req,res){
   }
 
    export async function changeCurrent(req,res){
+<<<<<<< HEAD
      // rimraf("fictiveProjects/projects/", function () { console.log("done"); });
      // rimraf("projects/", function () { console.log("done"); });
     deleteRecursively("fictiveProjects/projects/")
@@ -114,6 +115,11 @@ export async function getUsers(req,res){
     //
     // fs.rmdirSync("projects/", { recursive: true })
       const { id,newCurrentid,newCurrentname }=req.body;
+=======
+     const { id,newCurrentid,newCurrentname }=req.body;
+     rimraf(`fictiveProjects/${newCurrentname}/`, function () { console.log("done"); });
+
+>>>>>>> c5a1a81856c64cdbfecc659278c498245edd66b1
       const user= await Users.findOne({
         where:{
           id
@@ -131,6 +137,7 @@ export async function getUsers(req,res){
        var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
 
 
+<<<<<<< HEAD
         // var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
         //   if (err) throw err;
         // });
@@ -138,6 +145,11 @@ export async function getUsers(req,res){
         //       if (err) throw err;
         //     });
         var localPath = "fictiveProjects/projects";
+=======
+
+
+        var localPath =`${newCurrentname}`;
+>>>>>>> c5a1a81856c64cdbfecc659278c498245edd66b1
         var opts = {
             fetchOpts: {
               callbacks: {
@@ -146,7 +158,11 @@ export async function getUsers(req,res){
           }
         };
         var cloneRepository = Git.Clone(url, localPath, opts);
+<<<<<<< HEAD
       //  fs.copy("fictiveProjects/projects/","projects")
+=======
+      //  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
+>>>>>>> c5a1a81856c64cdbfecc659278c498245edd66b1
 
         return res.json(user);
 

@@ -1,5 +1,6 @@
 const dirTree = require("directory-tree");
 var fs = require('fs');
+var fs1 = require('fs-extra');
 
 import Users from '../models/Users';
 
@@ -8,14 +9,23 @@ export async function getFile(req, res){
 
   const {id}=req.body
 
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+  if (user.currentProject!=null) {
+console.log(user.currentProject.name);
+    fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
+    var tree = dirTree(user.currentProject.name);
+    tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
+        try{
+         res.json(tree);
+        }catch(e){
+         console.log(e)
+        }
+  }
 
- var tree = dirTree("projects");
- tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
-     try{
-      res.json(tree);
-     }catch(e){
-      console.log(e)
-     }
 }
 
 
@@ -25,7 +35,7 @@ export async function create_DirectoryOrFile(req,res){
     var directory=fs.mkdir("fictiveProjects/"+path, { recursive: true }, (err) => {
       if (err) throw err;
     });
-    var fictiveDirectory=fs.mkdir("fictiveProjects/"+path, { recursive: true }, (err) => {
+    var fictiveDirectory=fs.mkdir(path, { recursive: true }, (err) => {
       if (err) throw err;
     });
 
@@ -33,7 +43,7 @@ export async function create_DirectoryOrFile(req,res){
     var file=fs.open(path,'w', (err) => {
       if (err) throw err;
     });
-    var fictiveFile=fs.open(path,'w', (err) => {
+    var fictiveFile=fs.open("fictiveProjects/"+path,'w', (err) => {
       if (err) throw err;
     });
   }

@@ -8,18 +8,15 @@ var Git = require("nodegit");
 var fs = require('fs-extra');
 var rimraf = require("rimraf");
 
-
+// Simple-git without promise
+const simpleGit = require('simple-git')("testforPush1/");
+// Shelljs package for running shell tasks optional
+const shellJs = require('shelljs');
+// Simple Git with Promise for handling success and failure
+const simpleGitPromise = require('simple-git/promise')("testforPush1/");
 export async function create_Git_Repository(req,res){
   rimraf("fictiveProjects/projects/", function () { console.log("done"); });
-  rimraf("projects/", function () { console.log("done"); });
-  fs.rmdir("fictiveProjects/projects/", { recursive: true },(err) => {
-    if (err) throw err;
-    console.log("folder successfully deleted");
-  });
-  fs.rmdir("projects/", { recursive: true },(err) => {
-    if (err) throw err;
-    console.log("folder successfully deleted");
-  });
+
   var {myID,name}= req.body;
   const user= await Users.findOne({
     where:{
@@ -39,13 +36,11 @@ export async function create_Git_Repository(req,res){
   console.log(data.data.html_url);
   console.log("repo successfully created");
   //
-  var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
-    if (err) throw err;
-  });
-  var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
+
+  var directory1=fs.mkdir(name, { recursive: true }, (err) => {
         if (err) throw err;
       });
-  var localPath = "fictiveProjects/projects";
+  var localPath = name;
   var opts = {
       fetchOpts: {
         callbacks: {
@@ -63,7 +58,6 @@ export async function create_Git_Repository(req,res){
   console.log(e);
   //  alert("ERROR check your informations");
   })
-  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
 
   if (user.projectid!=null) {
     for (var i = 0; i < user.projectid.length; i++) {
@@ -123,6 +117,74 @@ export async function create_Git_Repository(req,res){
 
 
 
+}
+export async function pullRepo(req,res){
+  const { id }=req.body;
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+
+  const clientWithAuth = new octokit({
+  auth:user.gitToken
+  })
+
+ if (user.currentProject!=null) {
+   const project= await Project.findOne({
+     where:{
+       id:user.currentProject.id
+
+   }
+   });
+   if (project!=null) {
+
+
+    // console.log();
+   }
+ }
+console.log(user.currentProject.name);
+ // change current directory to repo directory in local
+// shellJs.cd("testforpush");
+ // Repo name
+ const repo = user.currentProject.name;  //Repo name
+ // User name and password of your GitHub
+ const userName = 'moncef08';
+ console.log("tes");
+
+ const password = 'Sfar18:**';
+ // Set up GitHub url like this so no manual entry of user pass needed
+ const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
+ // add local git config like username and email
+ simpleGit.addConfig('user.email','mrejebsf@enssat.fr');
+ simpleGit.addConfig('user.name','moncef08');
+ // Add remore repo url as origin to repo
+ //simpleGitPromise.addRemote('origin',gitHubUrl);
+ // Add all files for commit
+   simpleGitPromise.add('.')
+     .then(
+        (addSuccess) => {
+          console.log("tes");
+           console.log(addSuccess);
+        }, (failedAdd) => {
+           console.log('adding files failed');
+     });
+ // Commit files as Initial Commit
+  simpleGitPromise.commit('  by simplegit')
+    .then(
+       (successCommit) => {
+         console.log("get");
+         console.log(successCommit);
+      }, (failed) => {
+         console.log('failed commmit');
+  });
+ // Finally push to online repository
+  simpleGitPromise.push('origin','master')
+     .then((success) => {
+        console.log('repo successfully pushed');
+     },(failed)=> {
+        console.log('repo push failed');
+  });
 }
 export async function delete_Git_Repository(req,res){
   const {gitUsername,name,token}= req.body;
