@@ -12,36 +12,8 @@ storage.setItem('userID', "")
 
 const { Op } = require("sequelize");
 
- function deleteRecursively(dir) {
-   console.log("hello");
-   var empty = true, list = fs.readdirSync(dir);
-   	for(var i = list.length - 1; i >= 0; i--) {
-   		var filename = path.join(dir, list[i]);
-   		var stat = fs.statSync(filename);
 
-   		if(filename.indexOf('.') > -1) {
-   			//There are files in the directory - we can't empty it!
-   			empty = false;
-   			list.splice(i, 1);
-   		}
-   	}
-
-   	//Cycle through the list of sub-directories, cleaning each as we go
-   	for(var i = list.length - 1; i >= 0; i--) {
-   		filename = path.join(dir, list[i]);
-   		if (rmdir(filename)) {
-   			list.splice(i, 1);
-   		}
-   	}
-
-   	//Check if the directory was truly empty
-   	if (!list.length && empty) {
-   		console.log('delete!');
-   		fs.rmdirSync(dir);
-   		return true;
-   	}
-   	return false;
-};
+  
 export async function createUser(req, res){
   var { name,login,Email,gitToken,gitUsername,job,location,school,hashedPassword,mastodon}= req.body;
   console.log(req.body);
@@ -105,21 +77,9 @@ export async function getUsers(req,res){
   }
 
    export async function changeCurrent(req,res){
-<<<<<<< HEAD
-     // rimraf("fictiveProjects/projects/", function () { console.log("done"); });
-     // rimraf("projects/", function () { console.log("done"); });
-    deleteRecursively("fictiveProjects/projects/")
-    deleteRecursively("projects/")
-
-    // fs.rmdirSync("fictiveProjects/projects/", { recursive: true })
-    //
-    // fs.rmdirSync("projects/", { recursive: true })
-      const { id,newCurrentid,newCurrentname }=req.body;
-=======
      const { id,newCurrentid,newCurrentname }=req.body;
      rimraf(`fictiveProjects/${newCurrentname}/`, function () { console.log("done"); });
 
->>>>>>> c5a1a81856c64cdbfecc659278c498245edd66b1
       const user= await Users.findOne({
         where:{
           id
@@ -137,19 +97,9 @@ export async function getUsers(req,res){
        var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
 
 
-<<<<<<< HEAD
-        // var directory=fs.mkdir("fictiveProjects/projects", { recursive: true }, (err) => {
-        //   if (err) throw err;
-        // });
-        // var directory1=fs.mkdir("projects", { recursive: true }, (err) => {
-        //       if (err) throw err;
-        //     });
-        var localPath = "fictiveProjects/projects";
-=======
 
 
         var localPath =`${newCurrentname}`;
->>>>>>> c5a1a81856c64cdbfecc659278c498245edd66b1
         var opts = {
             fetchOpts: {
               callbacks: {
@@ -158,11 +108,7 @@ export async function getUsers(req,res){
           }
         };
         var cloneRepository = Git.Clone(url, localPath, opts);
-<<<<<<< HEAD
-      //  fs.copy("fictiveProjects/projects/","projects")
-=======
       //  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
->>>>>>> c5a1a81856c64cdbfecc659278c498245edd66b1
 
         return res.json(user);
 

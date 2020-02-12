@@ -332,7 +332,59 @@
 .option{
    display:none;
 }
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
 
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type=text], .form-container input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
 </style>
 </head>
 
@@ -374,9 +426,8 @@ Emerginov Editor
             Github
           </a>
           <div style="  background-color: #505050;"class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" style="color: #DDDCDB"href="#" onclick="push()">Push</a>
-            <a class="dropdown-item" style="color: #DDDCDB"href="#"onclick="theme2()">Commit</a>
-            <a class="dropdown-item" style="color: #DDDCDB" id="pull" >Pull</a>
+            <a class="dropdown-item" style="color: #DDDCDB"href="#" onclick="openForm()">Commit & Push</a>
+            <a class="dropdown-item" style="color: #DDDCDB" onclick="pullRepo()" >Pull</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -466,6 +517,23 @@ Emerginov Editor
 <button type="button" class="btn btn-light">Light</button>
 <button type="button" class="btn btn-dark">Dark</button>-->
 
+
+<div class="form-popup" id="myForm">
+  <div
+  id="formPush"
+  class="form-container"
+
+  >
+    <label for="email"><b>Git userName</b></label>
+    <input id="userGit" type="text" placeholder="Enter username" name="gitUsername" required>
+
+    <label for="psw"><b>GitPassword</b></label>
+    <input id="pswGit"type="password" placeholder="Enter Password" name="password" required>
+
+    <button type="submit" onclick="pushRepo()" class="btn">Commit&Push</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </div>
+</div>
 
 
 <div class="main">
@@ -587,6 +655,81 @@ Emerginov Editor
   </a>
 </script>
 <script>
+function pullRepo(){
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/repos/pull",
+      dataType:"json",
+      data:{
+        "id":sessionStorage.getItem('userID')
+      },
+      success: function (json) {
+        if (json.message!=null) {
+          if (json.message=="please verify your informations"){
+            alert("please verify your informations")
+            return false
+          }else {
+            alert("you don't have any project ")
+            return false
+
+          }
+
+        }else {
+          alert("your files have been pushed successfully")
+        }
+
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        alert("please verify your informations")
+      }
+  });
+}
+function pushRepo(){
+  let gitUsername=document.getElementById('userGit').value
+  let password=document.getElementById('pswGit').value
+
+  // let gitUsername=document.forms["formPush"].gitUsername.value
+  // let password=document.forms["formPush"].password.value
+  $.ajax({
+      async: true,
+      type: "POST",
+      url: "http://localhost:3000/repos/push",
+      dataType:"json",
+      data:{
+        "password":password,
+        "gitUsername":gitUsername
+      },
+      success: function (json) {
+        if (json.message!=null) {
+          if (json.message=="please verify your informations"){
+            alert("please verify your informations")
+            return false
+          }else if (json.message=="mot de passe incorrect") {
+            alert("mot de passe incorrect")
+          }else {
+            alert("you don't have any project ")
+            return false
+
+          }
+
+        }else {
+        //  window.location.reload()
+        }
+
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        alert("please verify your informations")
+      }
+  });
+}
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
 function acceptRequest(e){
   var identifyid=e.replace("Accept","")
   identifyid=parseInt(identifyid)
@@ -2149,25 +2292,7 @@ function checkPageFocus() {
   //console.log(currentDiv);
 //  parentDiv.insertBefore(newDiv, sp2);
 }
-$("#pull").click(function pullRepo(){
-  $.ajax({
-      async: true,
-      type: "POST",
-      url: "http://localhost:3000/repos/pull",
-      data: {
-        "id":sessionStorage.getItem("userID")
-      },
-      success: function (json) {
 
-        },
-      error: function (xhr, ajaxOptions, thrownError) {
-          alert(thrownError);
-      }
-
-  });
-
-
-})
 var id=sessionStorage.getItem("userID")
 console.log(id);
 $.ajax({
@@ -2288,28 +2413,8 @@ function pressEnter() {
 
         });
       }
-      function changed(){
-        console.log("hello");
-      }
-      function push(){
-        $.ajax({
-            async: true,
-            type: "POST",
-            url: "http://localhost:3000/push/",
-            data: {
-            },
-            success: function (json) {
 
-              },
-              // response=json.msg3+"\n"+json.msg2+"\n"+json.msg1+"\n"+json.msg0;
-              // document.getElementById('chatBox').srcdoc+=response;
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert(thrownError);
-            }
 
-        });
-
-      }
 
     setTimeout(function(){
       if(window.location.href.substr(-2) !== "?r") {
