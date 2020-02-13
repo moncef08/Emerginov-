@@ -13,7 +13,7 @@ storage.setItem('userID', "")
 const { Op } = require("sequelize");
 
 
-  
+
 export async function createUser(req, res){
   var { name,login,Email,gitToken,gitUsername,job,location,school,hashedPassword,mastodon}= req.body;
   console.log(req.body);
@@ -78,7 +78,7 @@ export async function getUsers(req,res){
 
    export async function changeCurrent(req,res){
      const { id,newCurrentid,newCurrentname }=req.body;
-     rimraf(`fictiveProjects/${newCurrentname}/`, function () { console.log("done"); });
+    // rimraf(`fictiveProjects/${newCurrentname}/`, function () { console.log("done"); });
 
       const user= await Users.findOne({
         where:{
@@ -94,20 +94,20 @@ export async function getUsers(req,res){
             }
 
         })
-       var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
-
-
-
-
-        var localPath =`${newCurrentname}`;
-        var opts = {
-            fetchOpts: {
-              callbacks: {
-                certificateCheck: () => 0
-            }
-          }
-        };
-        var cloneRepository = Git.Clone(url, localPath, opts);
+       // var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
+       //
+       //
+       //
+       //
+       //  var localPath =`${newCurrentname}`;
+       //  var opts = {
+       //      fetchOpts: {
+       //        callbacks: {
+       //          certificateCheck: () => 0
+       //      }
+       //    }
+       //  };
+       //  var cloneRepository = Git.Clone(url, localPath, opts);
       //  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
 
         return res.json(user);

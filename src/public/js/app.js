@@ -53,7 +53,9 @@ let vm=new Vue({
      }*/
 
      if (!this.errors.length) {
+//       sweetAlert("files pushed successfully ! ", "Thank you", "success");
        return true;
+
      }
      e.preventDefault();
    },

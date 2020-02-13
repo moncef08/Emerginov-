@@ -178,10 +178,10 @@ export async function pullRepo(req,res){
 export async function pushRepo(req,res){
   // Simple-git without promise
 
-  const { gitUsername,password}=req.body;
+  const {id,commitMessage,gitUsername,password}=req.body;
   const user= await Users.findOne({
     where:{
-      gitUsername
+      id
     }
   });
 if (user!=null) {
@@ -204,7 +204,6 @@ if (user!=null) {
     const repo = user.currentProject.name;  //Repo name
     // User name and password of your GitHub
     const userName = user.gitUsername;
-    console.log("tes");
 
     // Set up GitHub url like this so no manual entry of user pass needed
     const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
@@ -216,42 +215,68 @@ if (user!=null) {
      if (err) {
        return console.log(err);
      }
-     var result = data.replace(`https://github.com/${userName}/${repo}`, gitHubUrl);
+     if (data.includes(`https://github.com/${userName}/${repo}`)) {
+       var result = data.replace(`https://github.com/${userName}/${repo}`, gitHubUrl);
+       fs.writeFile(`${repo}/.git/config`, result, 'utf8', function (err) {
+            if (err) return console.log(err);
+         });
+     }
 
-     fs.writeFile(`${repo}/.git/config`, result, 'utf8', function (err) {
-        if (err) return console.log(err);
-     });
+
    });
    // simpleGitPromise.addRemote('origin',gitHubUrl);
     // Add all files for commit
       simpleGitPromise.add('.')
         .then(
            (addSuccess) => {
-             console.log("tes");
+             console.log("adding files succeeded");
               console.log(addSuccess);
            }, (failedAdd) => {
               console.log('adding files failed');
         });
     // Commit files as Initial Commit
-     simpleGitPromise.commit('  by simplegit')
+     simpleGitPromise.commit(commitMessage)
        .then(
           (successCommit) => {
             console.log("get");
-            console.log(successCommit);
+            console.log("this is commit",successCommit);
+            if (successCommit.summary.changes!="0") {
+              simpleGitPromise.push('origin','master')
+                 .then((success) => {
+                   res.json({
+                     "message":"repo successfully pushed"
+
+                   })
+
+                    console.log('repo successfully pushed');
+                    // fs.readFile(`${repo}/.git/config`, 'utf8', function (err,data) {
+                    //  if (err) {
+                    //    return console.log(err);
+                    //  }
+                    //  var result1 = data.replace(gitHubUrl,`https://github.com/${userName}/${repo}`, gitHubUrl);
+                    //  fs.writeFile(`${repo}/.git/config`, result1, 'utf8', function (err) {
+                    //         if (err) return console.log(err);
+                    //      });
+                   //});
+                 },(failed)=> {
+                   res.json({
+                     "message":"mot de passe incorrect"
+
+                   })
+                    console.log('repo push failed');
+              });
+            }else {
+              res.json({
+                "message":"already pushed"
+
+              })
+            }
          }, (failed) => {
             console.log('failed commmit');
      });
-    // Finally push to online repository
-     simpleGitPromise.push('origin','master')
-        .then((success) => {
-           console.log('repo successfully pushed');
-        },(failed)=> {
-          res.json({
-            "message":"mot de passe incorrect"
 
-          })
-           console.log('repo push failed');
-     });
+    // Finally push to online repository
+
  }else {
    res.json({
      "message":"you don't have any project"
