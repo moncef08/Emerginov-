@@ -7,7 +7,7 @@ import Project from '../models/Project';
 var Git = require("nodegit");
 var fs = require('fs-extra');
 var rimraf = require("rimraf");
-
+var exist=false;
 const simpleGit = require('simple-git')();
 // Shelljs package for running shell tasks optional
 const shellJs = require('shelljs');
@@ -23,44 +23,6 @@ export async function create_Git_Repository(req,res){
     }
   });
 
-
- const clientWithAuth = new octokit({
-  //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
-
-  auth:user.gitToken
-  })
-  clientWithAuth.repos.createForAuthenticatedUser({
-  name:name
-  }).then(data =>{
-  console.log(data.data.html_url);
-  console.log("repo successfully created");
-  var localPath = name;
-  var opts = {
-      fetchOpts: {
-        callbacks: {
-          certificateCheck: () => 0
-      }
-    }
-  };
-;
-  var cloneRepository = Git.Clone(data.data.html_url, localPath, opts);
-  setTimeout(function(){
-    fs.mkdirSync(`${name}/src`)
-  var file=fs.open(`${name}/src/index.php`,'w', (err) => {
-        if (err) throw err;
-      });
-},200)
-
-
-  }).catch(e =>{
-    res.json({
-      "error":"your token does not exist"
-    })
-
-  console.log(e);
-  //  alert("ERROR check your informations");
-  })
-
   if (user.projectid!=null) {
     for (var i = 0; i < user.projectid.length; i++) {
       const project= await Project.findOne({
@@ -72,48 +34,83 @@ export async function create_Git_Repository(req,res){
         return res.json({
           "message":"this project already exist"
         })
+         exist=true;
       }
     }
   }
-  console.log(req.body);
-  var idProject= Math.floor(Math.random() * Math.floor(100000));
-  console.log(idProject);
-  let id=idProject;
-  let priority=null;
-  let deliverydate=null;
-  let newProject= await Project.create({
-    id,
-    name,
-    priority,
-    deliverydate
-  },{
-    fields:['id','name','priority','deliverydate']
-  });
+  console.log(exist);
+  if (exist==false) {
+    const clientWithAuth = new octokit({
+     //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
 
-  var projID=user.projectid
-  console.log(projID);
-  if (user.projectid!=null) {
-    projID.push(idProject)
-    console.log(projID);
-    user.update({
-      projectid:projID,
-      currentProject:{
-        "id":idProject,
-        "name":newProject.name
-      }
+     auth:user.gitToken
+     })
+     clientWithAuth.repos.createForAuthenticatedUser({
+     name:name
+     }).then(data =>{
+     console.log(data.data.html_url);
+     console.log("repo successfully created");
+     var localPath = name;
+     var opts = {
+         fetchOpts: {
+           callbacks: {
+             certificateCheck: () => 0
+         }
+       }
+     };
+   ;
+     var cloneRepository = Git.Clone(data.data.html_url, localPath, opts);
+     setTimeout(function(){
+       fs.mkdirSync(`${name}/src`)
+     var file=fs.open(`${name}/src/index.php`,'w', (err) => {
+           if (err) throw err;
+         });
+   },200)
+     })
 
-    })
-  }else {
-    var newProjectid=[idProject]
-    console.log(newProjectid);
-    user.update({
-      currentProject:{
-        "id":idProject,
-        "name":newProject.name
-      },
-      projectid:newProjectid
-    })
+     console.log(req.body);
+     var idProject= Math.floor(Math.random() * Math.floor(100000));
+     console.log(idProject);
+     let id=idProject;
+     let priority=null;
+     let deliverydate=null;
+     let newProject= await Project.create({
+       id,
+       name,
+       priority,
+       deliverydate
+     },{
+       fields:['id','name','priority','deliverydate']
+     });
+
+     var projID=user.projectid
+     console.log(projID);
+     if (user.projectid!=null) {
+       projID.push(idProject)
+       console.log(projID);
+       user.update({
+         projectid:projID,
+         currentProject:{
+           "id":idProject,
+           "name":newProject.name
+         }
+
+       })
+     }else {
+       var newProjectid=[idProject]
+       console.log(newProjectid);
+       user.update({
+         currentProject:{
+           "id":idProject,
+           "name":newProject.name
+         },
+         projectid:newProjectid
+       })
+     }
+
+
   }
+
 
 
 
@@ -142,36 +139,54 @@ export async function pullRepo(req,res){
 
       }
       });
-      rimraf(`fictiveProjects/${user.currentProject.name}`, function () { console.log("deleted"); });
-      rimraf(`${user.currentProject.name}`, function () { console.log("deleted"); });
-      const clientWithAuth = new octokit({
-       //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
+      simpleGit.cwd(user.currentProject.name)
+      simpleGitPromise.cwd(user.currentProject.name)
 
-       auth:user.gitToken
-       })
+     simpleGitPromise.pull()
+       .then(
+          (addSuccess) => {
+            console.log("adding files succeeded");
+            console.log(addSuccess);
 
-       var localPath = user.currentProject.name;
-       var opts = {
-           fetchOpts: {
-             callbacks: {
-               certificateCheck: () => 0
-           }
-         }
-       };
-       setTimeout(function(){
-         fs.mkdirSync(user.currentProject.name)
-         var cloneRepository = Git.Clone(`https://github.com/${user.gitUsername}/${user.currentProject.name}.git`, localPath, opts);
-
-         },200)
-
-         setTimeout(function(){
-           if (!fs.existsSync(`${user.currentProject.name}/src`)){
-              fs.mkdirSync(`${user.currentProject.name}/src`);
-              var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
-                    if (err) throw err;
-                  });
-          }
-        },400)
+            res.json({
+              "message":"file have been pulled"
+            })
+          }, (failedAdd) => {
+            res.json({
+              "message":"error"
+            })
+             console.log('adding files failed');
+       });
+      // rimraf(`fictiveProjects/${user.currentProject.name}`, function () { console.log("deleted"); });
+      // rimraf(`${user.currentProject.name}`, function () { console.log("deleted"); });
+      // const clientWithAuth = new octokit({
+      //  //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
+      //
+      //  auth:user.gitToken
+      //  })
+      //
+      //  var localPath = user.currentProject.name;
+      //  var opts = {
+      //      fetchOpts: {
+      //        callbacks: {
+      //          certificateCheck: () => 0
+      //      }
+      //    }
+      //  };
+      //  setTimeout(function(){
+      //    fs.mkdirSync(user.currentProject.name)
+      //    var cloneRepository = Git.Clone(`https://github.com/${user.gitUsername}/${user.currentProject.name}.git`, localPath, opts);
+      //
+      //    },200)
+      //
+      //    setTimeout(function(){
+      //      if (!fs.existsSync(`${user.currentProject.name}/src`)){
+      //         fs.mkdirSync(`${user.currentProject.name}/src`);
+      //         var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+      //               if (err) throw err;
+      //             });
+      //     }
+      //   },400)
 }
 }
 }
@@ -249,15 +264,19 @@ if (user!=null) {
                    })
 
                     console.log('repo successfully pushed');
-                    // fs.readFile(`${repo}/.git/config`, 'utf8', function (err,data) {
-                    //  if (err) {
-                    //    return console.log(err);
-                    //  }
-                    //  var result1 = data.replace(gitHubUrl,`https://github.com/${userName}/${repo}`, gitHubUrl);
-                    //  fs.writeFile(`${repo}/.git/config`, result1, 'utf8', function (err) {
-                    //         if (err) return console.log(err);
-                    //      });
-                   //});
+                    fs.readFile(`${repo}/.git/config`, 'utf8', function (err,data) {
+                     if (err) {
+                       return console.log(err);
+                     }
+                     if (data.includes(`https://${userName}:${password}@github.com/${userName}/${repo}`)) {
+                       var result = data.replace(`https://${userName}:${password}@github.com/${userName}/${repo}`,`https://github.com/${userName}/${repo}`);
+                       fs.writeFile(`${repo}/.git/config`, result, 'utf8', function (err) {
+                            if (err) return console.log(err);
+                         });
+                     }
+
+
+                   });
                  },(failed)=> {
                    res.json({
                      "message":"mot de passe incorrect"

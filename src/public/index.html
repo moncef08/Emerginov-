@@ -428,7 +428,7 @@ Emerginov Editor
           </a>
           <div style="  background-color: #505050;"class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" style="color: #DDDCDB"href="#" onclick="openForm()">Commit & Push</a>
-            <a class="dropdown-item" style="color: #DDDCDB" onclick="pullRepo()" >Pull</a>
+            <a class="dropdown-item" style="color: #DDDCDB"href="#" onclick="pullRepo()" >Pull</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -670,18 +670,20 @@ function pullRepo(){
       },
       success: function (json) {
         if (json.message!=null) {
-          if (json.message=="please verify your informations"){
-            alert("please verify your informations")
-            return false
+          if (json.message=="file have been pulled"){
+            //alert("please verify your informations")
+            sweetAlert("files pulled successfully ! ", "Thank you", "success");
+
+          }else if (json.message=="No pull available") {
+            sweetAlert("All files are already pulled", "No pull available", "error");
+
           }else {
-            alert("you don't have any project ")
-            return false
+            sweetAlert( "No pull available", "","error");
 
           }
 
-        }else {
-          alert("your files have been pushed successfully")
-        }
+      }
+
 
       },
       error: function (xhr, ajaxOptions, thrownError) {
