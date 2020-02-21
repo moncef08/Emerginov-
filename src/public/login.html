@@ -14,10 +14,23 @@
 body {background:  	#505050;}
 form{
   position: absolute;
+
   margin-left : 700px ;
   margin-top : -40px ;
 
   font-family: Comic sans ms;
+}
+#app{
+  position: fixed;
+    z-index: 999;
+    height: 50%;
+    width: 50%;
+    overflow: show;
+    margin: auto;
+    top: -200px;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 
 </style>
@@ -91,10 +104,9 @@ form{
   action="http://localhost:3000/api/users/"
   method="post"
   novalidate="true"
-  style="margin-left:400px"
 >
 
-<br><br>  <div  style="margin-left: 130px; margin-top: -50px;color:gold;"  class="p-3 mb-2 h1 font-weight-bold">Register</div>
+<br><br>  <div  style="margin-left: 200px; margin-top: -50px;color:gold;"  class="p-3 mb-2 h1 font-weight-bold">Register</div>
   <div  class="row form-group">
       <div  class="col">
         <input  id="name" name="name" v-model="name" type="text" class="form-control" placeholder="name">
@@ -133,7 +145,7 @@ form{
   <div class="form-group">
     <input id="mastodon" v-model="mastodon" type="password" class="form-control" name="mastodon" placeholder="Mastodon token">
   </div>
-  <button style="margin-left: 160px;"type="submit" class="btn btn-outline-success btn-lg my-2 my-sm-0">Register</button>
+  <button style="margin-left: 200px;"type="submit" class="btn btn-outline-success btn-lg my-2 my-sm-0">Register</button>
   <div style="margin-left:-300px; margin-top: -650px;color:gold">
     <p v-if="errors.length">
       <b>Please correct the following error(s):</b>

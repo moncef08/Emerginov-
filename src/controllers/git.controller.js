@@ -152,10 +152,16 @@ export async function pullRepo(req,res){
           (addSuccess) => {
             console.log("adding files succeeded");
             console.log(addSuccess);
+            if (addSuccess.summary.changes==0) {
+              res.json({
+                "message":"No pull available"
+              })
+            }else {
+              res.json({
+                "message":"file have been pulled"
+              })
+            }
 
-            res.json({
-              "message":"file have been pulled"
-            })
           }, (failedAdd) => {
             res.json({
               "message":"error"
