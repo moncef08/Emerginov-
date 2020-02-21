@@ -416,7 +416,7 @@ Emerginov Editor
         </li>
 
         <li class="nav-item">
-          <a id="run" class="nav-link"  target="viewer" href="http://project.ci/">Run</a>
+          <a id="run" class="nav-link"  target="viewer" href="http://projet.ci/">Run</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " id="saved" onkeypress="pressControlS(event)" onclick="save()" href="#">save</a>
@@ -1766,10 +1766,10 @@ function hideMarker() {
                   url: "http://localhost:3000/php",
                   dataType:"json",
                   data: {
-                      "code":textContent
+                      "id":sessionStorage.getItem("userID"),
                   },
                   success: function (json) {
-                      document.getElementById('viewer').srcdoc=json.response;
+                    //document.getElementById('viewer').srcdoc=json.response;
                   },
                   error: function (xhr, ajaxOptions, thrownError) {
                     //  alert(xhr.status);

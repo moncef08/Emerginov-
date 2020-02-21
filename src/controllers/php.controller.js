@@ -1,33 +1,17 @@
   /*global phpCode, resultBody, uniter */
   var uniter = require('uniter');
 //  var fs = require('fs');
+  import Users from '../models/Users';
+  var rimraf = require("rimraf");
+
   var sudo = require('sudo-js');
   const fs = require('fs-extra');
   //const { exec } = require('child_process');
-  //sudo.setPassword('Moncef18');
-  var projectName="project"
-  var newVirtualHost =`
-  <VirtualHost *:80>
-    ServerAdmin adminr@${projectName}.ci
-    ServerName ${projectName}.ci
-    ServerAlias www.${projectName}.ci
-    DocumentRoot "/var/www/html/${projectName}.ci"
-    <Directory "/var/www/html/${projectName}.ci">
-      Options +FollowSymLinks
-      AllowOverride all
-      Require all granted
-    </Directory>
-    ErrorLog /var/log/apache2/error.${projectName}.com.log
-    CustomLog /var/log/apache2/access.${projectName}.com.log combined
-  </VirtualHost>
-  `
-  var command1 = ['chmod', '777', '/etc/apache2/sites-available'];
-  var command2 = ['chmod', '777', '/var/www/html'];
-  var command3 = ['chmod', '777', '/etc/hosts'];
-  var command4 = ['a2ensite', `${projectName}.conf`];
-  var command5 = ['systemctl', 'reload', 'apache2'];
+  sudo.setPassword('azerty');
 
-    function rights(){
+
+
+    function rights(command1,command2,command3){
       //var command3 = ['echo', newVirtualHost, '>' , '/etc/apache2/sites-available'];
 
       sudo.exec(command1, function(err, pid, result) {
@@ -51,24 +35,31 @@
       console.log("rights of hosts changed");
       });
   }
-export function copyFiles_And_CreateVirtualHost(){
+export function copyFiles_And_CreateVirtualHost(projectName,newVirtualHost){
 
-  var path=`projects/${projectName}.ci`;
+  var path=projectName;
 
   try {
+    // fs.rmdir(`/var/www/html/${projectName}.ci`, { recursive: true },(err) => {
+    //   if (err) throw err;
+    //   console.log("folder successfully deleted");
+    // });
+   rimraf(`/var/www/html/${projectName}.ci`, function () { console.log("done"); });
 
-    fs.remove(`/var/www/html/${projectName}.ci`, err => {
-      if (err) return console.error(err)
-        console.log('deleted!') // I just deleted my entire HOME directory.
-    })
+    // fs.remove(`/var/www/html/${projectName}.ci`, err => {
+    //   if (err) return console.error(err)
+    //     console.log('deleted!') // I just deleted my entire HOME directory.
+    // })
     setTimeout(function () {
       var directory=fs.mkdir(`/var/www/html/${projectName}.ci`, { recursive: true }, (err) => {
         if (err) throw err;
       });
        fs.copy(path, `/var/www/html/${projectName}.ci`)
+       //fs.copy(path+"/src/index.php", `/var/www/html/`)
+
       console.log('files copied!')
 
-    }, 10);
+    }, 100);
 
   } catch (err) {
     console.error(err)
@@ -104,13 +95,41 @@ function reloadApache2(){
     });
 }
 
-  export  function get_And_Execute_PhpCode(req, res){
+  export async function get_And_Execute_PhpCode(req, res){
 
-    //const {name}= req.body;
-    rights()
-    setTimeout(copyFiles_And_CreateVirtualHost, 1100);
-    setTimeout(a2ensite, 1200);
-    setTimeout(reloadApache2, 1300);
+    const {id}= req.body;
+    const user= await Users.findOne({
+      where:{
+        id
+      }
+    });
+    if (user.currentProject!=null) {
+      var projectName=user.currentProject.name
+      var command1 = ['chmod', '777', '/etc/apache2/sites-available'];
+      var command2 = ['chmod', '777', '/var/www/html'];
+      var command3 = ['chmod', '777', '/etc/hosts'];
+      var command4 = ['a2ensite', `${projectName}.conf`];
+      var command5 = ['systemctl', 'reload', 'apache2'];
+      var newVirtualHost =`
+      <VirtualHost *:80>
+        ServerAdmin adminr@${projectName}.ci
+        ServerName ${projectName}.ci
+        ServerAlias www.${projectName}.ci
+        DocumentRoot "/var/www/html/${projectName}.ci"
+        <Directory "/var/www/html/${projectName}.ci">
+          Options +FollowSymLinks
+          AllowOverride all
+          Require all granted
+        </Directory>
+        ErrorLog /var/log/apache2/error.${projectName}.com.log
+        CustomLog /var/log/apache2/access.${projectName}.com.log combined
+      </VirtualHost>
+      `
+    }
+    rights(command1,command2,command3)
+    setTimeout(copyFiles_And_CreateVirtualHost(projectName,newVirtualHost), 1500);
+    setTimeout(a2ensite, 1600);
+    setTimeout(reloadApache2, 1700);
 
 //sudo chmod 777 /etc/hosts
 //sudo chmod 777 /etc/apache2/sites-available
