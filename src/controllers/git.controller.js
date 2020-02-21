@@ -8,6 +8,8 @@ var Git = require("nodegit");
 var fs = require('fs-extra');
 var rimraf = require("rimraf");
 var exist=false;
+var badtry=false;
+
 const simpleGit = require('simple-git')();
 // Shelljs package for running shell tasks optional
 const shellJs = require('shelljs');
@@ -50,6 +52,9 @@ export async function create_Git_Repository(req,res){
      }).then(data =>{
      console.log(data.data.html_url);
      console.log("repo successfully created");
+     res.json({
+       "message" : "created"
+     })
      var localPath = name;
      var opts = {
          fetchOpts: {
@@ -255,7 +260,8 @@ if (user!=null) {
           (successCommit) => {
             console.log("get");
             console.log("this is commit",successCommit);
-            if (successCommit.summary.changes!="0") {
+            if (successCommit.summary.changes!="0"  ||  badtry==true) {
+              console.log("badtry= ",badtry);
               simpleGitPromise.push('origin','master')
                  .then((success) => {
                    res.json({
@@ -277,7 +283,23 @@ if (user!=null) {
 
 
                    });
+                   badtry=false;
                  },(failed)=> {
+                   fs.readFile(`${repo}/.git/config`, 'utf8', function (err,data) {
+                    if (err) {
+                      return console.log(err);
+                    }
+                    if (data.includes(`https://${userName}:${password}@github.com/${userName}/${repo}`)) {
+                      var result = data.replace(`https://${userName}:${password}@github.com/${userName}/${repo}`,`https://github.com/${userName}/${repo}`);
+                      fs.writeFile(`${repo}/.git/config`, result, 'utf8', function (err) {
+                           if (err) return console.log(err);
+                        });
+                    }
+
+
+                  });
+                  badtry=true
+
                    res.json({
                      "message":"mot de passe incorrect"
 

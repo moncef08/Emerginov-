@@ -410,7 +410,7 @@ Emerginov Editor
           <div style="  background-color: #505050;"  class="dropdown-menu" aria-labelledby="navbarDropdown">
 
           <input id="NewProjectName" class="form-control mr-sm-2" type="text" placeholder="    Project Name" >
-          <button style="margin-top: 5px;margin-left:40px;" id="createProject" onclick=""  type="submit" class="btn btn-secondary">create</button>
+          <button style="margin-top: 5px;margin-left:40px;" id="createProject" type="submit" class="btn btn-secondary">create</button>
           </div>
 
         </li>
@@ -534,7 +534,7 @@ Emerginov Editor
 
     <input id="commitMessage"type="text" placeholder="Commit message" name="commitMessage" required>
 
-    <button type="submit" onclick="pushRepo()" class="btn">Commit&Push</button>
+    <button id="comBtn" type="submit" onclick="pushRepo()" class="btn">Commit&Push</button>
     <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
   </div>
 </div>
@@ -687,11 +687,22 @@ function pullRepo(){
 
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        alert("please verify your informations")
       }
   });
 }
+$(document).ready(function() {
+  $("#comBtn").click(function() {
+    // disable button
+    $(this).prop("disabled", true);
+    // add spinner to button
+    $(this).html(
+      `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...`
+    );
+  });
+});
+
 function pushRepo(){
+
   let gitUsername=document.getElementById('userGit').value
   let password=document.getElementById('pswGit').value
   let commitMessage=document.getElementById('commitMessage').value
@@ -715,10 +726,13 @@ function pushRepo(){
           if (json.message=="please verify your informations"){
             //alert("please verify your informations")
             sweetAlert("Incorrect informations","", "error");
+            closeForm()
+
 
             return false
           }else if (json.message=="mot de passe incorrect") {
             sweetAlert("Incorrect password", "check informations", "error");
+            closeForm()
 
           }else if (json.message=="you don't have any project") {
             sweetAlert("Project Not Found","", "error");
@@ -742,7 +756,6 @@ function pushRepo(){
 
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        alert("please verify your informations")
       }
   });
 }
@@ -830,17 +843,26 @@ $("#createProject").click(function(){
 
         },
         success: function (json) {
-          if (json.message!=null) {
-            $("#alertSearch").text("This project already exist")
-            $("#alertSearch").show()
-            return ;
 
-          }
           if (json.error!=null) {
             $("#alertSearch").text("Your Token is not valid")
             $("#alertSearch").show()
             return;
           }
+          if (json.message!=null) {
+            if (json.message!="created") {
+              $("#alertSearch").text("This project already exist")
+              $("#alertSearch").show()
+              return ;
+            }else {
+              sweetAlert("Project created successfully ! ", "Thank you", "success");
+              //window.location.reload()
+
+            }
+
+
+          }
+
 
         },
         error: function (xhr, ajaxOptions, thrownError) {
