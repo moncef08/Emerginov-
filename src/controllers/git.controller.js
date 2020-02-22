@@ -70,8 +70,28 @@ export async function create_Git_Repository(req,res){
      var file=fs.open(`${name}/src/index.php`,'w', (err) => {
            if (err) throw err;
          });
+      
    },200)
      })
+    setTimeout(function(){
+      simpleGitPromise.cwd(name)
+      simpleGit.cwd(name)
+      simpleGitPromise.add('.')
+        .then(
+           (addSuccess) => {
+             console.log("adding files succeeded");
+              console.log(addSuccess);
+           }, (failedAdd) => {
+              console.log('adding files failed');
+        });
+      // Commit files as Initial Commit
+      simpleGitPromise.commit("initial commit")
+       .then(
+          (successCommit) => {
+            console.log("get");
+            console.log("this is commit",successCommit);
+          })
+    },2000)
 
      console.log(req.body);
      var idProject= Math.floor(Math.random() * Math.floor(100000));

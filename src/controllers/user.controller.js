@@ -112,19 +112,22 @@ export async function getUsers(req,res){
             }
           }
         };
-        var cloneRepository = Git.Clone(url, localPath, opts);
-       setTimeout(function(){
-         fs.copy(newCurrentname,"fictiveProjects")
+        if (!fs.existsSync(user.currentProject.name)) {
+          console.log("helloo");
+          var cloneRepository = Git.Clone(url, localPath, opts);
 
-       },2000)
-       setTimeout(function(){
-         if (!fs.existsSync(`${user.currentProject.name}/src`)){
-            fs.mkdirSync(`${user.currentProject.name}/src`);
-            var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
-                  if (err) throw err;
-                });
+         setTimeout(function(){
+           if (!fs.existsSync(`${user.currentProject.name}/src`)){
+              fs.mkdirSync(`${user.currentProject.name}/src`);
+              var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+                    if (err) throw err;
+                  });
+
+
+          }
+        },2000)
         }
-      },400)
+
         return res.json(user);
 
     }
@@ -172,29 +175,27 @@ export async function getUsers(req,res){
           });
           simpleGit.cwd(project.name)
           simpleGitPromise.cwd(project.name)
-          // Add all files for commit
-            simpleGitPromise.add('.')
-              .then(
-                 (addSuccess) => {
-                   console.log("adding files succeeded");
-                    console.log(addSuccess);
-                 }, (failedAdd) => {
-                    console.log('adding files failed');
-              });
+        //  Add all files for commit
+            // simpleGitPromise.add('.')
+            //   .then(
+            //      (addSuccess) => {
+            //        console.log("adding files succeeded");
+            //         console.log(addSuccess);
+            //      }, (failedAdd) => {
+            //         console.log('adding files failed');
+            //   });
           // Commit files as Initial Commit
-           simpleGitPromise.commit()
+
+           simpleGitPromise.diffSummary()
              .then(
-                (successCommit) => {
+                (diff) => {
                   console.log("get");
-                  console.log("this is commit",successCommit);
-                  if (successCommit.summary.changes!="0" ) {
+                  console.log("this is commit",diff);
+                  if (diff.changed!="0") {
+                    console.log(diff.changed)
+
                     listOfprojectNotCommited.push(project.name)
 
-                  // var words = successCommit.commit.split(' ');
-                  // console.log("words: ",words[1]);
-                  //   simpleGitPromise.revert(words[1]).then(
-                  //     console.log("revert done")
-                  //   )
 
                 }
 
@@ -502,9 +503,18 @@ export async function logout(req,res){
 
         }
       });
-      rimraf("fictiveProjects/"+project.name, function () { console.log("done"); });
-      rimraf(project.name, function () { console.log("done"); });
+      if (fs.existsSync("fictiveProjects/"+project.name)) {
+        rimraf("fictiveProjects/"+project.name, function () { console.log("done"); });
 
+      }
+      if (fs.existsSync(project.name)) {
+        rimraf(project.name, function () { console.log("done"); });
+
+      }
+
+res.json({
+  "message":"deleted"
+})
 
     }
   }

@@ -24,6 +24,7 @@ console.log(user.currentProject.name);
         }catch(e){
          console.log(e)
         }
+        
   }
 
 }

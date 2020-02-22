@@ -2486,7 +2486,7 @@ function checkPageFocus() {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, delete changes!'
               }).then((result) => {
                 if (result.value) {
                    $.ajax({
@@ -2498,21 +2498,24 @@ function checkPageFocus() {
                          "id":sessionStorage.getItem("userID")
                        },
                        success: function (json) {
-                         Swal.fire(
-                           'Deleted!',
-                           'Your file has been deleted.',
-                           'success'
+                         if (json.message=="deleted") {
+                           Swal.fire(
+                             'Deleted!',
+                             'Your files have been deleted.',
+                             'success'
 
-                         ).then((result)=>{
-                           if (result.value) {
-                             setTimeout(function(){
-                               var sessionkey=sessionStorage.removeItem("userID")
-                               document.location.href = `http://localhost:3000/login.html`
+                           ).then((result)=>{
+                             if (result.value) {
+                               setTimeout(function(){
+                                 var sessionkey=sessionStorage.removeItem("userID")
+                                 document.location.href = `http://localhost:3000/login.html`
 
-                             },100)
+                               },100)
 
-                           }
-                         })
+                             }
+                           })
+                         }
+
                        },
                        error: function (xhr, ajaxOptions, thrownError) {
                        }

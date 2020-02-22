@@ -266,6 +266,9 @@ export async function deleteProjectFromAllTables(req,res){
   user.update({
     projectid:newProjectid
   })
+  res.json({
+    message:'Project deleted successfully',
+  });
 }
 export async function deleteProject(req,res){
   const { id }=req.params;
