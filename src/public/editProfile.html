@@ -7,6 +7,8 @@
       <link rel="icon" href="./assets/Emerginov.ico" />
       <!-- 2 load the theme CSS file -->
       <link rel="stylesheet" href="plugin/codemirror/addon/display/fullscreen.css">
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
       <title></title>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -215,9 +217,12 @@
       <textarea placeholder="Comment"></textarea>
       <input id="update"class="formBtn" value="Validate" type="submit" />
   </div>
+  <div id="load" class="loading">Loading&#8230;</div>
+
 </body>
 
   <script>
+  $("#load").hide()
   function changeCurrent(){
     var x = document.getElementById('currentProject').value;
     var y = document.getElementById(x).innerText;
@@ -316,7 +321,15 @@
          success: function (json) {
 
            console.log("done");
-
+           Swal.fire({
+             title: 'update succeeded successfully !',
+             text: "Thank you",
+             icon: 'success',
+           }).then((result) => {
+             if (result.value) {
+               window.location.reload()
+             }
+           })
            //mettre l'id dans l'url
          },
          error: function (xhr, ajaxOptions, thrownError) {

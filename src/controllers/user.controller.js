@@ -8,6 +8,11 @@ var fs = require('fs-extra');
 var path = require("path")
 var Git = require("nodegit");
 
+const simpleGit = require('simple-git')();
+// Shelljs package for running shell tasks optional
+const shellJs = require('shelljs');
+// Simple Git with Promise for handling success and failure
+const simpleGitPromise = require('simple-git/promise')();
 storage.setItem('userID', "")
 
 const { Op } = require("sequelize");
@@ -94,22 +99,32 @@ export async function getUsers(req,res){
             }
 
         })
-       // var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
-       //
-       //
-       //
-       //
-       //  var localPath =`${newCurrentname}`;
-       //  var opts = {
-       //      fetchOpts: {
-       //        callbacks: {
-       //          certificateCheck: () => 0
-       //      }
-       //    }
-       //  };
-       //  var cloneRepository = Git.Clone(url, localPath, opts);
-      //  setTimeout(function(){fs.copy("fictiveProjects/projects/","projects")},2000)
+       var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
 
+
+
+
+        var localPath =`${newCurrentname}`;
+        var opts = {
+            fetchOpts: {
+              callbacks: {
+                certificateCheck: () => 0
+            }
+          }
+        };
+        var cloneRepository = Git.Clone(url, localPath, opts);
+       setTimeout(function(){
+         fs.copy(newCurrentname,"fictiveProjects")
+
+       },2000)
+       setTimeout(function(){
+         if (!fs.existsSync(`${user.currentProject.name}/src`)){
+            fs.mkdirSync(`${user.currentProject.name}/src`);
+            var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+                  if (err) throw err;
+                });
+        }
+      },400)
         return res.json(user);
 
     }
@@ -139,7 +154,77 @@ export async function getUsers(req,res){
     }
 
   }
+  export async function verifyCommit(req,res){
+      const {id}= req.body;
+      var listOfprojectNotCommited=[]
+      const user = await Users.findOne({
+        where:{
+          id
+      }
+      });
 
+      if (user.projectid!=null) {
+        for (var i = 0; i < user.projectid.length; i++) {
+          const project = await Project.findOne({
+            where:{
+              id:user.projectid[i]
+            }
+          });
+          simpleGit.cwd(project.name)
+          simpleGitPromise.cwd(project.name)
+          // Add all files for commit
+            simpleGitPromise.add('.')
+              .then(
+                 (addSuccess) => {
+                   console.log("adding files succeeded");
+                    console.log(addSuccess);
+                 }, (failedAdd) => {
+                    console.log('adding files failed');
+              });
+          // Commit files as Initial Commit
+           simpleGitPromise.commit()
+             .then(
+                (successCommit) => {
+                  console.log("get");
+                  console.log("this is commit",successCommit);
+                  if (successCommit.summary.changes!="0" ) {
+                    listOfprojectNotCommited.push(project.name)
+
+                  // var words = successCommit.commit.split(' ');
+                  // console.log("words: ",words[1]);
+                  //   simpleGitPromise.revert(words[1]).then(
+                  //     console.log("revert done")
+                  //   )
+
+                }
+
+
+                });
+
+
+              }
+
+              setTimeout(function(){
+                console.log(listOfprojectNotCommited);
+                console.log("hello");
+                if (listOfprojectNotCommited.length!=0) {
+                  res.json({"message":listOfprojectNotCommited})
+
+                }else {
+                  res.json({"message":"no problem"})
+
+                }
+
+              },500)
+
+
+      }else {
+        res.json({
+          "message":"no projects"
+        })
+      }
+
+  }
 export async function getUsersByProject(req,res){
     const {projectId}= req.params;
     const ProjectUsers = await Users.findAll({
@@ -399,7 +484,30 @@ export async function getSession(req,res){
 
 }
 export async function logout(req,res){
-  storage.setItem('userID', "")
+  const {id}=req.body
+  const user= await Users.findOne({
+    where:{
+      id
+    }
+  });
+  user.update({
+
+      currentProject:null
+  })
+  if (user.projectid!=null) {
+    for (var i = 0; i < user.projectid.length; i++) {
+      const project= await Project.findOne({
+        where:{
+          id:user.projectid[i]
+
+        }
+      });
+      rimraf("fictiveProjects/"+project.name, function () { console.log("done"); });
+      rimraf(project.name, function () { console.log("done"); });
+
+
+    }
+  }
 
 }
 export async function getUserByLoginAndPassword(req,res){

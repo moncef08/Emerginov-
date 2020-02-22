@@ -10,9 +10,10 @@
   <link rel="stylesheet" type="text/css" href="./css/index.css">
   <script type="text/javascript" src="./js/index.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
   <!-- 2 load the theme CSS file -->
   <link rel="stylesheet" href="plugin/codemirror/addon/display/fullscreen.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
   <title>Editeur</title>
@@ -795,16 +796,38 @@ function pullRepo(){
         if (json.message!=null) {
           if (json.message=="file have been pulled"){
             //alert("please verify your informations")
-            sweetAlert("files pulled successfully ! ", "Thank you", "success");
+            //sweetAlert("files pulled successfully ! ", "Thank you", "success");
+            Swal.fire({
+              title: 'files pulled successfully !',
+              text: "Thank you",
+              icon: 'success',
+            }).then((result) => {
+              if (result.value) {
+                window.location.reload()
+              }
+            })
 
           }else if (json.message=="No pull available") {
-            sweetAlert("All files are already pulled", "No pull available", "error");
+            Swal.fire({
+              title: 'No pull available',
+              text: "",
+              icon: 'error',
+            })
+            //swal("All files are already pulled", "No pull available", "error");
 
           }else if (json.message=="you don't have any project") {
-            sweetAlert( "No project found", "Please create ","error");
-
+            Swal.fire({
+              title: 'No project found',
+              text: "Please choose or create a project",
+              icon: 'error',
+            })
           }else if (json.message=="error") {
-            sweetAlert("No pull available","", "error");
+          //  sweetAlert("No pull available","", "error");
+          Swal.fire({
+            title: 'No pull available',
+            text: "",
+            icon: 'error',
+          })
           }
 
 
@@ -852,24 +875,49 @@ function pushRepo(){
         if (json.message!=null) {
           if (json.message=="please verify your informations"){
             //alert("please verify your informations")
-            sweetAlert("Incorrect informations","", "error");
+            Swal.fire({
+              title: "Incorrect informations",
+              text: "",
+              icon: 'error',
+            })
+          //  sweetAlert("Incorrect informations","", "error");
             closeForm()
 
 
             return false
           }else if (json.message=="mot de passe incorrect") {
-            sweetAlert("Incorrect password", "check informations", "error");
+          //  sweetAlert("Incorrect password", "check informations", "error");
+          Swal.fire({
+            title: "Incorrect password",
+            text: "check your informations",
+            icon: 'error',
+          })
             closeForm()
 
           }else if (json.message=="you don't have any project") {
-            sweetAlert("Project Not Found","", "error");
+            //sweetAlert("Project Not Found","", "error");
+            Swal.fire({
+              title: "Project not found !",
+              text: "",
+              icon: 'error',
+            })
             return false
 
           }else if(json.message=="repo successfully pushed") {
-            sweetAlert("files pushed successfully ! ", "Thank you", "success");
+            //sweetAlert("files pushed successfully ! ", "Thank you", "success");
+            Swal.fire({
+              title: 'files pushed successfully !',
+              text: "Thank you",
+              icon: 'success',
+            })
             closeForm()
           }else if (json.message=="already pushed") {
-            sweetAlert("All files are already pushed","", "error");
+            //sweetAlert("All files are already pushed","", "error");
+            Swal.fire({
+              title: "All files are already pushed !",
+              text: "",
+              icon: 'error',
+            })
             closeForm()
           }
 
@@ -959,6 +1007,8 @@ $("#createProject").click(function(){
   console.log(projectName);
   if (projectName!="" && spaceProblem==false) {
     $("#load").show()
+    //$("#load").text("hello")
+
     $.ajax({
         async: true,
         type: "POST",
@@ -988,12 +1038,16 @@ $("#createProject").click(function(){
               return ;
             }else {
               $("#load").hide()
+              Swal.fire({
+                title: "Project created successfully ! ",
+                text: "Thank you",
+                icon: 'success',
+              }).then((result) => {
+                if (result.value) {
+                  window.location.reload()
+                }
+              })
 
-              swal("Project created successfully ! ", "Thank you", "success")
-              .then((value) => {
-                console.log("hello");
-                window.location.reload()
-              });
               //
 
             }
@@ -2400,19 +2454,95 @@ function checkPageFocus() {
 
   }
   function logout(){
-    var sessionkey=sessionStorage.removeItem("userID")
-    document.location.href = `http://localhost:3000/login.html`
     $.ajax({
         async: true,
         type: "POST",
-        url: "http://localhost:3000/api/users/logout",
+        url: "http://localhost:3000/api/users/verifyCommit",
         dataType:"json",
+        data:{
+          "id":sessionStorage.getItem("userID")
+        },
         success: function (json) {
 
+          if (json.message!=null) {
+            if (json.message=="no projects") {
+
+              setTimeout(function(){
+                var sessionkey=sessionStorage.removeItem("userID")
+                document.location.href = `http://localhost:3000/login.html`
+
+              },100)
+
+            }else if(json.message!="no problem"){
+              console.log(json);
+              Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                html: `
+                       Projects not commited:
+                       <li>${json.message}</li>
+                     ` ,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                if (result.value) {
+                   $.ajax({
+                       async: true,
+                       type: "POST",
+                       url: "http://localhost:3000/api/users/logout",
+                       dataType:"json",
+                       data:{
+                         "id":sessionStorage.getItem("userID")
+                       },
+                       success: function (json) {
+                         Swal.fire(
+                           'Deleted!',
+                           'Your file has been deleted.',
+                           'success'
+
+                         ).then((result)=>{
+                           if (result.value) {
+                             setTimeout(function(){
+                               var sessionkey=sessionStorage.removeItem("userID")
+                               document.location.href = `http://localhost:3000/login.html`
+
+                             },100)
+
+                           }
+                         })
+                       },
+                       error: function (xhr, ajaxOptions, thrownError) {
+                       }
+                   });
+
+
+                }
+              })
+            }else {
+              setTimeout(function(){
+                var sessionkey=sessionStorage.removeItem("userID")
+                document.location.href = `http://localhost:3000/login.html`
+
+              },100)
+
+            }
+
+          }else {
+            console.log(json);
+
+            //var sessionkey=sessionStorage.removeItem("userID")
+            //document.location.href = `http://localhost:3000/login.html`
+
+          }
         },
         error: function (xhr, ajaxOptions, thrownError) {
         }
     });
+
+
   }
 
   function addElement (value) {
