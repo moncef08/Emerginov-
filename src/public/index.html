@@ -420,11 +420,16 @@ box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1
     margin-top: -30px;
     width: 100%;
     height: 658px;
+    top:30;
+
     resize: vertical;
     border: 1px solid #3498db
    }
    #editor-textarea
-   {height: 100%;}
+   {
+     height: 100%;
+     resize: vertical;
+   }
    #X,#Y,#Z,#T,#U
    {
     visibility: hidden;}
@@ -538,7 +543,7 @@ Emerginov Editor
         </li>
 
         <li class="nav-item">
-          <a id="run" class="nav-link"  target="viewer" href="http://Mahdi.ci/">Run</a>
+          <a id="run" class="nav-link"  type="button" target="viewer">Run</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " id="saved" onkeypress="pressControlS(event)" onclick="save()" href="#">save</a>
@@ -665,7 +670,9 @@ Emerginov Editor
 
 <div class="main">
    <!-- div for the tree-->
-    <div style="margin-top:30px;" class="tree" id="jstree"></div>
+   <div style="margin-top:30px;" class="tree" id="jstree"></div>
+
+
   <!--  <div style=" margin-top:450px;">
         <button  style="margin-top:-50px; margin-left:100px"type="button" class="text-light bg-dark btn" disabled>Live Chat</button>
 -->
@@ -1985,7 +1992,19 @@ function hideMarker() {
                       "id":sessionStorage.getItem("userID"),
                   },
                   success: function (json) {
-                    //document.getElementById('viewer').srcdoc=json.response;
+                    if (json.message=="select a project") {
+                      Swal.fire(
+                        'Project not found !',
+                        'Select a project or create a new one',
+                        'error'
+
+                      )
+
+                    }else {
+                      document.getElementById('run').href=`http://${json.message}.ci/`;
+                      console.log(document.getElementById('run').href);
+
+                    }
                   },
                   error: function (xhr, ajaxOptions, thrownError) {
                     //  alert(xhr.status);
@@ -2031,7 +2050,7 @@ function hideMarker() {
            },
            "types" : {
              "#" : {
-                   "max_children" : 1,
+                   "max_children" : 3,
                    "max_depth" : 6,              //set max number of children's node
                    "valid_children" : ["root"]
                  },

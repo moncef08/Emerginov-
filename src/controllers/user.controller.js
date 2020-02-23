@@ -535,15 +535,15 @@ export async function getUserByLoginAndPassword(req,res){
             return res.redirect(`http://localhost:3000/`);
 
           }else {
-           res.redirect(`http://localhost:3000/login.html`)
+            return res.redirect(`http://localhost:3000/login.html`);
+
           }
 
 
 
       }else {
-        return res.json({
-          message:'User does not exist '
-        });
+        return res.redirect(`http://localhost:3000/login.html`);
+
       }
     }
 

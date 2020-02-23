@@ -7,7 +7,7 @@
   var sudo = require('sudo-js');
   const fs = require('fs-extra');
   //const { exec } = require('child_process');
-  sudo.setPassword('azerty');
+  sudo.setPassword('Moncef18');
 
 
 
@@ -125,11 +125,20 @@ function reloadApache2(){
         CustomLog /var/log/apache2/access.${projectName}.com.log combined
       </VirtualHost>
       `
+      res.json({
+        "message":user.currentProject.name
+      })
+      rights(command1,command2,command3)
+      setTimeout(copyFiles_And_CreateVirtualHost(projectName,newVirtualHost), 1500);
+      setTimeout(a2ensite, 1600);
+      setTimeout(reloadApache2, 1700);
+
+
+    }else {
+      res.json({
+        "message":"select a project"
+      })
     }
-    rights(command1,command2,command3)
-    setTimeout(copyFiles_And_CreateVirtualHost(projectName,newVirtualHost), 1500);
-    setTimeout(a2ensite, 1600);
-    setTimeout(reloadApache2, 1700);
 
 //sudo chmod 777 /etc/hosts
 //sudo chmod 777 /etc/apache2/sites-available

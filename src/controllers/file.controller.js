@@ -1,6 +1,7 @@
 const dirTree = require("directory-tree");
 var fs = require('fs');
 var fs1 = require('fs-extra');
+var rimraf = require("rimraf");
 
 import Users from '../models/Users';
 
@@ -24,7 +25,7 @@ console.log(user.currentProject.name);
         }catch(e){
          console.log(e)
         }
-        
+
   }
 
 }
@@ -78,15 +79,17 @@ export async function delete_DirectoryOrFile(req,res){
   const {type,path}= req.body;
   if (type=="folder") {
     console.log(path);
-    //rimraf(path, function () { console.log("delete done"); });
-    fs.rmdir(path, { recursive: true },(err) => {
-      if (err) throw err;
-      console.log("folder successfully deleted");
-    });
-    fs.rmdir("fictiveProjects/"+path, { recursive: true },(err) => {
-      if (err) throw err;
-      console.log("folder successfully deleted");
-    });
+    rimraf(path, function () { console.log("delete done"); });
+    // fs.rmdir(path, { recursive: true },(err) => {
+    //   if (err) throw err;
+    //   console.log("folder successfully deleted");
+    // });
+    rimraf("fictiveProjects/"+path, function () { console.log("delete done"); });
+
+    // fs.rmdir("fictiveProjects/"+path, { recursive: true },(err) => {
+    //   if (err) throw err;
+    //   console.log("folder successfully deleted");
+    // });
   }else{
     fs.unlink(path, (err) => {
       if (err) throw err;

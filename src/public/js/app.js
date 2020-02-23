@@ -21,18 +21,29 @@ let vm=new Vue({
      this.errors = [];
      if (!this.password) {
        this.errors.push("Password required.");
+     }else if (this.password.length<6) {
+         this.errors.push("Password required should have more than 6 caracters.");
+
+
+     }else if (this.password!=this.Newpassword) {
+         this.errors.push("The passwords are not similar");
+       }
+
+     if (!this.Newpassword) {
+       this.errors.push("Repeat password");
      }
+
      if (!this.mastodon) {
-       this.errors.push("mastodon Token required.");
+       this.errors.push("Mastodon Token required.");
      }
      if (!this.location) {
-       this.errors.push("location required.");
+       this.errors.push("Location required.");
      }
      if (!this.gitUsername) {
-       this.errors.push("gitUsername required.");
+       this.errors.push("GitUsername required.");
      }
      if (!this.gitToken) {
-       this.errors.push("gitToken required.");
+       this.errors.push("GitToken required.");
      }
      if (!this.Email) {
        this.errors.push("Email required.");
@@ -77,12 +88,10 @@ let vm1=new Vue({
   methods:{
 
     checkLogin: function (e) {
+
      this.errors = [];
      if (!this.password) {
        this.errors.push("Password required.");
-
-     }else if (this.password.length<6) {
-       this.errors.push("Password required should have more than 6 caracters.");
 
      }
 

@@ -24,7 +24,7 @@ form{
   position: fixed;
     z-index: 999;
     height: 50%;
-    width: 50%;
+    width: 30%;
     overflow: show;
     margin: auto;
     top: -200px;
@@ -32,6 +32,13 @@ form{
     bottom: 0;
     right: 0;
 }
+#app1{
+  position: fixed;
+    overflow: show;
+    margin: auto;
+    right: 0;
+}
+
 
 </style>
 
@@ -41,6 +48,7 @@ form{
       <img src="./assets/Emerginov.png" width="30" height="30" alt="logo">
       Emerginov Editor
       </a>
+
         <form
         id="app1"
         @submit="checkLogin"
@@ -48,23 +56,21 @@ form{
         method="post"
         novalidate="true"
         class="form-inline my-2 my-lg-0">
-          <input style="margin-left:-100px;" id="login"  name="login" v-model="login"  type="text" class="form-control mr-sm-2" placeholder="Login" aria-label="Search">
-          <input  id="password" name="password" v-model="password" type="password"class="form-control mr-sm-2" type="search" placeholder="Password" aria-label="Search">
-          <button onclick="sessionStorage()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Connexion</button>
+            <input id="login"  name="login" v-model="login"  type="text" class="form-control mr-sm-2" placeholder="Login" aria-label="Search">
+            <input  id="password" name="password" v-model="password" type="password"class="form-control mr-sm-2" type="search" placeholder="Password" aria-label="Search">
+            <button  onclick="sessionStorage()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Connexion</button>
+            <!-- <a style="color:white" href="https://example.com">I forgot my password</a> -->
 
 
           <ul>
-            <div style=" color: gold;margin-left:-300px;margin-top:165px" v-if="errors.length">
+            <div style=" color: gold;margin-left:-400px;margin-top:165px" v-if="errors.length">
               <b>Please correct the following error(s):</b>
               <ul>
                 <li v-for="error in errors">{{ error }}</li>
               </ul>
             </div>
           </ul>
-          <ul class="form-inline my-2 my-lg-0">
-            <!-- <a style="color:white" href="https://example.com">I forgot my password</a> -->
 
-          </ul>
 
         </form>
 
@@ -126,7 +132,7 @@ form{
     <input id="hashedPassword" name="hashedPassword" v-model="password" type="password" class="form-control" id="formGroupExampleInput2" placeholder="Password">
   </div>
   <div class="form-group">
-    <input id="password2" v-model="password" type="password" class="form-control"   id="formGroupExampleInput2" placeholder=" New Password">
+    <input id="password2" v-model="Newpassword" type="password" class="form-control"   id="formGroupExampleInput2" placeholder=" New Password">
   </div>
 
     <div class="form-group">
@@ -146,7 +152,7 @@ form{
     <input id="mastodon" v-model="mastodon" type="password" class="form-control" name="mastodon" placeholder="Mastodon token">
   </div>
   <button style="margin-left: 200px;"type="submit" class="btn btn-outline-success btn-lg my-2 my-sm-0">Register</button>
-  <div style="margin-left:-300px; margin-top: -650px;color:gold">
+  <div style="margin-left:-500px; margin-top: -650px;color:gold">
     <p v-if="errors.length">
       <b>Please correct the following error(s):</b>
       <ul>
@@ -168,6 +174,12 @@ form{
     <script src="js/app.js"></script>
 <script type="text/javascript">
 
-
+function pressEnter() {
+               var code=event.which || event.keyCode; //Selon le navigateur c'est which ou keyCode
+               if (code==13) { //le code de la touche Enter
+                 console.log("pressed");
+                 sessionStorage();
+               }
+           }
 </script>
 </html>
