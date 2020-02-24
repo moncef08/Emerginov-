@@ -4,7 +4,7 @@ var $ = require("jquery");
 import copyFiles_And_CreateVirtualHost from './php.controller.js'
 import Users from '../models/Users';
 import Project from '../models/Project';
-var Git = require("nodegit");
+//var Git = require("nodegit");
 var fs = require('fs-extra');
 var rimraf = require("rimraf");
 var exist=false;
@@ -50,48 +50,57 @@ export async function create_Git_Repository(req,res){
      clientWithAuth.repos.createForAuthenticatedUser({
      name:name
      }).then(data =>{
+     fs.mkdirSync(name)
      console.log(data.data.html_url);
      console.log("repo successfully created");
      res.json({
        "message" : "created"
      })
      var localPath = name;
-     var opts = {
-         fetchOpts: {
-           callbacks: {
-             certificateCheck: () => 0
-         }
-       }
-     };
-   ;
-     var cloneRepository = Git.Clone(data.data.html_url, localPath, opts);
+   //   var opts = {
+   //       fetchOpts: {
+   //         callbacks: {
+   //           certificateCheck: () => 0
+   //       }
+   //     }
+   //   };
+
+   simpleGitPromise.clone(data.data.html_url, localPath).then(
+     (addSuccess) => {
+          console.log("clonage réussi",addSuccess);
+
+   })
+
      setTimeout(function(){
        fs.mkdirSync(`${name}/src`)
-     var file=fs.open(`${name}/src/index.php`,'w', (err) => {
-           if (err) throw err;
-         });
-      
+       var file=fs.open(`${name}/src/index.php`,'w', (err) => {
+             if (err) throw err;
+           });
+
    },200)
-     })
-    setTimeout(function(){
-      simpleGitPromise.cwd(name)
-      simpleGit.cwd(name)
-      simpleGitPromise.add('.')
-        .then(
-           (addSuccess) => {
-             console.log("adding files succeeded");
-              console.log(addSuccess);
-           }, (failedAdd) => {
-              console.log('adding files failed');
-        });
-      // Commit files as Initial Commit
-      simpleGitPromise.commit("initial commit")
-       .then(
-          (successCommit) => {
-            console.log("get");
-            console.log("this is commit",successCommit);
-          })
-    },2000)
+
+
+ })
+
+    // setTimeout(function(){
+    //   simpleGitPromise.cwd(name)
+    //   simpleGit.cwd(name)
+    //   simpleGitPromise.add('.')
+    //     .then(
+    //        (addSuccess) => {
+    //          console.log("adding files succeeded");
+    //           console.log(addSuccess);
+    //        }, (failedAdd) => {
+    //           console.log('adding files failed');
+    //     });
+    //   // Commit files as Initial Commit
+    //   simpleGitPromise.commit("initial commit")
+    //    .then(
+    //       (successCommit) => {
+    //         console.log("get");
+    //         console.log("this is commit",successCommit);
+    //       })
+    // },2000)
 
      console.log(req.body);
      var idProject= Math.floor(Math.random() * Math.floor(100000));
@@ -223,14 +232,15 @@ export async function pullRepo(req,res){
 }
 export async function pushRepo(req,res){
   // Simple-git without promise
-
   const {id,commitMessage,gitUsername,password}=req.body;
   const user= await Users.findOne({
     where:{
       id
     }
   });
-if (user!=null) {
+  console.log("commit message: ",commitMessage);
+
+if (commitMessage!="") {
   const clientWithAuth = new octokit({
   auth:user.gitToken
   })
@@ -352,7 +362,7 @@ if (user!=null) {
 
 }else {
   res.json({
-    "message":"please verify your informations"
+    "message":"please put a commit message"
   })
 
 }

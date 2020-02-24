@@ -6,7 +6,7 @@ var storage1="";
 var rimraf = require("rimraf");
 var fs = require('fs-extra');
 var path = require("path")
-var Git = require("nodegit");
+//var Git = require("nodegit");
 
 const simpleGit = require('simple-git')();
 // Shelljs package for running shell tasks optional
@@ -105,16 +105,20 @@ export async function getUsers(req,res){
 
 
         var localPath =`${newCurrentname}`;
-        var opts = {
-            fetchOpts: {
-              callbacks: {
-                certificateCheck: () => 0
-            }
-          }
-        };
+        // var opts = {
+        //     fetchOpts: {
+        //       callbacks: {
+        //         certificateCheck: () => 0
+        //     }
+        //   }
+        // };
         if (!fs.existsSync(user.currentProject.name)) {
           console.log("helloo");
-          var cloneRepository = Git.Clone(url, localPath, opts);
+        fs.mkdirSync(user.currentProject.name);
+
+        simpleGitPromise.clone(url, localPath)
+
+
 
          setTimeout(function(){
            if (!fs.existsSync(`${user.currentProject.name}/src`)){
@@ -491,10 +495,10 @@ export async function logout(req,res){
       id
     }
   });
-  user.update({
-
-      currentProject:null
-  })
+  // user.update({
+  //
+  //     currentProject:null
+  // })
   if (user.projectid!=null) {
     for (var i = 0; i < user.projectid.length; i++) {
       const project= await Project.findOne({

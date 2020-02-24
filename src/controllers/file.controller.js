@@ -4,6 +4,7 @@ var fs1 = require('fs-extra');
 var rimraf = require("rimraf");
 
 import Users from '../models/Users';
+const simpleGitPromise = require('simple-git')();
 
 
 export async function getFile(req, res){
@@ -16,8 +17,33 @@ export async function getFile(req, res){
     }
   });
   if (user.currentProject!=null) {
-console.log(user.currentProject.name);
-    fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
+    //      if (!fs.existsSync(`${user.currentProject.name}/src`)){
+
+    if (fs.existsSync(user.currentProject.name)){
+      console.log(user.currentProject.name);
+          fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
+    }else{
+      fs.mkdirSync(user.currentProject.name)
+      var url=`https://github.com/${user.gitUsername}/${user.currentProject.name}.git`
+      simpleGitPromise.clone(url, user.currentProject.name).then(
+        (addSuccess) => {
+             console.log("clonage réussi",addSuccess);
+
+      })
+      if (!fs.existsSync(`${user.currentProject.name}/src`)) {
+        setTimeout(function(){
+          fs.mkdirSync(`${user.currentProject.name}/src`)
+          var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+                if (err) throw err;
+              });
+
+      },200)
+
+      }
+      fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
+
+    }
+
     var tree = dirTree(user.currentProject.name);
     tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
         try{
