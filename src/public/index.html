@@ -2502,6 +2502,9 @@ function checkPageFocus() {
 
             }else if(json.message!="no problem"){
               console.log(json);
+              if (json.message.length!=0) {
+
+
               Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -2527,8 +2530,8 @@ function checkPageFocus() {
                        success: function (json) {
                          if (json.message=="deleted") {
                            Swal.fire(
-                             'Deleted!',
-                             'Your files have been deleted.',
+                             'Changes deleted!',
+                             'Your changes have been deleted.',
                              'success'
 
                            ).then((result)=>{
@@ -2549,8 +2552,47 @@ function checkPageFocus() {
                    });
 
 
-                }
-              })
+                 }
+                })
+              }else {
+                Swal.fire({
+                  title: 'Are you sure ?',
+                  text: 'For your project, we created a start src directory, we recommand you to push it before leaving',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Later'
+                }).then((result) => {
+                  if (result.value) {
+                     $.ajax({
+                         async: true,
+                         type: "POST",
+                         url: "http://localhost:3000/api/users/logout",
+                         dataType:"json",
+                         data:{
+                           "id":sessionStorage.getItem("userID")
+                         },
+                         success: function (json) {
+
+                                   var sessionkey=sessionStorage.removeItem("userID")
+                                   document.location.href = `http://localhost:3000/login.html`
+
+
+
+
+
+
+
+                         },
+                         error: function (xhr, ajaxOptions, thrownError) {
+                         }
+                     });
+
+
+                   }
+                  })
+              }
             }else {
             setTimeout(function(){  $.ajax({
                   async: true,

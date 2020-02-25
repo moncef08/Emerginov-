@@ -3,6 +3,8 @@ import Project from '../models/Project';
 var passwordHash = require('password-hash');
 var storage = require('node-sessionstorage')
 var storage1="";
+const  octokit = require('@octokit/rest');
+
 var rimraf = require("rimraf");
 var fs = require('fs-extra');
 var path = require("path")
@@ -171,6 +173,8 @@ export async function getUsers(req,res){
       });
 
       if (user.projectid!=null) {
+        console.log("client :");
+
         for (var i = 0; i < user.projectid.length; i++) {
           const project = await Project.findOne({
             where:{
@@ -179,48 +183,80 @@ export async function getUsers(req,res){
           });
           simpleGit.cwd(project.name)
           simpleGitPromise.cwd(project.name)
-        //  Add all files for commit
-            // simpleGitPromise.add('.')
-            //   .then(
-            //      (addSuccess) => {
-            //        console.log("adding files succeeded");
-            //         console.log(addSuccess);
-            //      }, (failedAdd) => {
-            //         console.log('adding files failed');
-            //   });
-          // Commit files as Initial Commit
 
-           simpleGitPromise.diffSummary()
-             .then(
-                (diff) => {
-                  console.log("get");
-                  console.log("this is commit",diff);
-                  if (diff.changed!="0") {
-                    console.log(diff.changed)
+      //     simpleGitPromise.diffSummary()
+      //         .then(
+      //           (diff) => {
+      //             console.log("get");
+      //             console.log("this is commit",diff);
+      //             if (diff.changed!="0") {
+      //                   console.log(diff.changed)
+      //
+      //                    listOfprojectNotCommited.push(project.name)
+      //
+      //
+      //              }
+      //
+      //
+      //       });
+      //     setTimeout(function(){
+      //               console.log(listOfprojectNotCommited);
+      //              if (listOfprojectNotCommited.length!=0) {
+      //                 res.json({"message":listOfprojectNotCommited})
+      //
+      //                     }else {
+      //                   res.json({"message":"no problem"})
+      //
+      //                   }
+      //
+      //   },500)
+      // }
 
-                    listOfprojectNotCommited.push(project.name)
+
+          simpleGitPromise.log().then(
+
+            (addSuccess) => {
+
+                   console.log("yes");
+
+                              simpleGitPromise.diffSummary()
+                                .then(
+                                   (diff) => {
+                                     console.log("get");
+                                     console.log("this is commit",diff);
+                                     if (diff.changed!="0") {
+                                       console.log(diff.changed)
+
+                                       listOfprojectNotCommited.push(project.name)
 
 
-                }
+                                   }
 
 
-                });
+                                   });
 
 
-              }
 
-              setTimeout(function(){
-                console.log(listOfprojectNotCommited);
-                console.log("hello");
-                if (listOfprojectNotCommited.length!=0) {
-                  res.json({"message":listOfprojectNotCommited})
 
-                }else {
-                  res.json({"message":"no problem"})
+                                 setTimeout(function(){
+                                   console.log(listOfprojectNotCommited);
+                                   console.log("hello");
+                                   if (listOfprojectNotCommited.length!=0) {
+                                     res.json({"message":listOfprojectNotCommited})
 
-                }
+                                   }else {
+                                     res.json({"message":"no problem"})
 
-              },500)
+                                   }
+
+                                 },500)
+                 }, (failedAdd) => {
+
+                   res.json({"message":[]})
+                  }
+          )
+
+        }
 
 
       }else {

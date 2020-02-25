@@ -28,18 +28,18 @@ export async function getFile(req, res){
       simpleGitPromise.clone(url, user.currentProject.name).then(
         (addSuccess) => {
              console.log("clonage réussi",addSuccess);
+             if (!fs.existsSync(`${user.currentProject.name}/src`)) {
+               setTimeout(function(){
+                 fs.mkdirSync(`${user.currentProject.name}/src`)
+                 var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+                       if (err) throw err;
+                     });
 
+             },200)
+
+             }
       })
-      if (!fs.existsSync(`${user.currentProject.name}/src`)) {
-        setTimeout(function(){
-          fs.mkdirSync(`${user.currentProject.name}/src`)
-          var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
-                if (err) throw err;
-              });
 
-      },200)
-
-      }
       fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
 
     }
