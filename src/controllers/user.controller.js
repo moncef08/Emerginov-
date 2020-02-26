@@ -116,7 +116,7 @@ export async function getUsers(req,res){
         // };
         if (!fs.existsSync(user.currentProject.name)) {
           console.log("helloo");
-        fs.mkdirSync(user.currentProject.name);
+        //fs.mkdirSync(user.currentProject.name);
 
         simpleGitPromise.clone(url, localPath)
 
