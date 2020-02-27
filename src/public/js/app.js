@@ -9,7 +9,7 @@ let vm=new Vue({
      school: null,
      login: null,
      Job: null,
-     gitUsername:null,
+     gitusername:null,
      gitToken:null,
      mastodon:null,
      school:null,
@@ -39,13 +39,13 @@ let vm=new Vue({
      if (!this.location) {
        this.errors.push("Location required.");
      }
-     if (!this.gitUsername) {
+     if (!this.gitusername) {
        this.errors.push("GitUsername required.");
      }
-     if (!this.gitToken) {
+     if (!this.gittoken) {
        this.errors.push("GitToken required.");
      }
-     if (!this.Email) {
+     if (!this.email) {
        this.errors.push("Email required.");
      }
      if (!this.Job) {

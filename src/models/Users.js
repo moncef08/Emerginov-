@@ -12,13 +12,13 @@ const Users=sequelize.define('users',{
   login:{
     type: Sequelize.TEXT
   },
-  gitUsername:{
+  gitusername:{
     type: Sequelize.TEXT
   },
-  Email:{
+  email:{
     type: Sequelize.TEXT
   },
-  gitToken:{
+  gittoken:{
     type: Sequelize.TEXT
   },
   projectid:{
@@ -46,11 +46,11 @@ const Users=sequelize.define('users',{
     type: Sequelize.TEXT
 
   },
-  hashedPassword:{
+  hashedpassword:{
     type: Sequelize.TEXT
 
   },
-  currentProject:{
+  currentproject:{
     type: Sequelize.JSON
 
   },

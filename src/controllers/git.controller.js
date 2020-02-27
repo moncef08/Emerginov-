@@ -12,7 +12,7 @@ var badtry=false;
 
 const simpleGit = require('simple-git')();
 // Shelljs package for running shell tasks optional
-const shellJs = require('shelljs');
+//const shellJs = require('shelljs');
 // Simple Git with Promise for handling success and failure
 const simpleGitPromise = require('simple-git/promise')();
 export async function create_Git_Repository(req,res){
@@ -45,7 +45,7 @@ export async function create_Git_Repository(req,res){
     const clientWithAuth = new octokit({
      //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
 
-     auth:user.gitToken
+     auth:user.gittoken
      })
      clientWithAuth.repos.createForAuthenticatedUser({
      name:name
@@ -124,7 +124,7 @@ export async function create_Git_Repository(req,res){
        console.log(projID);
        user.update({
          projectid:projID,
-         currentProject:{
+         currentproject:{
            "id":idProject,
            "name":newProject.name
          }
@@ -134,7 +134,7 @@ export async function create_Git_Repository(req,res){
        var newProjectid=[idProject]
        console.log(newProjectid);
        user.update({
-         currentProject:{
+         currentproject:{
            "id":idProject,
            "name":newProject.name
          },
@@ -162,19 +162,19 @@ export async function pullRepo(req,res){
       "message":"please verify your informations"
     })
   }else {
-    if (user.currentProject==null) {
+    if (user.currentproject==null) {
       res.json({
         "message":"you don't have any project"
       })
     }else {
       const project= await Project.findOne({
         where:{
-          id:user.currentProject.id
+          id:user.currentproject.id
 
       }
       });
-      simpleGit.cwd(user.currentProject.name)
-      simpleGitPromise.cwd(user.currentProject.name)
+      simpleGit.cwd(user.currentproject.name)
+      simpleGitPromise.cwd(user.currentproject.name)
 
      simpleGitPromise.pull()
        .then(
@@ -197,15 +197,15 @@ export async function pullRepo(req,res){
             })
              console.log('adding files failed');
        });
-      // rimraf(`fictiveProjects/${user.currentProject.name}`, function () { console.log("deleted"); });
-      // rimraf(`${user.currentProject.name}`, function () { console.log("deleted"); });
+      // rimraf(`fictiveProjects/${user.currentproject.name}`, function () { console.log("deleted"); });
+      // rimraf(`${user.currentproject.name}`, function () { console.log("deleted"); });
       // const clientWithAuth = new octokit({
       //  //auth:"c7a365f1185f37ea43d3f58217dd6a6074889bea"
       //
-      //  auth:user.gitToken
+      //  auth:user.gittoken
       //  })
       //
-      //  var localPath = user.currentProject.name;
+      //  var localPath = user.currentproject.name;
       //  var opts = {
       //      fetchOpts: {
       //        callbacks: {
@@ -214,15 +214,15 @@ export async function pullRepo(req,res){
       //    }
       //  };
       //  setTimeout(function(){
-      //    fs.mkdirSync(user.currentProject.name)
-      //    var cloneRepository = Git.Clone(`https://github.com/${user.gitUsername}/${user.currentProject.name}.git`, localPath, opts);
+      //    fs.mkdirSync(user.currentproject.name)
+      //    var cloneRepository = Git.Clone(`https://github.com/${user.gitUsername}/${user.currentproject.name}.git`, localPath, opts);
       //
       //    },200)
       //
       //    setTimeout(function(){
-      //      if (!fs.existsSync(`${user.currentProject.name}/src`)){
+      //      if (!fs.existsSync(`${user.currentproject.name}/src`)){
       //         fs.mkdirSync(`${user.currentProject.name}/src`);
-      //         var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+      //         var file=fs.open(`${user.currentproject.name}/src/index.php`,'w', (err) => {
       //               if (err) throw err;
       //             });
       //     }
@@ -232,7 +232,7 @@ export async function pullRepo(req,res){
 }
 export async function pushRepo(req,res){
   // Simple-git without promise
-  const {id,commitMessage,gitUsername,password}=req.body;
+  const {id,commitMessage,gitusername,password}=req.body;
   const user= await Users.findOne({
     where:{
       id
@@ -242,24 +242,24 @@ export async function pushRepo(req,res){
 
 if (commitMessage!="") {
   const clientWithAuth = new octokit({
-  auth:user.gitToken
+  auth:user.gittoken
   })
- if (user.currentProject!=null) {
+ if (user.currentproject!=null) {
    const project= await Project.findOne({
      where:{
-       id:user.currentProject.id
+       id:user.currentproject.id
 
    }
    });
-   console.log(user.currentProject.name);
+   console.log(user.currentproject.name);
     // change current directory to repo directory in local
    // shellJs.cd("testforpush");
     // Repo name
-    simpleGit.cwd(user.currentProject.name)
-    simpleGitPromise.cwd(user.currentProject.name)
-    const repo = user.currentProject.name;  //Repo name
+    simpleGit.cwd(user.currentproject.name)
+    simpleGitPromise.cwd(user.currentproject.name)
+    const repo = user.currentproject.name;  //Repo name
     // User name and password of your GitHub
-    const userName = user.gitUsername;
+    const userName = user.gitusername;
 
     // Set up GitHub url like this so no manual entry of user pass needed
     const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
@@ -368,13 +368,13 @@ if (commitMessage!="") {
 }
 }
 export async function delete_Git_Repository(req,res){
-  const {gitUsername,name,token}= req.body;
+  const {gitusername,name,token}= req.body;
   console.log(req.body);
   const clientWithAuth = new octokit({
   auth:token
   })
   clientWithAuth.repos.delete({
-    owner: gitUsername,
+    owner: gitusername,
     repo:name
   }).then(data =>{
     console.log("repo successfully deleted");

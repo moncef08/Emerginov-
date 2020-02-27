@@ -16,22 +16,22 @@ export async function getFile(req, res){
       id
     }
   });
-  if (user.currentProject!=null) {
-    //      if (!fs.existsSync(`${user.currentProject.name}/src`)){
+  if (user.currentproject!=null) {
+    //      if (!fs.existsSync(`${user.currentproject.name}/src`)){
 
-    if (fs.existsSync(user.currentProject.name)){
-      console.log(user.currentProject.name);
-          fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
+    if (fs.existsSync(user.currentproject.name)){
+      console.log(user.currentproject.name);
+          fs1.copy(user.currentproject.name,`fictiveProjects/${user.currentproject.name}/`)
     }else{
-      fs.mkdirSync(user.currentProject.name)
-      var url=`https://github.com/${user.gitUsername}/${user.currentProject.name}.git`
-      simpleGitPromise.clone(url, user.currentProject.name).then(
+      fs.mkdirSync(user.currentproject.name)
+      var url=`https://github.com/${user.gitusername}/${user.currentproject.name}.git`
+      simpleGitPromise.clone(url, user.currentproject.name).then(
         (addSuccess) => {
              console.log("clonage réussi",addSuccess);
-             if (!fs.existsSync(`${user.currentProject.name}/src`)) {
+             if (!fs.existsSync(`${user.currentproject.name}/src`)) {
                setTimeout(function(){
-                 fs.mkdirSync(`${user.currentProject.name}/src`)
-                 var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+                 fs.mkdirSync(`${user.currentproject.name}/src`)
+                 var file=fs.open(`${user.currentproject.name}/src/index.php`,'w', (err) => {
                        if (err) throw err;
                      });
 
@@ -40,11 +40,11 @@ export async function getFile(req, res){
              }
       })
 
-      fs1.copy(user.currentProject.name,`fictiveProjects/${user.currentProject.name}/`)
+      fs1.copy(user.currentproject.name,`fictiveProjects/${user.currentproject.name}/`)
 
     }
 
-    var tree = dirTree(user.currentProject.name);
+    var tree = dirTree(user.currentproject.name);
     tree = JSON.parse(JSON.stringify(tree).replace(/"name":/g, "\"text\":"));
         try{
          res.json(tree);

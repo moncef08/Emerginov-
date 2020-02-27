@@ -240,9 +240,9 @@ export async function deleteProjectFromAllTables(req,res){
       id:idOfUser
     }
   });
-  if (user.currentProject.name==proj.name) {
+  if (user.currentproject.name==proj.name) {
     user.update({
-      currentProject:null
+      currentproject:null
     })
   }
   const deleteRowCount = await Project.destroy({

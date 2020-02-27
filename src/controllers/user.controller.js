@@ -7,12 +7,12 @@ const  octokit = require('@octokit/rest');
 
 var rimraf = require("rimraf");
 var fs = require('fs-extra');
-var path = require("path")
+//var path = require("path")
 //var Git = require("nodegit");
 
 const simpleGit = require('simple-git')();
 // Shelljs package for running shell tasks optional
-const shellJs = require('shelljs');
+//const shellJs = require('shelljs');
 // Simple Git with Promise for handling success and failure
 const simpleGitPromise = require('simple-git/promise')();
 storage.setItem('userID', "")
@@ -22,13 +22,9 @@ const { Op } = require("sequelize");
 
 
 export async function createUser(req, res){
-  var { name,login,Email,gitToken,gitUsername,job,location,school,hashedPassword,mastodon}= req.body;
-  console.log(req.body);
-  console.log(hashedPassword);
-  hashedPassword = passwordHash.generate(hashedPassword);
+  var { name,login,email,gittoken,gitusername,job,location,school,password,mastodon}= req.body;
+  let hashedpassword = passwordHash.generate(password);
   var id= Math.floor(Math.random() * Math.floor(1000000000000));
-  console.log(id);
-  console.log(req.body);
   var projectid=null;
   var company=null;
   var nbfollowers=0;
@@ -39,29 +35,28 @@ export async function createUser(req, res){
       id,
       name,
       login,
-      Email,
-      gitToken,
+      email,
+      gittoken,
       school,
       projectid,
       location,
       job,
       company,
-      gitUsername,
+      gitusername,
       nbfollowers,
       listoffollow,
       picture,
-      hashedPassword,
+      hashedpassword,
       mastodon
     },{
-      fields:['id','name','login','Email','gitToken','school','projectid','location','job','company','gitUsername','nbfollowers','listoffollow','picture','hashedPassword','mastodon']
+      fields:['id','name','login','email','gittoken','school','projectid','location','job','company','gitusername','nbfollowers','listoffollow','picture','hashedpassword','mastodon']
     });
     if(newUser){
-      res.redirect("/login.html")
-      return res.json({
-        message:'User created successfully',
-        data:newUser
-      });
-    }
+      setTimeout(function(){
+        console.log("user created successfully");
+        res.redirect("/login.html")},500)
+      }
+
   }catch(error){
     console.log(error);
     res.status(500).json({
@@ -70,7 +65,7 @@ export async function createUser(req, res){
     });
   }
 }
-//console.log(passwordHash.verify('password123', hashedPassword)); // true
+//console.log(passwordHash.verify('password123', hashedpassword)); // true
 
 export async function getUsers(req,res){
    try{
@@ -95,13 +90,13 @@ export async function getUsers(req,res){
       if (user!=null) {
         user.update({
 
-            currentProject:{
+            currentproject:{
               id:newCurrentid,
               name:newCurrentname
             }
 
         })
-       var url=`https://github.com/${user.gitUsername}/${newCurrentname}.git`
+       var url=`https://github.com/${user.gitusername}/${newCurrentname}.git`
 
 
 
@@ -114,18 +109,18 @@ export async function getUsers(req,res){
         //     }
         //   }
         // };
-        if (!fs.existsSync(user.currentProject.name)) {
+        if (!fs.existsSync(user.currentproject.name)) {
           console.log("helloo");
-        //fs.mkdirSync(user.currentProject.name);
+        //fs.mkdirSync(user.currentproject.name);
 
         simpleGitPromise.clone(url, localPath)
 
 
 
          setTimeout(function(){
-           if (!fs.existsSync(`${user.currentProject.name}/src`)){
-              fs.mkdirSync(`${user.currentProject.name}/src`);
-              var file=fs.open(`${user.currentProject.name}/src/index.php`,'w', (err) => {
+           if (!fs.existsSync(`${user.currentproject.name}/src`)){
+              fs.mkdirSync(`${user.currentproject.name}/src`);
+              var file=fs.open(`${user.currentproject.name}/src/index.php`,'w', (err) => {
                     if (err) throw err;
                   });
 
@@ -533,7 +528,7 @@ export async function logout(req,res){
   });
   // user.update({
   //
-  //     currentProject:null
+  //     currentproject:null
   // })
   if (user.projectid!=null) {
     for (var i = 0; i < user.projectid.length; i++) {
@@ -568,7 +563,7 @@ export async function getUserByLoginAndPassword(req,res){
           }
         });
         if (user!=null ) {
-          if ( passwordHash.verify(password, user.hashedPassword)) {
+          if ( passwordHash.verify(password, user.hashedpassword)) {
             storage.setItem('userID', user.id)
             storage1=user.id
 
@@ -605,10 +600,10 @@ export async function deleteUserFromProject(req,res){}
 
 export async function updateUser(req,res){
     const { id } = req.params;
-    const{ name,login, gitToken, projectid } = req.body;
+    const{ name,login, gittoken, projectid } = req.body;
 
     const users = await Users.findAll({
-      attributes: ['id', 'name','login', 'gitToken', 'projectid'],
+      attributes: ['id', 'name','login', 'gittoken', 'projectid'],
       where:{
         id
       }
@@ -619,7 +614,7 @@ export async function updateUser(req,res){
         await user.update({
           name,
           login,
-          gitToken,
+          gittoken,
           projectid
         });
       })

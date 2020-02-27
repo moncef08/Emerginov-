@@ -654,7 +654,7 @@ Emerginov Editor
 
   >
     <label style="color:white;" for="email"><b>Git username</b></label>
-    <input id="userGit" type="text" placeholder="Enter username" name="gitUsername" required>
+    <input id="userGit" type="text" placeholder="Enter username" name="gitusername" required>
 
     <label style="color:white;" for="psw"><b>Git password</b></label>
     <input id="pswGit"type="password" placeholder="Enter Password" name="password" required>
@@ -876,7 +876,7 @@ function pushRepo(){
         "id":sessionStorage.getItem("userID"),
         "commitMessage":commitMessage,
         "password":password,
-        "gitUsername":gitUsername
+        "gitusername":gitUsername
       },
       success: function (json) {
         if (json.message!=null) {

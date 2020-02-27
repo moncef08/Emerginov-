@@ -1,5 +1,5 @@
   /*global phpCode, resultBody, uniter */
-  var uniter = require('uniter');
+  //var uniter = require('uniter');
 //  var fs = require('fs');
   import Users from '../models/Users';
   var rimraf = require("rimraf");
@@ -7,7 +7,7 @@
   var sudo = require('sudo-js');
   const fs = require('fs-extra');
   //const { exec } = require('child_process');
-  sudo.setPassword('Moncef18');
+  //sudo.setPassword('Moncef18'); à changer !!
 
 
 
@@ -103,8 +103,8 @@ function reloadApache2(){
         id
       }
     });
-    if (user.currentProject!=null) {
-      var projectName=user.currentProject.name
+    if (user.currentproject!=null) {
+      var projectName=user.currentproject.name
       var command1 = ['chmod', '777', '/etc/apache2/sites-available'];
       var command2 = ['chmod', '777', '/var/www/html'];
       var command3 = ['chmod', '777', '/etc/hosts'];
@@ -126,7 +126,7 @@ function reloadApache2(){
       </VirtualHost>
       `
       res.json({
-        "message":user.currentProject.name
+        "message":user.currentproject.name
       })
       rights(command1,command2,command3)
       setTimeout(copyFiles_And_CreateVirtualHost(projectName,newVirtualHost), 1500);
