@@ -113,7 +113,7 @@ export async function getUsers(req,res){
           console.log("helloo");
         //fs.mkdirSync(user.currentproject.name);
 
-        simpleGitPromise.clone(url, localPath)
+        simpleGit.clone(url, localPath)
 
 
 
@@ -223,7 +223,18 @@ export async function getUsers(req,res){
                                        console.log(diff.changed)
 
                                        listOfprojectNotCommited.push(project.name)
+                                       setTimeout(function(){
+                                         console.log(listOfprojectNotCommited);
+                                         console.log("hello");
+                                         if (listOfprojectNotCommited.length!=0) {
+                                           res.json({"message":listOfprojectNotCommited})
 
+                                         }else {
+                                           res.json({"message":"no problem"})
+
+                                         }
+
+                                       },500)
 
                                    }
 
@@ -233,18 +244,7 @@ export async function getUsers(req,res){
 
 
 
-                                 setTimeout(function(){
-                                   console.log(listOfprojectNotCommited);
-                                   console.log("hello");
-                                   if (listOfprojectNotCommited.length!=0) {
-                                     res.json({"message":listOfprojectNotCommited})
 
-                                   }else {
-                                     res.json({"message":"no problem"})
-
-                                   }
-
-                                 },500)
                  }, (failedAdd) => {
 
                    res.json({"message":[]})
