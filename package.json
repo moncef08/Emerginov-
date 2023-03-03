@@ -28,7 +28,7 @@
     "dotphp": "^3.5.2",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "extract-zip": "^1.6.7",
+    "extract-zip": "^1.7.0",
     "fs-extra": "^8.1.0",
     "git-clone": "^0.1.0",
     "jquery": "^3.4.1",
